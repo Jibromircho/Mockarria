@@ -35,6 +35,11 @@ int main() {
         // camera follow the player
         camera.target = (Vector2){player.x + 20, player.y + 20};
 
+        //camera zoom 
+        camera.zoom += ((float)GetMouseWheelMove()*0.05f);
+        if (camera.zoom > 3.0f) camera.zoom = 3.0f;
+        else if (camera.zoom < 0.1f) camera.zoom = 0.1f;
+
         // screen selector
         switch (currentScreen)
         {
@@ -75,8 +80,10 @@ int main() {
             }break;
             case GAMEPLAY:
             {
-                DrawRectangle(-5000, 220, 15000, 800, BLACK);
-                DrawRectangle(player.x, player.y, player.width, player.height, RED);
+                BeginMode2D(camera);
+                    DrawRectangle(-3000, 280, 6000, 1200, BLACK);
+                    DrawRectangle(player.x, player.y, player.width, player.height, RED);
+                EndMode2D();
 
             }break;
             case ENDING:
