@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/Mockarria.dir/src/main.cpp.o -o Mockarria  -lraylib -ldl -lGL 

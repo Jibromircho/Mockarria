@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build OpenGL Project",
+            "type": "shell",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-g",
+                "${workspaceFolder}/src/main.cpp",
+                "${workspaceFolder}/src/mysource.cpp",
+                "${workspaceFolder}/third_party/glad.c",
+                "-I${workspaceFolder}/include",
+                "-I${workspaceFolder}/include/glad",
+                "-I${workspaceFolder}/third_party",
+                "-lglfw",
+                "-ldl",
+                "-lGL",
+                "-o",
+                "${workspaceFolder}/bin/main"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Generated task by the VS Code C++ extension."
+        }
+    ]
+}
+
