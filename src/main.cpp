@@ -8,20 +8,34 @@ int main() {
 
     const int screenWidth = 800;
     const int screenHeight = 450;
-    const int fps = 60;
+    int fps = 60;
 
     InitWindow(screenWidth, screenHeight, "Mockarria");
 
     GameScreen currentScreen = LOGO;
+    Player player;
+
+    Camera2D camera = { 0 };
+    camera.target = (Vector2){player.x + 20.0f, player.y + 20.0f};
+    camera.offset = (Vector2){screenWidth/2.0f, screenHeight/2.0f};
+    camera.zoom = 1.0f;
 
     int frameCounter = 0;
     SetTargetFPS(fps); // set target fps
 
-    Player playerChar;
     // Main game loop
     while (!WindowShouldClose()) // detect window closure
     {
         // Update
+
+        //player movement
+        if (IsKeyDown(KEY_A)) player.x -= 2;
+        else if (IsKeyDown(KEY_D)) player.x += 2;
+
+        // camera follow the player
+        camera.target = (Vector2){player.x + 20, player.y + 20};
+
+        // screen selector
         switch (currentScreen)
         {
         case LOGO:
@@ -61,7 +75,9 @@ int main() {
             }break;
             case GAMEPLAY:
             {
-                DrawRectangle(screenWidth/2, screenHeight/2, playerChar.width, playerChar.height, BLACK);
+                DrawRectangle(-5000, 220, 15000, 800, BLACK);
+                DrawRectangle(player.x, player.y, player.width, player.height, RED);
+
             }break;
             case ENDING:
             {
