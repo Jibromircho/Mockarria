@@ -1,4 +1,4 @@
-# Install script for directory: /home/didi-desktop/Code/Mockarria
+# Install script for directory: /home/didi/code/Mockarria
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/didi-desktop/Code/Mockarria/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/didi/code/Mockarria/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

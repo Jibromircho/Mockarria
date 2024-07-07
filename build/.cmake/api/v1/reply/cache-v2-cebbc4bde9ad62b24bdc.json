@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/didi-desktop/Code/Mockarria/build"
+			"value" : "/home/didi/code/Mockarria/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -591,7 +591,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/didi-desktop/Code/Mockarria"
+			"value" : "/home/didi/code/Mockarria"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1327,7 +1327,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/didi-desktop/Code/Mockarria/build"
+			"value" : "/home/didi/code/Mockarria/build"
 		},
 		{
 			"name" : "OpenGLProject_IS_TOP_LEVEL",
@@ -1351,7 +1351,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/didi-desktop/Code/Mockarria"
+			"value" : "/home/didi/code/Mockarria"
 		}
 	],
 	"kind" : "cache",

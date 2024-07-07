@@ -10,6 +10,9 @@ int main() {
     const int screenHeight = 450;
     int fps = 60;
 
+    //some stats
+    int velocity = 5;
+
     InitWindow(screenWidth, screenHeight, "Mockarria");
 
     GameScreen currentScreen = LOGO;
@@ -31,6 +34,8 @@ int main() {
         //player movement
         if (IsKeyDown(KEY_A)) player.x -= 2;
         else if (IsKeyDown(KEY_D)) player.x += 2;
+        if (IsKeyPressed(KEY_SPACE)) player.y -= velocity;
+        else if (IsKeyReleased(KEY_SPACE)) player.y += velocity;
 
         // camera follow the player
         camera.target = (Vector2){player.x + 20, player.y + 20};

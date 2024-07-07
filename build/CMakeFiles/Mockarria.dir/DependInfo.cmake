@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/didi-desktop/Code/Mockarria/src/main.cpp" "CMakeFiles/Mockarria.dir/src/main.cpp.o" "gcc" "CMakeFiles/Mockarria.dir/src/main.cpp.o.d"
+  "/home/didi/code/Mockarria/src/main.cpp" "CMakeFiles/Mockarria.dir/src/main.cpp.o" "gcc" "CMakeFiles/Mockarria.dir/src/main.cpp.o.d"
   )
 
 # Targets to which this target links.
