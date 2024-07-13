@@ -1,7 +1,7 @@
 [
 {
-  "directory": "/home/didi/code/Mockarria/build",
-  "command": "/usr/bin/c++  -I/home/didi/code/Mockarria/include -g -o CMakeFiles/Mockarria.dir/src/main.cpp.o -c /home/didi/code/Mockarria/src/main.cpp",
-  "file": "/home/didi/code/Mockarria/src/main.cpp"
+  "directory": "/home/didi-desktop/Code/Mockarria/build",
+  "command": "/usr/bin/c++  -I/home/didi-desktop/Code/Mockarria/include -g -o CMakeFiles/Mockarria.dir/src/main.cpp.o -c /home/didi-desktop/Code/Mockarria/src/main.cpp",
+  "file": "/home/didi-desktop/Code/Mockarria/src/main.cpp"
 }
 ]
