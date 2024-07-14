@@ -63,7 +63,7 @@ int main() {
         framesCounter++; 
         player.position.y += velocity;
         player.hitbox.y += velocity;
-        player.hitbox.x = player.position.x;
+        player.hitbox.x = player.position.x + 15;
         if (velocity < velocityMax) velocity += acceleretion;
         else velocity = velocityMax;
         if (CheckCollisionRecs(player.hitbox, floor))
@@ -95,7 +95,7 @@ int main() {
         if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
         else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
 
-        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) velocity = jumpStrenght, player.state = JUMPING, player.jumpCount--;
+        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0 && player.state == GROUND) velocity = jumpStrenght, player.state = JUMPING, player.jumpCount--;
 
         // camera follow the player
         camera.target = {player.position.x + 20, player.position.y + 20};
@@ -146,9 +146,6 @@ int main() {
             case GAMEPLAY:
             {
                 BeginMode2D(camera);
-                    //for (int i = 0; i < 25; i++){
-                    //DrawTexture(dirtTile, 0 + dirtTile.width * i, screenHeight/2 + dirtTile.height + 70, WHITE);
-                    //}
 
                     for (int i = 0; i <= worldSizeY; i++)
                     {
