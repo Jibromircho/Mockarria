@@ -1,3 +1,0 @@
-/home/didi-desktop/Code/Mockarria/build/CMakeFiles/Mockarria.dir
-/home/didi-desktop/Code/Mockarria/build/CMakeFiles/edit_cache.dir
-/home/didi-desktop/Code/Mockarria/build/CMakeFiles/rebuild_cache.dir
