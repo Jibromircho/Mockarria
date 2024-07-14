@@ -57,6 +57,7 @@ int main() {
         else velocity = velocityMax;
         if (floor.y <= player.position.y)
         {
+            player.jumpCount = player.maxJump;
             velocity = 0;
         }
 
@@ -79,7 +80,7 @@ int main() {
         //player movement
         if (IsKeyDown(KEY_A)) player.position.x -= 2;
         else if (IsKeyDown(KEY_D)) player.position.x += 2;
-        if (IsKeyDown(KEY_SPACE)) velocity = jumpStrenght;
+        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) velocity = jumpStrenght, player.state = JUMPING, player.jumpCount--;
 
         // camera follow the player
         camera.target = {player.position.x + 20, player.position.y + 20};

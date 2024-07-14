@@ -3,6 +3,7 @@
 
 #include <config.h>
 
+typedef enum PlayerState { GROUND = 0, JUMPING, FLYGHT } PlayerState;
 class Player
 {
 public:
@@ -12,6 +13,9 @@ public:
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_move.width/8, (float)model_move.height/2 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_idle.width/12, (float)model_idle.height/3 };
     const int maxJump = 2;
+    int jumpCount = maxJump;
+    PlayerState state = GROUND;
+
 
     
 
