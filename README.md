@@ -9,3 +9,4 @@
 - `src/`: Source files
 - `third_party/`: Third party files and libraries
 - `build/`: CMake build folder
+- `img/`: Image files
