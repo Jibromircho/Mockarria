@@ -7,8 +7,8 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
 int main() {
     // initialize win
 
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1200;
+    const int screenHeight = 800;
     int fps = 60;
 
     //some stats
@@ -51,9 +51,14 @@ int main() {
     {
         // Update
         framesCounter++;
+        
         player.position.y += velocity;
         if (velocity < velocityMax) velocity += acceleretion;
         else velocity = velocityMax;
+        if (floor.y <= player.position.y)
+        {
+            velocity = 0;
+        }
 
         if (framesCounter >= (60/framesSpeed))
         {
