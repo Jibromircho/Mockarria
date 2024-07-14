@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/didi/code/Mockarria/include
+CXX_INCLUDES = -I/home/didi-desktop/Code/Mockarria/include
 
 CXX_FLAGS = -g
 

@@ -7,12 +7,18 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
 int main() {
     // initialize win
 
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1200;
+    const int screenHeight = 800;
     int fps = 60;
 
     //some stats
-    int velocity = 2;
+    float acceleretion = 0.1f;
+    float velocity = 0;
+    float velocityMax = 5.0f;
+    float jumpStrenght = -3.5f;
+
+
+    Rectangle floor = {-2000, (screenHeight/2) + 300, 8000, 30};
 
     InitWindow(screenWidth, screenHeight, "Mockarria");
 
@@ -45,7 +51,14 @@ int main() {
     {
         // Update
         framesCounter++;
-        while(player.position.y < screenHeight/3) player.position.y += velocity;
+        
+        player.position.y += velocity;
+        if (velocity < velocityMax) velocity += acceleretion;
+        else velocity = velocityMax;
+        if (floor.y <= player.position.y)
+        {
+            velocity = 0;
+        }
 
         if (framesCounter >= (60/framesSpeed))
         {
@@ -66,8 +79,7 @@ int main() {
         //player movement
         if (IsKeyDown(KEY_A)) player.position.x -= 2;
         else if (IsKeyDown(KEY_D)) player.position.x += 2;
-        if (IsKeyDown(KEY_SPACE)) player.position.y -= velocity;
-        else if (IsKeyReleased(KEY_SPACE)) player.position.y += velocity/2;
+        if (IsKeyDown(KEY_SPACE)) velocity = jumpStrenght;
 
         // camera follow the player
         camera.target = {player.position.x + 20, player.position.y + 20};
@@ -118,9 +130,10 @@ int main() {
             case GAMEPLAY:
             {
                 BeginMode2D(camera);
-                    for (int i = 0; i < 25; i++){
-                    DrawTexture(dirtTile, 0 + dirtTile.width * i, screenHeight/2 + dirtTile.height + 70, WHITE);
-                    }
+                    //for (int i = 0; i < 25; i++){
+                    //DrawTexture(dirtTile, 0 + dirtTile.width * i, screenHeight/2 + dirtTile.height + 70, WHITE);
+                    //}
+                    DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_idle, player.frameRecIdle, player.position, WHITE);
