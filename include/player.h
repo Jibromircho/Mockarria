@@ -15,6 +15,7 @@ public:
     const int maxJump = 2;
     int jumpCount = maxJump;
     PlayerState state = GROUND;
+    Rectangle hitbox = { position.x, position.y, frameRecMove.width, frameRecMove.height};
 
 
     

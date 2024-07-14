@@ -49,13 +49,14 @@ int main() {
     // Main game loop
     while (!WindowShouldClose()) // detect window closure
     {
-        // Update
-        framesCounter++;
-        
+        //Constantly updating stuff
+        framesCounter++; 
         player.position.y += velocity;
+        player.hitbox.y += velocity;
+        player.hitbox.x = player.position.x;
         if (velocity < velocityMax) velocity += acceleretion;
         else velocity = velocityMax;
-        if (floor.y <= player.position.y)
+        if (CheckCollisionRecs(player.hitbox, floor))
         {
             player.jumpCount = player.maxJump;
             velocity = 0;
@@ -134,6 +135,7 @@ int main() {
                     //for (int i = 0; i < 25; i++){
                     //DrawTexture(dirtTile, 0 + dirtTile.width * i, screenHeight/2 + dirtTile.height + 70, WHITE);
                     //}
+                    DrawRectangleLinesEx(player.hitbox,2.0f,RED);
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);
