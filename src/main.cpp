@@ -14,8 +14,18 @@ int main() {
     //some stats
     float acceleretion = 0.1f;
     float velocity = 0;
-    float velocityMax = 5.0f;
+    float velocityMax = 15.0f;
     float jumpStrenght = -3.5f;
+    
+
+    //some world properties
+    const int cellSize = 20;
+    const int worldSizeX = 6400;
+    const int worldSizeY = 1800;
+    const int worldStartX = (worldSizeX * cellSize / 2) * -1;
+    const int worldStartY = (worldSizeY * cellSize / 2) * -1;
+    const int worldEndX = worldSizeX * cellSize / 2;
+    const int worldEndY = worldSizeY * cellSize / 2;
 
 
     Rectangle floor = {-2000, (screenHeight/2) + 300, 8000, 30};
@@ -60,6 +70,7 @@ int main() {
         {
             player.jumpCount = player.maxJump;
             velocity = 0;
+            player.state = GROUND;
         }
 
         if (framesCounter >= (60/framesSpeed))
@@ -79,8 +90,11 @@ int main() {
         }
 
         //player movement
-        if (IsKeyDown(KEY_A)) player.position.x -= 2;
-        else if (IsKeyDown(KEY_D)) player.position.x += 2;
+        if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
+        if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 3.0f;
+        if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
+        else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
+
         if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) velocity = jumpStrenght, player.state = JUMPING, player.jumpCount--;
 
         // camera follow the player
@@ -135,6 +149,18 @@ int main() {
                     //for (int i = 0; i < 25; i++){
                     //DrawTexture(dirtTile, 0 + dirtTile.width * i, screenHeight/2 + dirtTile.height + 70, WHITE);
                     //}
+
+                    for (int i = 0; i <= worldSizeY; i++)
+                    {
+                        DrawLine(worldStartX,worldStartY + i * cellSize , worldEndX, worldStartY + i * cellSize, LIGHTGRAY);
+                    }
+
+                    for (int j = 0; j <= worldSizeX; j++)
+                    {
+                        DrawLine(worldStartX + j * cellSize,worldStartY, worldStartX + j * cellSize, worldEndY, LIGHTGRAY);
+                    }
+
+
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);

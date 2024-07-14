@@ -14,8 +14,9 @@ public:
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_idle.width/12, (float)model_idle.height/3 };
     const int maxJump = 2;
     int jumpCount = maxJump;
+    float movementSpeed = 3.0f;
     PlayerState state = GROUND;
-    Rectangle hitbox = { position.x, position.y, frameRecMove.width, frameRecMove.height};
+    Rectangle hitbox = { position.x, position.y, frameRecIdle.width, frameRecIdle.height};
 
 
     
