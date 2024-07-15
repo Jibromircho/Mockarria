@@ -50,8 +50,7 @@ int main() {
 
 
     int currentFrameMove = 0;
-    int currentFrameIdle = 0;
-    int currentFrameIdleRow = 0;
+    float currentFrameIdle = 0;
 
     int framesCounter = 0;
     int framesSpeed = 8;
@@ -63,7 +62,7 @@ int main() {
         framesCounter++; 
         player.position.y += velocity;
         player.hitbox.y += velocity;
-        player.hitbox.x = player.position.x + 15;
+        player.hitbox.x = player.position.x + 20;
         if (velocity < velocityMax) velocity += acceleretion;
         else velocity = velocityMax;
         if (CheckCollisionRecs(player.hitbox, floor))
@@ -76,17 +75,25 @@ int main() {
         if (framesCounter >= (60/framesSpeed))
         {
             framesCounter = 0;
+            
             currentFrameMove++;
             currentFrameIdle++;
 
+            if(player.state == JUMPING)
+            {
+                currentFrameMove = 2;
+                currentFrameIdle = 0;
+            }
+            
             if (currentFrameMove > 7) currentFrameMove = 0;
-            if (currentFrameIdle > 11) currentFrameIdle = 0;
+            if (currentFrameIdle > 7) currentFrameIdle = 0;
     
 
-            player.frameRecMove.x = (float)currentFrameMove*(float)player.model_move.width/8;
-            player.frameRecIdle.x = (float)currentFrameIdle*(float)player.model_idle.width/12;
-            if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_move.height/2;
-            if(IsKeyDown(KEY_A)) currentFrameIdle = 0, player.frameRecMove.y = player.model_move.height;
+            player.frameRecMove.x = (float)currentFrameMove*(float)player.model_movement.width/8;
+            player.frameRecIdle.x = (float)currentFrameIdle*(float)player.model_movement.width/8;
+            player.frameRecIdle.y = (player.model_movement.height/3)*2; 
+            if(IsKeyDown(KEY_A)) currentFrameIdle = 0, player.frameRecMove.y = (player.model_movement.height/3)*3;
+            if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
         }
 
         //player movement
@@ -157,12 +164,16 @@ int main() {
                         DrawLine(worldStartX + j * cellSize,worldStartY, worldStartX + j * cellSize, worldEndY, LIGHTGRAY);
                     }
 
-
+                    //hitbox for easier debugging
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
+
+                    //simple floor for testing
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
-                    if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);
-                    else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_move, player.frameRecMove, player.position, WHITE);
-                    else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_idle, player.frameRecIdle, player.position, WHITE);
+
+                    //player drawing
+                    if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
+                    else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
+                    else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
                 EndMode2D();
 
             }break;

@@ -8,15 +8,14 @@ class Player
 {
 public:
     Vector2 position = { 400.0f, 280.0f };
-    Texture2D model_move = LoadTexture("../img/player/Unarmed_Run_full.png");
-    Texture2D model_idle = LoadTexture("../img/player/Unarmed_Idle_full.png");
-    Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_move.width/8, (float)model_move.height/2 };
-    Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_idle.width/12, (float)model_idle.height/3 };
+    Texture2D model_movement = LoadTexture("../img/player/Unarmed_Movement_full.png");
+    Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
+    Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     const int maxJump = 1;
     int jumpCount = maxJump;
     float movementSpeed = 3.0f;
     PlayerState state = GROUND;
-    Rectangle hitbox = { position.x + 15, position.y + 15, frameRecIdle.width - 35, frameRecIdle.height - 30};
+    Rectangle hitbox = { position.x + 20, position.y + 10, frameRecIdle.width - 40, frameRecIdle.height - 25};
 
 
     
