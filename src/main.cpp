@@ -9,10 +9,11 @@ int main() {
     const Vector2 screenStartPos{ 0, 0 };
     const int screenWidth = 1280;
     const int screenHeight = 720;
-    const Vector2 newGameButtonPos { screenWidth / 2, screenHeight / 2 };
-    const Vector2 loadGameButtonPos { screenWidth / 2, screenHeight / 2 + 50 };
-    const Vector2 settingsButtonPos { screenWidth / 2, screenHeight / 2  + 100 };
-    const Vector2 exitButtonPos { screenWidth / 2, screenHeight / 2  + 150 };
+    const Vector2 newGameButtonPos { screenWidth / 2 - 100, screenHeight / 2 - 100 };
+    const Vector2 loadGameButtonPos { screenWidth / 2 - 100, screenHeight / 2 - 25 };
+    const Vector2 settingsButtonPos { screenWidth / 2 - 100, screenHeight / 2  + 50 };
+    const Vector2 exitButtonPos { screenWidth / 2 - 100, screenHeight / 2  + 125 };
+    const int buttonFontSize = 28;
     int fps = 60;
 
     Rectangle floor = {-2000, (screenHeight/2) + 300, 8000, 30};
@@ -39,10 +40,15 @@ int main() {
     UnloadImage(tile);
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
     Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen.png");
-    Texture2D buttonsEmpty = LoadTexture("../img/ui/ui_buttons.png");
+    Texture2D buttonsEmpty = LoadTexture("../img/ui/ui_buttons_x2.png");
     Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+
+    const Rectangle newGameButtonHitbox { newGameButtonPos.x , newGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    const Rectangle loadGameButtonHitbox { loadGameButtonPos.x , loadGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
 
 
     int currentFrameMove = 0;
@@ -56,6 +62,7 @@ int main() {
     {
         //Constantly updating stuff
         framesCounter++;
+        Rectangle mousePosition = { GetMouseX() , GetMouseY(), 5, 5};
         if(currentScreen == GAMEPLAY) 
         {
 
@@ -144,11 +151,36 @@ int main() {
             } break;
             case TITLE:
             {
+                //draw title screen elements
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
-                DrawText("TITLE SCREEN", 20, 20, 40, LIGHTGRAY);
-                DrawTextureRec(buttonsEmpty, buttonNonPressed, newGameButtonPos, WHITE);
-                DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos , WHITE);
-                DrawTextureRec(buttonsEmpty, buttonPressed, settingsButtonPos, WHITE);
+                DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
+                //draw all the buttons
+                if (!CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
+
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, newGameButtonPos, WHITE);
+                    DrawText("NEW GAME", newGameButtonPos.x + buttonFontSize , newGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
+                }
+
+                if (!CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
+
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, loadGameButtonPos , WHITE);
+                    DrawText("LOAD GAME", loadGameButtonPos.x + buttonFontSize , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
+
+                }
+                if (!CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
+
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, settingsButtonPos, WHITE);
+                    DrawText("SETTINGS", settingsButtonPos.x + buttonFontSize , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
+
+                }
+                if (!CheckCollisionRecs(mousePosition, exitButtonHitbox)){
+
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, exitButtonPos, WHITE);
+                    DrawText("EXIT", exitButtonPos.x + buttonFontSize , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
+
+                }
+
+
             }break;
             case GAMEPLAY:
             {
