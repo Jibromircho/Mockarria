@@ -3,7 +3,7 @@
 // some global val we will need
 
 
-typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, NEWGAME, LOADGAME, SETTINGS, GAMEPLAY, ENDING} GameScreen;
 int main() {
     // initialize win
     const Vector2 screenStartPos{ 0, 0 };
@@ -13,6 +13,7 @@ int main() {
     const Vector2 loadGameButtonPos { screenWidth / 2 - 100, screenHeight / 2 - 25 };
     const Vector2 settingsButtonPos { screenWidth / 2 - 100, screenHeight / 2  + 50 };
     const Vector2 exitButtonPos { screenWidth / 2 - 100, screenHeight / 2  + 125 };
+    const Vector2 backButtonPos { 50 , screenHeight - 100};
     const int buttonFontSize = 28;
     int fps = 60;
 
@@ -49,6 +50,7 @@ int main() {
     const Rectangle loadGameButtonHitbox { loadGameButtonPos.x , loadGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
 
 
     int currentFrameMove = 0;
@@ -154,11 +156,14 @@ int main() {
                 //draw title screen elements
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
+
                 //draw all the buttons
                 if (!CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
-
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, newGameButtonPos, WHITE);
-
+                    }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
+                        DrawTextureRec(buttonsEmpty, buttonPressed, newGameButtonPos, WHITE);
+                        currentScreen = NEWGAME;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, newGameButtonPos, WHITE);
 
@@ -166,11 +171,19 @@ int main() {
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, loadGameButtonPos , WHITE);
                 }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
+                        DrawTextureRec(buttonsEmpty, buttonPressed, loadGameButtonPos, WHITE);
+                        currentScreen = LOADGAME;
+                }
                 else DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos, WHITE);
 
                 if (!CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, settingsButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
+                        DrawTextureRec(buttonsEmpty, buttonPressed, settingsButtonPos, WHITE);
+                        currentScreen = SETTINGS;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, settingsButtonPos, WHITE);
 
@@ -178,13 +191,72 @@ int main() {
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, exitButtonPos, WHITE);
                 }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, exitButtonHitbox)){
+                        DrawTextureRec(buttonsEmpty, buttonPressed, exitButtonPos, WHITE);
+                        currentScreen = ENDING;
+                }
                 else DrawTextureRec(buttonsEmpty, buttonHover, exitButtonPos, WHITE);
 
+                //draw button text
                 DrawText("NEW GAME", newGameButtonPos.x + buttonFontSize , newGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("LOAD GAME", loadGameButtonPos.x + buttonFontSize , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("SETTINGS", settingsButtonPos.x + buttonFontSize , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("EXIT", exitButtonPos.x + buttonFontSize , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
+
+            }break;
+            case NEWGAME:
+            {
+                //draw background
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
+
+                //draw all buttons
+                if (!CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, backButtonPos, WHITE);
+                    currentScreen = TITLE;
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
+                DrawText("BACK", backButtonPos.x + buttonFontSize , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+
+            }break;
+            case LOADGAME:
+            {
+                //draw background
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
+
+                //draw all buttons
+                if (!CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, backButtonPos, WHITE);
+                    currentScreen = TITLE;
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
+                DrawText("BACK", backButtonPos.x + buttonFontSize , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+
+            }break;
+            case SETTINGS:
+            {
+                //draw background
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
+
+                //draw all buttons
+                if (!CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, backButtonPos, WHITE);
+                    currentScreen = TITLE;
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
+                DrawText("BACK", backButtonPos.x + buttonFontSize , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
             }break;
             case GAMEPLAY:
@@ -219,7 +291,7 @@ int main() {
             }break;
             case ENDING:
             {
-                DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
+                CloseWindow();
             }
             
             default:
@@ -235,4 +307,4 @@ int main() {
 
     return 0;
     
-}
+};
