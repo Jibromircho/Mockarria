@@ -158,27 +158,32 @@ int main() {
                 if (!CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, newGameButtonPos, WHITE);
-                    DrawText("NEW GAME", newGameButtonPos.x + buttonFontSize , newGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
+
                 }
+                else DrawTextureRec(buttonsEmpty, buttonHover, newGameButtonPos, WHITE);
 
                 if (!CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, loadGameButtonPos , WHITE);
-                    DrawText("LOAD GAME", loadGameButtonPos.x + buttonFontSize , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
-
                 }
+                else DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos, WHITE);
+
                 if (!CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, settingsButtonPos, WHITE);
-                    DrawText("SETTINGS", settingsButtonPos.x + buttonFontSize , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
-
                 }
+                else DrawTextureRec(buttonsEmpty, buttonHover, settingsButtonPos, WHITE);
+
                 if (!CheckCollisionRecs(mousePosition, exitButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, exitButtonPos, WHITE);
-                    DrawText("EXIT", exitButtonPos.x + buttonFontSize , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, BLACK);
-
                 }
+                else DrawTextureRec(buttonsEmpty, buttonHover, exitButtonPos, WHITE);
+
+                DrawText("NEW GAME", newGameButtonPos.x + buttonFontSize , newGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("LOAD GAME", loadGameButtonPos.x + buttonFontSize , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("SETTINGS", settingsButtonPos.x + buttonFontSize , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("EXIT", exitButtonPos.x + buttonFontSize , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
 
             }break;
