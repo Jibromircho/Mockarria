@@ -61,11 +61,14 @@ int main() {
     Texture2D dirtTile = LoadTextureFromImage(tile);
     UnloadImage(tile);
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
-    Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen.png");
+    Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen_no_sky.png");
+    Texture2D loadScreenSky = LoadTexture("../img/backgrounds/main_menu_sky.png");
+    Texture2D loadScreenCloud_1 = LoadTexture("../img/backgrounds/main_menu_cloud_1.png");
     Texture2D buttonsEmpty = LoadTexture("../img/ui/ui_buttons_x2.png");
     Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    Vector2 mainMenuCloudPos = screenStartPos;
 
     //button hitboxes
     const Rectangle newGameButtonHitbox { newGameButtonPos.x , newGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
@@ -92,6 +95,11 @@ int main() {
         Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
 
         UpdateMusicStream(mainMenuMusic1);
+
+        if (mainMenuCloudPos.x >= 0) {
+            mainMenuCloudPos.x += 0.05f;
+        }
+        else mainMenuCloudPos.x = screenStartPos.x;
 
         if(currentScreen == GAMEPLAY) 
         {
@@ -177,12 +185,18 @@ int main() {
             {
             case LOGO:
             {
+                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
             } break;
             case TITLE:
             {
                 //draw title screen elements
+                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
@@ -237,6 +251,8 @@ int main() {
             case NEWGAME:
             {
                 //draw background
+                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x * -1, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
@@ -255,6 +271,8 @@ int main() {
             case LOADGAME:
             {
                 //draw background
+                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x * -1, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
@@ -273,6 +291,8 @@ int main() {
             case SETTINGS:
             {
                 //draw background
+                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x * -1, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
