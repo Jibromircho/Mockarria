@@ -64,7 +64,7 @@ int main() {
     {
         //Constantly updating stuff
         framesCounter++;
-        Rectangle mousePosition = { GetMouseX() , GetMouseY(), 5, 5};
+        Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
         if(currentScreen == GAMEPLAY) 
         {
 
