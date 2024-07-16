@@ -7,8 +7,8 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING} GameScreen;
 int main() {
     // initialize win
 
-    const int screenWidth = 1200;
-    const int screenHeight = 800;
+    const int screenWidth = 1280;
+    const int screenHeight = 720;
     int fps = 60;
 
     //some stats
@@ -31,6 +31,7 @@ int main() {
     Rectangle floor = {-2000, (screenHeight/2) + 300, 8000, 30};
 
     InitWindow(screenWidth, screenHeight, "Mockarria");
+    ToggleFullscreen();
 
     GameScreen currentScreen = LOGO;
     Player player;
@@ -47,7 +48,7 @@ int main() {
     ImageResize(&tile, 30, 30);
     Texture2D dirtTile = LoadTextureFromImage(tile);
     UnloadImage(tile);
-    Texture2D healthUi = LoadTexture("../img/ui/Health_blank.png");
+    Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x2.png");
 
 
     int currentFrameMove = 0;
@@ -160,8 +161,7 @@ int main() {
                     {
                         DrawLine(worldStartX + j * cellSize,worldStartY, worldStartX + j * cellSize, worldEndY, LIGHTGRAY);
                     }
-                    //Drawing ui elemnts
-                    DrawTexture(healthUi, camera.target.x - 600, camera.target.y - 390, WHITE);
+
 
                     //hitbox for easier debugging
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
@@ -173,6 +173,8 @@ int main() {
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
                 EndMode2D();
+                //Drawing ui elemnts
+                DrawTexture(healthUi,10, 10, WHITE);
 
             }break;
             case ENDING:

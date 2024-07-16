@@ -7,7 +7,7 @@ typedef enum PlayerState { GROUND = 0, JUMPING, FLYGHT } PlayerState;
 class Player
 {
 public:
-    Vector2 position = { 400.0f, 280.0f };
+    Vector2 position = { 350.0f, 280.0f };
     Texture2D model_movement = LoadTexture("../img/player/Unarmed_Movement_full.png");
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
