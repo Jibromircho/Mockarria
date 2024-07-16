@@ -6,33 +6,54 @@
 typedef enum GameScreen { LOGO = 0, TITLE, NEWGAME, LOADGAME, SETTINGS, GAMEPLAY, ENDING} GameScreen;
 int main() {
     // initialize win
+    int nativeResWidth, nativeResHeight;
+    const int workingWidth = 1280;
+    const int workingHeight = 720;
     const Vector2 screenStartPos{ 0, 0 };
-    const int screenWidth = 1280;
-    const int screenHeight = 720;
-    const Vector2 newGameButtonPos { screenWidth / 2 - 100, screenHeight / 2 - 100 };
-    const Vector2 loadGameButtonPos { screenWidth / 2 - 100, screenHeight / 2 - 25 };
-    const Vector2 settingsButtonPos { screenWidth / 2 - 100, screenHeight / 2  + 50 };
-    const Vector2 exitButtonPos { screenWidth / 2 - 100, screenHeight / 2  + 125 };
-    const Vector2 backButtonPos { 50 , screenHeight - 100};
     const int buttonFontSize = 28;
     int fps = 60;
 
-    Rectangle floor = {-2000, (screenHeight/2) + 300, 8000, 30};
 
-    InitWindow(screenWidth, screenHeight, "Mockarria");
+    //screen values
+    InitWindow(0, 0, "Mockarria");
+    nativeResWidth = GetScreenWidth();
+    nativeResHeight = GetScreenHeight();
+    SetWindowSize(nativeResWidth, nativeResHeight);
     ToggleFullscreen();
 
+    int resolutionScale = nativeResWidth / workingWidth;
+    const Vector2 newGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
+    const Vector2 loadGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 25 };
+    const Vector2 settingsButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
+    const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 125 };
+    const Vector2 backButtonPos { 50 , nativeResHeight - 100};
+
+    //sound values
+    InitAudioDevice();
+
+    Music mainMenuMusic1 = LoadMusicStream("../sfx/Menu_soundtrack_1.mp3");
+    mainMenuMusic1.looping = true;
+    float volumeMaster = 0.8f;
+    float volumeMusic = 0.8f;
+    float volumeSoundFX = 0.8f;
+    float volumeAmbient = 0.8f;
+
+    SetMusicVolume(mainMenuMusic1, volumeMusic * volumeMaster);
+    PlayMusicStream(mainMenuMusic1);
+
+    //classes and general initializations
     GameScreen currentScreen = LOGO;
     Player player;
     World world;
 
+    Rectangle floor = {-3000, player.position.y + 50, 8000, 30};
+
+    //camera
     Camera2D camera = { 0 };
     camera.target = (Vector2){player.position.x + 20.0f, player.position.y + 20.0f};
-    camera.offset = (Vector2){screenWidth/2.0f, screenHeight/2.0f};
+    camera.offset = (Vector2){nativeResWidth/2.0f, nativeResHeight/2.0f};
     camera.zoom = 1.0f;
 
-    int frameCounter = 0;
-    SetTargetFPS(fps); // set target fps
 
     //initialize textures
     Image tile = LoadImage("../img/tiles/Platformer/Ground_06.png");
@@ -46,12 +67,16 @@ int main() {
     Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
 
+    //button hitboxes
     const Rectangle newGameButtonHitbox { newGameButtonPos.x , newGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     const Rectangle loadGameButtonHitbox { loadGameButtonPos.x , loadGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
 
+    //frame related stuff
+    int frameCounter = 0;
+    SetTargetFPS(fps); // set target fps
 
     int currentFrameMove = 0;
     float currentFrameIdle = 0;
@@ -65,8 +90,12 @@ int main() {
         //Constantly updating stuff
         framesCounter++;
         Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
+
+        UpdateMusicStream(mainMenuMusic1);
+
         if(currentScreen == GAMEPLAY) 
         {
+            StopMusicStream(mainMenuMusic1);
 
             player.position.y += world.velocity;
             player.hitbox.y += world.velocity;
@@ -122,7 +151,7 @@ int main() {
         case LOGO:
 
             frameCounter++;
-            if (frameCounter > 40)
+            if (frameCounter > 240)
             {
                 currentScreen = TITLE;
             }
@@ -148,13 +177,13 @@ int main() {
             {
             case LOGO:
             {
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
             } break;
             case TITLE:
             {
                 //draw title screen elements
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all the buttons
@@ -163,7 +192,7 @@ int main() {
                     }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, newGameButtonPos, WHITE);
-                        currentScreen = NEWGAME;
+                        currentScreen = GAMEPLAY;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, newGameButtonPos, WHITE);
 
@@ -208,7 +237,7 @@ int main() {
             case NEWGAME:
             {
                 //draw background
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -226,7 +255,7 @@ int main() {
             case LOADGAME:
             {
                 //draw background
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -244,7 +273,7 @@ int main() {
             case SETTINGS:
             {
                 //draw background
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
+                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -286,7 +315,7 @@ int main() {
                     else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
                 EndMode2D();
                 //Drawing ui elemnts
-                DrawTextureEx(healthUi,screenStartPos, 0.0f, 0.9f, WHITE);
+                DrawTextureEx(healthUi,screenStartPos, 0.0f, resolutionScale / 2, WHITE);
 
             }break;
             case ENDING:
@@ -302,6 +331,8 @@ int main() {
     }
 
     // De-initialize
+
+    CloseAudioDevice();
 
     CloseWindow();  //Close window and OpenGL context
 
