@@ -6,7 +6,7 @@
 typedef enum GameScreen { LOGO = 0, TITLE, NEWGAME, LOADGAME, SETTINGS, GAMEPLAY, ENDING} GameScreen;
 int main() {
     // initialize win
-    int nativeResWidth, nativeResHeight;
+    float nativeResWidth, nativeResHeight;
     const int workingWidth = 1280;
     const int workingHeight = 720;
     const Vector2 screenStartPos{ 0, 0 };
@@ -21,7 +21,7 @@ int main() {
     SetWindowSize(nativeResWidth, nativeResHeight);
     ToggleFullscreen();
 
-    int resolutionScale = nativeResWidth / workingWidth;
+    float resolutionScale = nativeResWidth / workingWidth;
     const Vector2 newGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
     const Vector2 loadGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 25 };
     const Vector2 settingsButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
