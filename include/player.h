@@ -15,7 +15,9 @@ public:
     int jumpCount = maxJump;
     float movementSpeed = 3.0f;
     PlayerState state = GROUND;
-    Rectangle hitbox = { position.x + 20, position.y + 10, frameRecIdle.width - 40, frameRecIdle.height - 25};
+    Rectangle hitbox = { position.x + 22, position.y + 10, frameRecIdle.width - 43, frameRecIdle.height - 25};
+    int health = 100;
+
 
 
     

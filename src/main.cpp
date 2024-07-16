@@ -47,6 +47,7 @@ int main() {
     ImageResize(&tile, 30, 30);
     Texture2D dirtTile = LoadTextureFromImage(tile);
     UnloadImage(tile);
+    Texture2D healthUi = LoadTexture("../img/ui/Health_blank.png");
 
 
     int currentFrameMove = 0;
@@ -62,7 +63,7 @@ int main() {
         framesCounter++; 
         player.position.y += velocity;
         player.hitbox.y += velocity;
-        player.hitbox.x = player.position.x + 20;
+        player.hitbox.x = player.position.x + 22;
         if (velocity < velocityMax) velocity += acceleretion;
         else velocity = velocityMax;
         if (CheckCollisionRecs(player.hitbox, floor))
@@ -107,11 +108,6 @@ int main() {
         // camera follow the player
         camera.target = {player.position.x + 20, player.position.y + 20};
 
-        //camera zoom 
-        camera.zoom += ((float)GetMouseWheelMove()*0.05f);
-        if (camera.zoom > 3.0f) camera.zoom = 3.0f;
-        else if (camera.zoom < 0.1f) camera.zoom = 0.1f;
-
         // screen selector
         switch (currentScreen)
         {
@@ -154,6 +150,7 @@ int main() {
             {
                 BeginMode2D(camera);
 
+
                     for (int i = 0; i <= worldSizeY; i++)
                     {
                         DrawLine(worldStartX,worldStartY + i * cellSize , worldEndX, worldStartY + i * cellSize, LIGHTGRAY);
@@ -163,13 +160,14 @@ int main() {
                     {
                         DrawLine(worldStartX + j * cellSize,worldStartY, worldStartX + j * cellSize, worldEndY, LIGHTGRAY);
                     }
+                    //Drawing ui elemnts
+                    DrawTexture(healthUi, camera.target.x - 600, camera.target.y - 390, WHITE);
 
                     //hitbox for easier debugging
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
 
                     //simple floor for testing
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
-
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
