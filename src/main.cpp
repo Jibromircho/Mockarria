@@ -9,6 +9,10 @@ int main() {
     const Vector2 screenStartPos{ 0, 0 };
     const int screenWidth = 1280;
     const int screenHeight = 720;
+    const Vector2 newGameButtonPos { screenWidth / 2, screenHeight / 2 };
+    const Vector2 loadGameButtonPos { screenWidth / 2, screenHeight / 2 + 50 };
+    const Vector2 settingsButtonPos { screenWidth / 2, screenHeight / 2  + 100 };
+    const Vector2 exitButtonPos { screenWidth / 2, screenHeight / 2  + 150 };
     int fps = 60;
 
     Rectangle floor = {-2000, (screenHeight/2) + 300, 8000, 30};
@@ -28,12 +32,17 @@ int main() {
     int frameCounter = 0;
     SetTargetFPS(fps); // set target fps
 
+    //initialize textures
     Image tile = LoadImage("../img/tiles/Platformer/Ground_06.png");
     ImageResize(&tile, 30, 30);
     Texture2D dirtTile = LoadTextureFromImage(tile);
     UnloadImage(tile);
-    Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x2.png");
+    Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
     Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen.png");
+    Texture2D buttonsEmpty = LoadTexture("../img/ui/ui_buttons.png");
+    Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
 
 
     int currentFrameMove = 0;
@@ -104,7 +113,7 @@ int main() {
         case LOGO:
 
             frameCounter++;
-            if (frameCounter > 240)
+            if (frameCounter > 40)
             {
                 currentScreen = TITLE;
             }
@@ -137,6 +146,9 @@ int main() {
             {
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, 0.6, WHITE);
                 DrawText("TITLE SCREEN", 20, 20, 40, LIGHTGRAY);
+                DrawTextureRec(buttonsEmpty, buttonNonPressed, newGameButtonPos, WHITE);
+                DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos , WHITE);
+                DrawTextureRec(buttonsEmpty, buttonPressed, settingsButtonPos, WHITE);
             }break;
             case GAMEPLAY:
             {
@@ -165,7 +177,7 @@ int main() {
                     else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
                 EndMode2D();
                 //Drawing ui elemnts
-                DrawTexture(healthUi,10, 10, WHITE);
+                DrawTextureEx(healthUi,screenStartPos, 0.0f, 0.9f, WHITE);
 
             }break;
             case ENDING:
