@@ -195,7 +195,7 @@ int main() {
             {
                 //draw title screen elements
                  DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
