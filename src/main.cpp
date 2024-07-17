@@ -45,6 +45,7 @@ int main() {
     GameScreen currentScreen = LOGO;
     Player player;
     World world;
+    Tile tile;
 
     Rectangle floor = {-3000, player.position.y + 50, 8000, 30};
 
@@ -54,12 +55,7 @@ int main() {
     camera.offset = (Vector2){nativeResWidth/2.0f, nativeResHeight/2.0f};
     camera.zoom = 1.0f;
 
-
     //initialize textures
-    Image tile = LoadImage("../img/tiles/Platformer/Ground_06.png");
-    ImageResize(&tile, 30, 30);
-    Texture2D dirtTile = LoadTextureFromImage(tile);
-    UnloadImage(tile);
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
     Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen_no_sky.png");
     Texture2D loadScreenSky = LoadTexture("../img/backgrounds/main_menu_sky.png");
@@ -108,7 +104,7 @@ int main() {
             player.position.y += world.velocity;
             player.hitbox.y += world.velocity;
             player.hitbox.x = player.position.x + 22;
-            if (world.velocity < world.velocityMax) world.velocity += world.acceleretion;
+            if (world.velocity < world.velocityMax) world.velocity += world.acceleration;
             else world.velocity = world.velocityMax;
             if (CheckCollisionRecs(player.hitbox, floor))
             {
@@ -147,7 +143,7 @@ int main() {
         if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
         else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
 
-        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0 && player.state == GROUND) world.velocity = player.jumpStrength, player.state = JUMPING, player.jumpCount--;
+        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0 /*&& player.state == GROUND*/) world.velocity = player.jumpStrength, player.state = JUMPING, player.jumpCount--;
 
         // camera follow the player
         camera.target = {player.position.x + 20, player.position.y + 20};
@@ -159,7 +155,7 @@ int main() {
         case LOGO:
 
             frameCounter++;
-            if (frameCounter > 240)
+            if (frameCounter > 40)
             {
                 currentScreen = TITLE;
             }
@@ -311,21 +307,18 @@ int main() {
             case GAMEPLAY:
             {
                 BeginMode2D(camera);
-
-
-                    for (int i = 0; i <= world.worldSizeY; i++)
-                    {
-                        DrawLine(world.worldStartX,world.worldStartY + i * world.cellSize , world.worldEndX, world.worldStartY + i * world.cellSize, LIGHTGRAY);
-                    }
-
-                    for (int j = 0; j <= world.worldSizeX; j++)
-                    {
-                        DrawLine(world.worldStartX + j * world.cellSize,world.worldStartY, world.worldStartX + j * world.cellSize, world.worldEndY, LIGHTGRAY);
-                    }
-
-
                     //hitbox for easier debugging
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
+                    for (int i = 0; i < world.getSizeX(); i++) {
+                        for (int j = 0; j < world.getSizeY(); j++) {
+                            Rectangle sourceRect;       
+                            sourceRect = tile.grass;
+                            Vector2 position = { i * tile.size, j * tile.size };
+                            if ( i % 50 == 0 && j % 50 == 0){
+                                DrawTextureRec(tile.tileSet, sourceRect, position, WHITE);
+                            }
+                        }
+                    }
 
                     //simple floor for testing
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);

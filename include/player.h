@@ -16,8 +16,8 @@ public:
     Rectangle hitbox = { position.x + 22, position.y + 10, frameRecIdle.width - 43, frameRecIdle.height - 25};
 
     //player stats
+    const int maxJump = 100;
     int jumpCount = maxJump;
-    const int maxJump = 1;
     float jumpStrength = -3.5f;
     int health = 100;
     float movementSpeed = 3.0f;
