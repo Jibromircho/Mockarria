@@ -1,6 +1,10 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <array>
+#include <map>
+#include <random>
+
 
 #include <raylib.h>
 

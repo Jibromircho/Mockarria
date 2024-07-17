@@ -47,13 +47,14 @@ int main() {
     World world;
     Tile tile;
 
-    Rectangle floor = {-3000, player.position.y + 50, 8000, 30};
+    Rectangle floor = {-300, 900, 8000, 30};
 
     //camera
     Camera2D camera = { 0 };
     camera.target = (Vector2){player.position.x + 20.0f, player.position.y + 20.0f};
     camera.offset = (Vector2){nativeResWidth/2.0f, nativeResHeight/2.0f};
     camera.zoom = 1.0f;
+    Rectangle cameraHitbox = { player.hitbox.x - nativeResWidth, player.hitbox.y - nativeResHeight, nativeResWidth * 2,nativeResHeight * 2};
 
     //initialize textures
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
@@ -101,15 +102,17 @@ int main() {
         {
             StopMusicStream(mainMenuMusic1);
 
-            player.position.y += world.velocity;
-            player.hitbox.y += world.velocity;
+            player.position.y += world.getVelocity();
+            player.hitbox.y += world.getVelocity();
+            cameraHitbox.y += world.getVelocity();
             player.hitbox.x = player.position.x + 22;
-            if (world.velocity < world.velocityMax) world.velocity += world.acceleration;
-            else world.velocity = world.velocityMax;
+            cameraHitbox.x = player.hitbox.x - nativeResWidth;
+            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
+            else world.setVelocity(world.getVelocityMax());
             if (CheckCollisionRecs(player.hitbox, floor))
             {
                 player.jumpCount = player.maxJump;
-                world.velocity = 0;
+                world.setVelocity(0);
                 player.state = GROUND;
             }
 
@@ -143,7 +146,7 @@ int main() {
         if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
         else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
 
-        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0 /*&& player.state == GROUND*/) world.velocity = player.jumpStrength, player.state = JUMPING, player.jumpCount--;
+        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0 /*&& player.state == GROUND*/) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
 
         // camera follow the player
         camera.target = {player.position.x + 20, player.position.y + 20};
@@ -190,7 +193,7 @@ int main() {
             case TITLE:
             {
                 //draw title screen elements
-                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
@@ -247,7 +250,8 @@ int main() {
             case NEWGAME:
             {
                 //draw background
-                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x * -1, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
@@ -267,7 +271,8 @@ int main() {
             case LOADGAME:
             {
                 //draw background
-                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x * -1, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
@@ -287,7 +292,8 @@ int main() {
             case SETTINGS:
             {
                 //draw background
-                DrawTextureEx(loadScreenSky, (Vector2) { mainMenuCloudPos.x * -1, mainMenuCloudPos.y * -1}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
@@ -309,14 +315,16 @@ int main() {
                 BeginMode2D(camera);
                     //hitbox for easier debugging
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
-
-                    //simple floor for testing
-                    DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
+                    if (CheckCollisionRecs(cameraHitbox, floor)) {
+                        DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
+                    }
+                    DrawRectangleLinesEx(cameraHitbox, 3.0f, BLUE);
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
                 EndMode2D();
+
                 //Drawing ui elemnts
                 DrawTextureEx(healthUi,screenStartPos, 0.0f, resolutionScale / 2, WHITE);
 

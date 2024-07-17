@@ -13,6 +13,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Add source files
 set(SOURCES
     src/main.cpp
+    src/world.cpp
     
 )
 
