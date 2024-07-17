@@ -309,16 +309,6 @@ int main() {
                 BeginMode2D(camera);
                     //hitbox for easier debugging
                     DrawRectangleLinesEx(player.hitbox,2.0f,RED);
-                    for (int i = 0; i < world.getSizeX(); i++) {
-                        for (int j = 0; j < world.getSizeY(); j++) {
-                            Rectangle sourceRect;       
-                            sourceRect = tile.grass;
-                            Vector2 position = { i * tile.size, j * tile.size };
-                            if ( i % 50 == 0 && j % 50 == 0){
-                                DrawTextureRec(tile.tileSet, sourceRect, position, WHITE);
-                            }
-                        }
-                    }
 
                     //simple floor for testing
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
@@ -333,7 +323,9 @@ int main() {
             }break;
             case ENDING:
             {
+                CloseAudioDevice();
                 CloseWindow();
+                return 0;
             }
             
             default:
