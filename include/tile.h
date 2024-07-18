@@ -14,7 +14,7 @@ public:
 
 
 private:
-    int x, y;
+    Vector2 possition;
     int textureIndex; //referance in sprite sheet
     std::string type; // type of tile
     bool isSolid; // collision

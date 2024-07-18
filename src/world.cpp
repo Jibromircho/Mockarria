@@ -6,12 +6,12 @@ World::World() {
 }
 
 // Getter methods
-int World::getWorldSizeX() const {
-    return worldSizeX;
+int World::getWorldWidth() const {
+    return worldWidth;
 }
 
-int World::getWorldSizeY() const {
-    return worldSizeY;
+int World::getWorldHeight() const {
+    return worldHeight;
 }
 
 float World::getAcceleration() const {
@@ -42,3 +42,4 @@ void World::setVelocity(float vel) {
         velocity = velocityMax; // Ensure velocity does not exceed maximum
     }
 }
+

@@ -7,8 +7,8 @@ class World {
 public:
     World();
 
-    int getWorldSizeX() const;
-    int getWorldSizeY() const;
+    int getWorldWidth() const;
+    int getWorldHeight() const;
     float getAcceleration() const;
     float getVelocity() const;
     float getVelocityMax() const;
@@ -19,9 +19,10 @@ public:
     
 
 private:
-    int worldSizeX = 6400;
-    int worldSizeY = 1800;
-   // std::map<int, int> tileMap;
+    const int worldWidth = 900;
+    const int worldHeight = 400;
+    //const int worldWidth = 6400;
+    //const int worldHeight = 1800;
     float acceleration = 0.1f;
     float velocity = 0;
     const float velocityMax = 15.0f;

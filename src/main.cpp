@@ -1,26 +1,53 @@
 #include <config.h>
 
-// some global val we will need
+///////////////////////////////////
+///////////////////////////////////some global varuables we will need
 
-
+//game current screen
 typedef enum GameScreen { LOGO = 0, TITLE, NEWGAME, LOADGAME, SETTINGS, GAMEPLAY, ENDING} GameScreen;
+
+typedef struct Block {
+    bool active;
+    Vector2 position;
+    Rectangle hitbox;
+    enum Type { SKY = 0, GRASS, STONE } type;
+    // Constructor with default values
+    Block() : active(false), position({ -7200.0f, -3200.0f }), hitbox({position.x,position.y, 16,16}), type(SKY) {}
+} Block;
+
+const int worldSizeW = 6400;
+const int worldSizeH = 1800;
+Block block[worldSizeW][worldSizeH];
+
+// screen constants
+constexpr int workingWidth = 1280;
+constexpr int workingHeight = 720;
+const Vector2 screenStartPos{ 0, 0 };
+constexpr int buttonFontSize = 28;
+constexpr int fps = 60;
+
+//button possitions
+constexpr Vector2 newGameButtonPos = { workingWidth / 2 - 100, workingHeight / 2 - 100 };
+constexpr Vector2 loadGameButtonPos = { workingWidth / 2 - 100, workingHeight / 2 - 25 };
+constexpr Vector2 settingsButtonPos = { workingWidth / 2 - 100, workingHeight / 2 + 50 };
+constexpr Vector2 exitButtonPos = { workingWidth / 2 - 100, workingHeight / 2 + 125 };
+constexpr Vector2 backButtonPos = { 50, workingHeight - 100 };
+
+//audio volumes
+float volumeMaster = 0.8f;
+float volumeMusic = 0.8f;
+float volumeSoundFX = 0.8f;
+float volumeAmbient = 0.8f;
+
 int main() {
     // initialize win
-    float nativeResWidth, nativeResHeight;
-    const int workingWidth = 1280;
-    const int workingHeight = 720;
-    const Vector2 screenStartPos{ 0, 0 };
-    const int buttonFontSize = 28;
-    int fps = 60;
-
-
-    //screen values
     InitWindow(0, 0, "Mockarria");
-    nativeResWidth = GetScreenWidth();
-    nativeResHeight = GetScreenHeight();
+    float nativeResWidth = GetScreenWidth();
+    float nativeResHeight = GetScreenHeight();
     SetWindowSize(nativeResWidth, nativeResHeight);
     ToggleFullscreen();
 
+    //button positions
     float resolutionScale = nativeResWidth / workingWidth;
     const Vector2 newGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
     const Vector2 loadGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 25 };
@@ -28,33 +55,41 @@ int main() {
     const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 125 };
     const Vector2 backButtonPos { 50 , nativeResHeight - 100};
 
-    //sound values
+    //initializing audio
     InitAudioDevice();
-
     Music mainMenuMusic1 = LoadMusicStream("../sfx/Menu_soundtrack_1.mp3");
     mainMenuMusic1.looping = true;
-    float volumeMaster = 0.8f;
-    float volumeMusic = 0.8f;
-    float volumeSoundFX = 0.8f;
-    float volumeAmbient = 0.8f;
-
     SetMusicVolume(mainMenuMusic1, volumeMusic * volumeMaster);
     PlayMusicStream(mainMenuMusic1);
 
-    //classes and general initializations
+    //game elements 
     GameScreen currentScreen = LOGO;
     Player player;
     World world;
     Tile tile;
 
-    Rectangle floor = {-300, 900, 8000, 30};
 
-    //camera
+
+    Image perlin = GenImagePerlinNoise(worldSizeW, worldSizeH, 5, 2, 1.4f);
+    ExportImage(perlin, "../save/map.png");
+    //create a map
+    for (int i = 0; i < worldSizeW - 1; i++){
+        for (int j = 0; j < worldSizeH - 1; j++){
+            block[i][j].position.x = -7200.0f + i * tile.size;
+            block[i][j].position.y = -3200.0f + j * tile.size;
+            block[i][j].type = Block::GRASS;
+        }
+    }
+    Rectangle floor = {-300, 100, 8000, 500};
+
+    //camera initialization
     Camera2D camera = { 0 };
-    camera.target = (Vector2){player.position.x + 20.0f, player.position.y + 20.0f};
-    camera.offset = (Vector2){nativeResWidth/2.0f, nativeResHeight/2.0f};
+    camera.target = {player.position.x + 100.0f, player.position.y + 100.0f};
+    camera.offset = {nativeResWidth / 2.0f, nativeResHeight / 2.0f};
     camera.zoom = 1.0f;
-    Rectangle cameraHitbox = { player.hitbox.x - nativeResWidth, player.hitbox.y - nativeResHeight, nativeResWidth * 2,nativeResHeight * 2};
+    Rectangle scissorArea = { player.position.x, player.position.y, nativeResWidth,nativeResHeight};
+   
+
 
     //initialize textures
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
@@ -62,6 +97,8 @@ int main() {
     Texture2D loadScreenSky = LoadTexture("../img/backgrounds/main_menu_sky.png");
     Texture2D loadScreenCloud_1 = LoadTexture("../img/backgrounds/main_menu_cloud_1.png");
     Texture2D buttonsEmpty = LoadTexture("../img/ui/ui_buttons_x2.png");
+
+
     Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
@@ -79,7 +116,7 @@ int main() {
     SetTargetFPS(fps); // set target fps
 
     int currentFrameMove = 0;
-    float currentFrameIdle = 0;
+    int currentFrameIdle = 0;
 
     int framesCounter = 0;
     int framesSpeed = 8;
@@ -91,6 +128,18 @@ int main() {
         framesCounter++;
         Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
 
+
+        int firstBlockX = 10 +(worldSizeW / 2) + (player.position.x - scissorArea.width) / 16;
+        int firstBlockY = 10 +(worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
+
+
+        for (int i = firstBlockX; i < worldSizeW - 1; i++){
+            for (int j = firstBlockY; j < worldSizeH - 1; j++){
+                    block[i][j].active = true;
+                }
+        }
+        
+   
         UpdateMusicStream(mainMenuMusic1);
 
         if (mainMenuCloudPos.x >= 0) {
@@ -102,11 +151,15 @@ int main() {
         {
             StopMusicStream(mainMenuMusic1);
 
+            //update all x coordinates
+            player.hitbox.x = player.position.x + 22;
+            
+            // upadte all y coordinates
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
-            cameraHitbox.y += world.getVelocity();
-            player.hitbox.x = player.position.x + 22;
-            cameraHitbox.x = player.hitbox.x - nativeResWidth;
+            //scissorArea.y += world.getVelocity();
+
+
             if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
             else world.setVelocity(world.getVelocityMax());
             if (CheckCollisionRecs(player.hitbox, floor))
@@ -146,10 +199,10 @@ int main() {
         if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
         else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
 
-        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0 /*&& player.state == GROUND*/) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
+        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
 
         // camera follow the player
-        camera.target = {player.position.x + 20, player.position.y + 20};
+        camera.target = {player.position.x + 100, player.position.y + 20};
         }
 
         // screen selector
@@ -313,12 +366,14 @@ int main() {
             case GAMEPLAY:
             {
                 BeginMode2D(camera);
-                    //hitbox for easier debugging
-                    DrawRectangleLinesEx(player.hitbox,2.0f,RED);
-                    if (CheckCollisionRecs(cameraHitbox, floor)) {
-                        DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
+                    DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
+                    for (int i = 0; i < world.getWorldWidth(); i++){
+                        for (int j = 0; j < world.getWorldHeight(); j++){
+                            if (block[i][j].active){
+                                DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
+                            }
+                        }
                     }
-                    DrawRectangleLinesEx(cameraHitbox, 3.0f, BLUE);
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
@@ -327,6 +382,7 @@ int main() {
 
                 //Drawing ui elemnts
                 DrawTextureEx(healthUi,screenStartPos, 0.0f, resolutionScale / 2, WHITE);
+                DrawFPS ( 20, 20);
 
             }break;
             case ENDING:
