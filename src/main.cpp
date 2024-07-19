@@ -11,12 +11,12 @@ const int worldSizeH = 1800;
 const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
 const float worldStartY = (float) worldSizeH * 16 / 2 * -1;
 typedef struct Block {
-    bool active;
+    bool solid = false;
     Vector2 position;
     Rectangle hitbox;
     enum Type { SKY = 0, GRASS, STONE } type;
     // Constructor with default values
-    Block() : active(false), position({ worldStartX, worldStartY}), hitbox({position.x,position.y, 16,16}), type(SKY) {}
+    Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
 
 Block block[worldSizeW][worldSizeH];
@@ -24,7 +24,6 @@ Block block[worldSizeW][worldSizeH];
 // screen constants
 constexpr int workingWidth = 1280;
 constexpr int workingHeight = 720;
-const Vector2 screenStartPos{ 0, 0 };
 constexpr int buttonFontSize = 28;
 constexpr int fps = 60;
 
@@ -79,7 +78,28 @@ int main() {
         for (int j = 0; j < worldSizeH - 1; j++){
             block[i][j].position.x = worldStartX + i * tile.size;
             block[i][j].position.y = worldStartY + j * tile.size;
-            block[i][j].type = Block::GRASS;
+            block[i][j].hitbox.x = worldStartX + i * tile.size;
+            block[i][j].hitbox.y = worldStartY + j * tile.size;
+
+            int randomNum = GetRandomValue(0, 9);
+            switch (randomNum){
+
+            case 0:
+                block[i][j].type = Block::SKY;
+                break;
+            case 1:
+                block[i][j].type = Block::GRASS;
+                block[i][j].solid = true;
+                break;
+            case 2:
+                block[i][j].type = Block::STONE;
+                block[i][j].solid = true;
+                break;
+            default:
+                block[i][j].type = Block::SKY;
+                block[i][j].solid = false;
+                break;
+            }
         }
     }
     Rectangle floor = {-300, 100, 8000, 500};
@@ -104,7 +124,7 @@ int main() {
     Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
     Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    Vector2 mainMenuCloudPos = screenStartPos;
+    Vector2 mainMenuCloudPos = Vector2{ 0.0f, 0.0f};
 
     //button hitboxes
     const Rectangle newGameButtonHitbox { newGameButtonPos.x , newGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
@@ -136,12 +156,6 @@ int main() {
         int firstBlockY = (worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
         int lastBlockY = (worldSizeH / 2) + (player.position.y + scissorArea.height) / 16;
 
-
-        for (int i = firstBlockX; i < lastBlockX - 1; i++){
-            for (int j = firstBlockY; j < lastBlockY - 1; j++){
-                    block[i][j].active = true;
-                }
-        }
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -149,31 +163,35 @@ int main() {
         if (mainMenuCloudPos.x >= 0) {
             mainMenuCloudPos.x += 0.05f;
         }
-        else mainMenuCloudPos.x = screenStartPos.x;
+        else mainMenuCloudPos.x = 0.0f;
 
         if(currentScreen == GAMEPLAY) 
         {
             StopMusicStream(mainMenuMusic1);
 
             //update all x coordinates
-            player.hitbox.x = player.position.x + 22;
+            player.hitbox.x = player.position.x + 26;
             
             // upadte all y coordinates
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
-            //scissorArea.y += world.getVelocity();
 
 
             if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
             else world.setVelocity(world.getVelocityMax());
-            if (CheckCollisionRecs(player.hitbox, floor))
-            {
-                player.jumpCount = player.maxJump;
-                world.setVelocity(0);
-                player.state = GROUND;
+
+            for (int i = firstBlockX; i < lastBlockX; i++){
+                for (int j = firstBlockY; j < lastBlockY; j++){
+                    if (CheckCollisionRecs(player.hitbox, block[i][j].hitbox) && block[i][j].solid)
+                    {
+                        player.jumpCount = player.maxJump;
+                        world.setVelocity(0);
+                        player.state = GROUND;
+                    }
+                }
             }
 
-            if (framesCounter >= (60/framesSpeed))
+            if (framesCounter >= (fps/framesSpeed))
             {
                 framesCounter = 0;
             
@@ -243,8 +261,8 @@ int main() {
             {
                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
                 DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
             } break;
             case TITLE:
@@ -252,8 +270,8 @@ int main() {
                 //draw title screen elements
                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all the buttons
@@ -309,8 +327,8 @@ int main() {
                 //draw background
                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -330,8 +348,8 @@ int main() {
                 //draw background
                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -351,8 +369,8 @@ int main() {
                 //draw background
                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
                 DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, screenStartPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, screenStartPos, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -370,14 +388,27 @@ int main() {
             case GAMEPLAY:
             {
                 BeginMode2D(camera);
-                    DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
                     for (int i = firstBlockX; i < lastBlockX; i++){
                         for (int j = firstBlockY; j < lastBlockY; j++){
-                            if (block[i][j].active){
+                            switch (block[i][j].type)
+                            {
+                            case Block::GRASS:
+                                DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
+                                break;
+                            case Block::STONE:
+                                DrawTextureRec(tile.tileSet, tile.stone, block[i][j].position, WHITE);
+                            default:
+                                break;
+                            }
+                            /*if (block[i][j].type == Block::GRASS){
                                 DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
                             }
+                            if (block[i][j].type == Block::STONE){
+                                DrawTextureRec(tile.tileSet, tile.stone, block[i][j].position, WHITE);
+                            }*/
                         }
                     }
+                    DrawRectangleRec(player.hitbox, GREEN);
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
@@ -385,7 +416,7 @@ int main() {
                 EndMode2D();
 
                 //Drawing ui elemnts
-                DrawTextureEx(healthUi,screenStartPos, 0.0f, resolutionScale / 2, WHITE);
+                DrawTextureEx(healthUi,Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale / 2, WHITE);
                 DrawFPS ( 20, 20);
 
             }break;

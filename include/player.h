@@ -13,7 +13,7 @@ public:
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;
-    Rectangle hitbox = { position.x + 22, position.y + 10, frameRecIdle.width - 43, frameRecIdle.height - 25};
+    Rectangle hitbox = { position.x + 28, position.y + 13, frameRecIdle.width - 48, frameRecIdle.height - 29};
 
     //player stats
     const int maxJump = 100;
