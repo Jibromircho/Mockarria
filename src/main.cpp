@@ -6,17 +6,19 @@
 //game current screen
 typedef enum GameScreen { LOGO = 0, TITLE, NEWGAME, LOADGAME, SETTINGS, GAMEPLAY, ENDING} GameScreen;
 
+const int worldSizeW = 6400;
+const int worldSizeH = 1800;
+const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
+const float worldStartY = (float) worldSizeH * 16 / 2 * -1;
 typedef struct Block {
     bool active;
     Vector2 position;
     Rectangle hitbox;
     enum Type { SKY = 0, GRASS, STONE } type;
     // Constructor with default values
-    Block() : active(false), position({ -7200.0f, -3200.0f }), hitbox({position.x,position.y, 16,16}), type(SKY) {}
+    Block() : active(false), position({ worldStartX, worldStartY}), hitbox({position.x,position.y, 16,16}), type(SKY) {}
 } Block;
 
-const int worldSizeW = 6400;
-const int worldSizeH = 1800;
 Block block[worldSizeW][worldSizeH];
 
 // screen constants
@@ -75,8 +77,8 @@ int main() {
     //create a map
     for (int i = 0; i < worldSizeW - 1; i++){
         for (int j = 0; j < worldSizeH - 1; j++){
-            block[i][j].position.x = -7200.0f + i * tile.size;
-            block[i][j].position.y = -3200.0f + j * tile.size;
+            block[i][j].position.x = worldStartX + i * tile.size;
+            block[i][j].position.y = worldStartY + j * tile.size;
             block[i][j].type = Block::GRASS;
         }
     }
@@ -129,12 +131,14 @@ int main() {
         Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
 
 
-        int firstBlockX = 10 +(worldSizeW / 2) + (player.position.x - scissorArea.width) / 16;
-        int firstBlockY = 10 +(worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
+        int firstBlockX = (worldSizeW / 2) + (player.position.x - scissorArea.width) / 16;
+        int lastBlockX = (worldSizeW / 2) + (player.position.x + scissorArea.width) / 16;
+        int firstBlockY = (worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
+        int lastBlockY = (worldSizeH / 2) + (player.position.y + scissorArea.height) / 16;
 
 
-        for (int i = firstBlockX; i < worldSizeW - 1; i++){
-            for (int j = firstBlockY; j < worldSizeH - 1; j++){
+        for (int i = firstBlockX; i < lastBlockX - 1; i++){
+            for (int j = firstBlockY; j < lastBlockY - 1; j++){
                     block[i][j].active = true;
                 }
         }
@@ -367,8 +371,8 @@ int main() {
             {
                 BeginMode2D(camera);
                     DrawRectangle(floor.x, floor.y, floor.width, floor.height, BLACK);
-                    for (int i = 0; i < world.getWorldWidth(); i++){
-                        for (int j = 0; j < world.getWorldHeight(); j++){
+                    for (int i = firstBlockX; i < lastBlockX; i++){
+                        for (int j = firstBlockY; j < lastBlockY; j++){
                             if (block[i][j].active){
                                 DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
                             }
