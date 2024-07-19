@@ -70,8 +70,7 @@ int main() {
     Tile tile;
 
 
-
-    Image perlin = GenImagePerlinNoise(worldSizeW, worldSizeH, 5, 2, 1.4f);
+    Image perlin = GenImagePerlinNoise(worldSizeW, worldSizeH, 10, 10, 10);
     ExportImage(perlin, "../save/map.png");
     //create a map
     for (int i = 0; i < worldSizeW - 1; i++){
@@ -228,26 +227,13 @@ int main() {
         }
 
         // screen selector
-        switch (currentScreen)
+        if (currentScreen == LOGO)
         {
-        case LOGO:
-
             frameCounter++;
             if (frameCounter > 40)
             {
                 currentScreen = TITLE;
             }
-            break;
-        case TITLE:
-        {
-            if (IsKeyPressed(KEY_ENTER))
-            {
-                currentScreen = GAMEPLAY;
-            }
-        }
-        
-        default:
-            break;
         }
 
         // Draw
