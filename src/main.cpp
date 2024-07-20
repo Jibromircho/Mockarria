@@ -64,8 +64,8 @@ int main() {
     Tile tile;
 
 
-    Image perlin = GenImagePerlinNoise(worldSizeW, worldSizeH, 10, 10, 10);
-    ExportImage(perlin, "../save/map.png");
+    //Image perlin = GenImagePerlinNoise(worldSizeW, worldSizeH, 10, 10, 10);
+    //ExportImage(perlin, "../save/map.png");
     //create a map
     for (int i = 0; i < worldSizeW - 1; i++){
         for (int j = 0; j < worldSizeH - 1; j++){
@@ -74,7 +74,7 @@ int main() {
             block[i][j].hitbox.x = block[i][j].position.x;
             block[i][j].hitbox.y = block[i][j].position.y;
 
-            int randomNum = GetRandomValue(0, 9);
+            int randomNum = GetRandomValue(0, 16);
             switch (randomNum){
 
             case 0:
@@ -191,19 +191,24 @@ int main() {
                 if(IsKeyDown(KEY_A)) currentFrameIdle = 0, player.frameRecMove.y = (player.model_movement.height/3)*3;
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
+            player.position.y += world.getVelocity();
+            player.hitbox.y += world.getVelocity();
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
                     if(block[i][j].solid){
-                        if (CheckCollisionRecs(player.hitbox, block[i][j].hitbox)){
-                            if(block[i][j].hitbox.y > player.hitbox.y){
-                                player.jumpCount = player.maxJump;
-                                world.setVelocity(0);
-                                player.state = GROUND;
-                            }else world.setVelocity(0.5f);
-                            if(block[i][j].hitbox.x < player.hitbox.x && player.hitbox.y > block[i][j].hitbox.y && player.hitbox.y + player.hitbox.height > block[i][j].hitbox.y){
-                                player.position.x = block[i][j].hitbox.x + tile.size;
-                                player.hitbox.x = player.position.x;
-                            }
+                        Rectangle collisionArea = GetCollisionRec(player.hitbox, block[i][j].hitbox);
+                        if (collisionArea.width > collisionArea.height){
+                            if (collisionArea.y == player.hitbox.y){
+                                player.position.y += collisionArea.height;
+                                player.hitbox.y += collisionArea.height;
+                                world.setVelocity(world.getVelocity() + 1);
+                            }else player.position.y -= collisionArea.height, player.hitbox.y -= collisionArea.height, world.setVelocity(0), player.state = GROUND;
+                        }
+                        if (collisionArea.height > collisionArea.width){
+                            if (collisionArea.x == player.hitbox.x) {
+                                player.position.x += collisionArea.width;
+                                player.hitbox.x += collisionArea.width;
+                            }else player.position.x -= collisionArea.width, player.hitbox.x -= collisionArea.width;
                         }
                     }
                 }
@@ -220,8 +225,6 @@ int main() {
             player.hitbox.x = player.position.x;
             
             // upadte all y coordinates
-            player.position.y += world.getVelocity();
-            player.hitbox.y += world.getVelocity();
 
 
             if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
