@@ -11,6 +11,7 @@ public:
     const float size = 16.0f;
     Rectangle grass = { 0.0f, 0.0f, size, size };
     Rectangle stone = { size * 8, 0.0f, size, size};
+    Rectangle ice = { size * 6, size * 2, size, size};
 
 
 private:

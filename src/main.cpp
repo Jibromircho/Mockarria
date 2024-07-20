@@ -14,7 +14,7 @@ typedef struct Block {
     bool solid = false;
     Vector2 position;
     Rectangle hitbox;
-    enum Type { SKY = 0, GRASS, STONE } type;
+    enum Type { SKY = 0, GRASS, STONE, ICE} type;
     // Constructor with default values
     Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -23,16 +23,8 @@ Block block[worldSizeW][worldSizeH];
 
 // screen constants
 constexpr int workingWidth = 1280;
-constexpr int workingHeight = 720;
 constexpr int buttonFontSize = 28;
 constexpr int fps = 60;
-
-//button possitions
-constexpr Vector2 newGameButtonPos = { workingWidth / 2 - 100, workingHeight / 2 - 100 };
-constexpr Vector2 loadGameButtonPos = { workingWidth / 2 - 100, workingHeight / 2 - 25 };
-constexpr Vector2 settingsButtonPos = { workingWidth / 2 - 100, workingHeight / 2 + 50 };
-constexpr Vector2 exitButtonPos = { workingWidth / 2 - 100, workingHeight / 2 + 125 };
-constexpr Vector2 backButtonPos = { 50, workingHeight - 100 };
 
 //audio volumes
 float volumeMaster = 0.8f;
@@ -47,14 +39,16 @@ int main() {
     float nativeResHeight = GetScreenHeight();
     SetWindowSize(nativeResWidth, nativeResHeight);
     ToggleFullscreen();
+    SetExitKey(0);
 
     //button positions
     float resolutionScale = nativeResWidth / workingWidth;
-    const Vector2 newGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
+    const Vector2 playButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
     const Vector2 loadGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 25 };
     const Vector2 settingsButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
     const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 125 };
     const Vector2 backButtonPos { 50 , nativeResHeight - 100};
+    const Vector2 createWorldButtonPos = { nativeResWidth / 2 - 300, nativeResHeight - 100 };
 
     //initializing audio
     InitAudioDevice();
@@ -85,6 +79,7 @@ int main() {
 
             case 0:
                 block[i][j].type = Block::SKY;
+                block[i][j].solid = false;
                 break;
             case 1:
                 block[i][j].type = Block::GRASS;
@@ -93,6 +88,10 @@ int main() {
             case 2:
                 block[i][j].type = Block::STONE;
                 block[i][j].solid = true;
+                break;
+            case 3:
+                block[i][j].type = Block::ICE;
+                block[i][j].solid = false;
                 break;
             default:
                 block[i][j].type = Block::SKY;
@@ -126,11 +125,12 @@ int main() {
     Vector2 mainMenuCloudPos = Vector2{ 0.0f, 0.0f};
 
     //button hitboxes
-    const Rectangle newGameButtonHitbox { newGameButtonPos.x , newGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    const Rectangle loadGameButtonHitbox { loadGameButtonPos.x , loadGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    const Rectangle playButtonHitbox { playButtonPos.x , playButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
+    const Rectangle loadGameButtonHitbox { loadGameButtonPos.x , loadGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
+    const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
+    const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
+    const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
+    const Rectangle createWorldButtonHitbox { createWorldButtonPos.x , createWorldButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
 
     //frame related stuff
     int frameCounter = 0;
@@ -169,7 +169,7 @@ int main() {
             StopMusicStream(mainMenuMusic1);
 
             //update all x coordinates
-            player.hitbox.x = player.position.x + 26;
+            player.hitbox.x = player.position.x + 25;
             
             // upadte all y coordinates
             player.position.y += world.getVelocity();
@@ -214,7 +214,7 @@ int main() {
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
 
-        //player movement
+        //player actions inputs
         if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
         if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 3.0f;
         if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
@@ -222,6 +222,8 @@ int main() {
 
         if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
 
+        //other keys and inputs
+        if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE;
         // camera follow the player
         camera.target = {player.position.x + 100, player.position.y + 20};
         }
@@ -261,14 +263,14 @@ int main() {
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all the buttons
-                if (!CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
-                    DrawTextureRec(buttonsEmpty, buttonNonPressed, newGameButtonPos, WHITE);
+                if (!CheckCollisionRecs(mousePosition, playButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, playButtonPos, WHITE);
                     }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, newGameButtonHitbox)){
-                        DrawTextureRec(buttonsEmpty, buttonPressed, newGameButtonPos, WHITE);
-                        currentScreen = GAMEPLAY;
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, playButtonHitbox)){
+                        DrawTextureRec(buttonsEmpty, buttonPressed, playButtonPos, WHITE);
+                        currentScreen = NEWGAME;
                 }
-                else DrawTextureRec(buttonsEmpty, buttonHover, newGameButtonPos, WHITE);
+                else DrawTextureRec(buttonsEmpty, buttonHover, playButtonPos, WHITE);
 
                 if (!CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
 
@@ -301,10 +303,10 @@ int main() {
                 else DrawTextureRec(buttonsEmpty, buttonHover, exitButtonPos, WHITE);
 
                 //draw button text
-                DrawText("NEW GAME", newGameButtonPos.x + buttonFontSize , newGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
-                DrawText("LOAD GAME", loadGameButtonPos.x + buttonFontSize , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
-                DrawText("SETTINGS", settingsButtonPos.x + buttonFontSize , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
-                DrawText("EXIT", exitButtonPos.x + buttonFontSize , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("PLAY", playButtonPos.x + 20 , playButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("LOAD GAME", loadGameButtonPos.x + 20 , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("SETTINGS", settingsButtonPos.x + 20 , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("EXIT", exitButtonPos.x + 20 , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
 
             }break;
@@ -326,7 +328,19 @@ int main() {
                     currentScreen = TITLE;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
-                DrawText("BACK", backButtonPos.x + buttonFontSize , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+
+                if (!CheckCollisionRecs(mousePosition, createWorldButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, createWorldButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, createWorldButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, createWorldButtonPos, WHITE);
+                    currentScreen = GAMEPLAY;
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
+
+
+                DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
             }break;
             case LOADGAME:
@@ -347,7 +361,7 @@ int main() {
                     currentScreen = TITLE;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
-                DrawText("BACK", backButtonPos.x + buttonFontSize , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
             }break;
             case SETTINGS:
@@ -368,7 +382,7 @@ int main() {
                     currentScreen = TITLE;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
-                DrawText("BACK", backButtonPos.x + buttonFontSize , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
             }break;
             case GAMEPLAY:
@@ -383,6 +397,10 @@ int main() {
                                 break;
                             case Block::STONE:
                                 DrawTextureRec(tile.tileSet, tile.stone, block[i][j].position, WHITE);
+                                break;
+                            case Block::ICE:
+                                DrawTextureRec(tile.tileSet, tile.ice, block[i][j].position, WHITE);
+                                break;
                             default:
                                 break;
                             }
