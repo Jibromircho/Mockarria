@@ -24,7 +24,7 @@ class Player
 public:
     //player assets and simialr stuff
     Vector2 position = { 0.0f, 0.0f };
-    Texture2D model_movement = LoadTexture("../img/player/Unarmed_Movement_full2.png");
+    Texture2D model_movement = LoadTexture("../img/player/Unarmed_Movement_full.png");
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;

@@ -191,6 +191,23 @@ int main() {
                 if(IsKeyDown(KEY_A)) currentFrameIdle = 0, player.frameRecMove.y = (player.model_movement.height/3)*3;
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
+            //player actions inputs
+            if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
+            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 3.0f;
+
+            if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
+            else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
+
+            //update all x coordinates
+            player.hitbox.x = player.position.x;
+            
+            // upadte all y coordinates
+
+
+            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
+            else world.setVelocity(world.getVelocityMax());
+
+        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
             for (int i = firstBlockX; i < lastBlockX; i++){
@@ -214,24 +231,6 @@ int main() {
                 }
             }
 
-        //player actions inputs
-        if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
-        if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 3.0f;
-
-        if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
-        else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
-
-            //update all x coordinates
-            player.hitbox.x = player.position.x;
-            
-            // upadte all y coordinates
-
-
-            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
-            else world.setVelocity(world.getVelocityMax());
-
-
-        if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
 
         //other keys and inputs
         if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE;
@@ -417,8 +416,7 @@ int main() {
                             }
                         }
                     }
-                    DrawRectangleLinesEx(player.hitbox, 2, GREEN);
-                    DrawRectangleLines(player.position.x, player.position.y, player.frameRecIdle.width,player.frameRecIdle.height, GREEN);
+                    //DrawRectangleLinesEx(player.hitbox, 2, GREEN);
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
