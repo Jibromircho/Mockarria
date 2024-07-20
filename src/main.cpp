@@ -71,8 +71,8 @@ int main() {
         for (int j = 0; j < worldSizeH - 1; j++){
             block[i][j].position.x = worldStartX + i * tile.size;
             block[i][j].position.y = worldStartY + j * tile.size;
-            block[i][j].hitbox.x = worldStartX + i * tile.size;
-            block[i][j].hitbox.y = worldStartY + j * tile.size;
+            block[i][j].hitbox.x = block[i][j].position.x;
+            block[i][j].hitbox.y = block[i][j].position.y;
 
             int randomNum = GetRandomValue(0, 9);
             switch (randomNum){
@@ -168,28 +168,6 @@ int main() {
         {
             StopMusicStream(mainMenuMusic1);
 
-            //update all x coordinates
-            player.hitbox.x = player.position.x + 25;
-            
-            // upadte all y coordinates
-            player.position.y += world.getVelocity();
-            player.hitbox.y += world.getVelocity();
-
-
-            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
-            else world.setVelocity(world.getVelocityMax());
-
-            for (int i = firstBlockX; i < lastBlockX; i++){
-                for (int j = firstBlockY; j < lastBlockY; j++){
-                    if (CheckCollisionRecs(player.hitbox, block[i][j].hitbox) && block[i][j].solid)
-                    {
-                        player.jumpCount = player.maxJump;
-                        world.setVelocity(0);
-                        player.state = GROUND;
-                    }
-                }
-            }
-
             if (framesCounter >= (fps/framesSpeed))
             {
                 framesCounter = 0;
@@ -213,12 +191,42 @@ int main() {
                 if(IsKeyDown(KEY_A)) currentFrameIdle = 0, player.frameRecMove.y = (player.model_movement.height/3)*3;
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
+            for (int i = firstBlockX; i < lastBlockX; i++){
+                for (int j = firstBlockY; j < lastBlockY; j++){
+                    if(block[i][j].solid){
+                        if (CheckCollisionRecs(player.hitbox, block[i][j].hitbox)){
+                            if(block[i][j].hitbox.y > player.hitbox.y){
+                                player.jumpCount = player.maxJump;
+                                world.setVelocity(0);
+                                player.state = GROUND;
+                            }else world.setVelocity(0.5f);
+                            if(block[i][j].hitbox.x < player.hitbox.x && player.hitbox.y > block[i][j].hitbox.y && player.hitbox.y + player.hitbox.height > block[i][j].hitbox.y){
+                                player.position.x = block[i][j].hitbox.x + tile.size;
+                                player.hitbox.x = player.position.x;
+                            }
+                        }
+                    }
+                }
+            }
 
         //player actions inputs
         if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
         if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 3.0f;
+
         if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
         else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
+
+            //update all x coordinates
+            player.hitbox.x = player.position.x;
+            
+            // upadte all y coordinates
+            player.position.y += world.getVelocity();
+            player.hitbox.y += world.getVelocity();
+
+
+            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
+            else world.setVelocity(world.getVelocityMax());
+
 
         if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
 
@@ -404,15 +412,10 @@ int main() {
                             default:
                                 break;
                             }
-                            /*if (block[i][j].type == Block::GRASS){
-                                DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
-                            }
-                            if (block[i][j].type == Block::STONE){
-                                DrawTextureRec(tile.tileSet, tile.stone, block[i][j].position, WHITE);
-                            }*/
                         }
                     }
-                    DrawRectangleRec(player.hitbox, GREEN);
+                    DrawRectangleLinesEx(player.hitbox, 2, GREEN);
+                    DrawRectangleLines(player.position.x, player.position.y, player.frameRecIdle.width,player.frameRecIdle.height, GREEN);
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
