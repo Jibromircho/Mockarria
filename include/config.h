@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <random>
+#include <fstream>
 
 
 #include <raylib.h>

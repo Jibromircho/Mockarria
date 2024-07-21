@@ -192,7 +192,7 @@ int main() {
             }
             //player actions inputs
             if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
-            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 3.0f;
+            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 2.0f;
 
             if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
             else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
@@ -230,7 +230,7 @@ int main() {
 
 
         //other keys and inputs
-        if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE;
+        if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "playerSave.dat");
         // camera follow the player
         camera.target = {player.position.x + 100, player.position.y + 20};
         }
@@ -285,7 +285,8 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, loadGameButtonPos, WHITE);
-                        currentScreen = LOADGAME;
+                        player.loadGame(player.position, "playerSave.dat");
+                        currentScreen = GAMEPLAY;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos, WHITE);
 
@@ -341,11 +342,12 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, createWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, createWorldButtonPos, WHITE);
+                    currentScreen = GAMEPLAY;
                     /////////////////////////////////////////////////////
                     
                     Image perlin = GenImagePerlinNoise(worldSizeW/10, worldSizeH/10, 50, 50, (float)GetRandomValue(30,100)/100);
                     ExportImage(perlin, "../save/map.png");
-                    generated = LoadTextureFromImage(perlin);
+                    //generated = LoadTextureFromImage(perlin);
                     //////////////////////////////////////////////////////
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
@@ -355,7 +357,7 @@ int main() {
                 DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
                 ////////////////////////////////////////////////////////
-                DrawTexture(generated, player.position.x, player.position.y,WHITE);
+                //DrawTexture(generated, player.position.x, player.position.y,WHITE);
                 ////////////////////////////////////////////////////////
             }break;
             case LOADGAME:
