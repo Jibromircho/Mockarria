@@ -103,7 +103,7 @@ int main() {
 
     //camera initialization
     Camera2D camera = { 0 };
-    camera.target = {player.position.x + 100.0f, player.position.y + 100.0f};
+    camera.target = {player.position.x , player.position.y };
     camera.offset = {nativeResWidth / 2.0f, nativeResHeight / 2.0f};
     camera.zoom = 1.0f;
     Rectangle scissorArea = { player.position.x, player.position.y, nativeResWidth,nativeResHeight};
@@ -230,9 +230,12 @@ int main() {
 
 
         //other keys and inputs
-        if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "playerSave.dat");
-        // camera follow the player
-        camera.target = {player.position.x + 100, player.position.y + 20};
+        if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "../save/playerSave.dat");
+        // camera follows the player and zoom handling
+        camera.zoom += ((float)GetMouseWheelMove()*0.1f);
+        if (camera.zoom > 3.0f) camera.zoom = 3.0f;
+        else if (camera.zoom < 0.6f) camera.zoom = 0.6f;
+        camera.target = {player.position.x, player.position.y };
         }
 
         // screen selector
@@ -285,7 +288,7 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, loadGameButtonPos, WHITE);
-                        player.loadGame(player.position, "playerSave.dat");
+                        player.loadGame(player.position, "../save/playerSave.dat");
                         currentScreen = GAMEPLAY;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos, WHITE);
@@ -423,7 +426,7 @@ int main() {
                             }
                         }
                     }
-                    //DrawRectangleLinesEx(player.hitbox, 2, GREEN);
+                    DrawRectangleLinesEx(player.hitbox, 2, GREEN);
                     //player drawing
                     if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
                     else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);

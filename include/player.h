@@ -28,7 +28,7 @@ public:
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;
-    Rectangle hitbox = { position.x, position.y, frameRecIdle.width, frameRecIdle.height };
+    Rectangle hitbox = { position.x, position.y, frameRecIdle.width - 10, frameRecIdle.height - 10 };
 
     //player stats
     PlayerStats stats;
