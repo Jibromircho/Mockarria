@@ -50,13 +50,6 @@ int main() {
     const Vector2 backButtonPos { 50 , nativeResHeight - 100};
     const Vector2 createWorldButtonPos = { nativeResWidth / 2 - 300, nativeResHeight - 100 };
 
-    //initializing audio
-    InitAudioDevice();
-    Music mainMenuMusic1 = LoadMusicStream("../sfx/Menu_soundtrack_1.mp3");
-    mainMenuMusic1.looping = true;
-    SetMusicVolume(mainMenuMusic1, volumeMusic * volumeMaster);
-    PlayMusicStream(mainMenuMusic1);
-
     //game elements 
     GameScreen currentScreen = LOGO;
     Player player;
@@ -108,7 +101,11 @@ int main() {
     camera.zoom = 1.0f;
     Rectangle scissorArea = { player.position.x, player.position.y, nativeResWidth,nativeResHeight};
    
-
+    //initialize audio stuff
+    InitAudioDevice();
+    Music mainMenuMusic1 = LoadMusicStream("../sfx/Menu_soundtrack_1.mp3");
+    mainMenuMusic1.looping = true;
+    SetMusicVolume(mainMenuMusic1, volumeMusic * volumeMaster);
 
     //initialize textures
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
@@ -154,6 +151,8 @@ int main() {
         int firstBlockY = (worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
         int lastBlockY = (worldSizeH / 2) + (player.position.y + scissorArea.height) / 16;
 
+
+        PlayMusicStream(mainMenuMusic1);
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -165,7 +164,6 @@ int main() {
 
         if(currentScreen == GAMEPLAY) 
         {
-            StopMusicStream(mainMenuMusic1);
 
             if (framesCounter >= (fps/framesSpeed))
             {
@@ -191,7 +189,7 @@ int main() {
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
             //player actions inputs
-            if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 10.0f;
+            if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 6.0f;
             if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 2.0f;
 
             if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
@@ -202,8 +200,9 @@ int main() {
             if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
             else world.setVelocity(world.getVelocityMax());
 
-            player.hitbox.x = player.position.x;
+            player.hitbox.x = player.position.x + player.hitboxOffset.x;
 
+            //player hitbox checks
             if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
@@ -348,8 +347,8 @@ int main() {
                     currentScreen = GAMEPLAY;
                     /////////////////////////////////////////////////////
                     
-                    Image perlin = GenImagePerlinNoise(worldSizeW/10, worldSizeH/10, 50, 50, (float)GetRandomValue(30,100)/100);
-                    ExportImage(perlin, "../save/map.png");
+                    //Image perlin = GenImagePerlinNoise(worldSizeW/10, worldSizeH/10, 50, 50, (float)GetRandomValue(30,100)/100);
+                    //ExportImage(perlin, "../save/map.png");
                     //generated = LoadTextureFromImage(perlin);
                     //////////////////////////////////////////////////////
                 }
@@ -453,7 +452,7 @@ int main() {
     }
 
     // De-initialize
-
+    UnloadMusicStream(mainMenuMusic1);
     CloseAudioDevice();
 
     CloseWindow();  //Close window and OpenGL context

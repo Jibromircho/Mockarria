@@ -28,7 +28,8 @@ public:
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;
-    Rectangle hitbox = { position.x, position.y, frameRecIdle.width - 10, frameRecIdle.height - 10 };
+    Vector2 hitboxOffset = { 4 , 4 };
+    Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 7, frameRecIdle.height - 5 };
 
     //player stats
     PlayerStats stats;
@@ -60,8 +61,8 @@ public:
         if (file.is_open()) {
             file.read(reinterpret_cast<char*>(&position), sizeof(Vector2));
             file.close();
-            hitbox.x = position.x;
-            hitbox.y = position.y;
+            hitbox.x = position.x + hitboxOffset.x;
+            hitbox.y = position.y + hitboxOffset.y;
             TraceLog(LOG_INFO, "Game loaded successfully.");
             return true;
         } else {
