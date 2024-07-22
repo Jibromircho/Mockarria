@@ -4,7 +4,7 @@
 ///////////////////////////////////some global varuables we will need
 
 //game current screen
-typedef enum GameScreen { LOGO = 0, TITLE, NEWGAME, LOADGAME, SETTINGS, GAMEPLAY, ENDING} GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, PLAY, SETTINGS, GAMEPLAY, ENDING} GameScreen;
 
 const int worldSizeW = 6400;
 const int worldSizeH = 1800;
@@ -44,11 +44,11 @@ int main() {
     //button positions
     float resolutionScale = nativeResWidth / workingWidth;
     const Vector2 playButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
-    const Vector2 loadGameButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 25 };
-    const Vector2 settingsButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
-    const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 125 };
+    const Vector2 settingsButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  - 25 };
+    const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
     const Vector2 backButtonPos { 50 , nativeResHeight - 100};
     const Vector2 createWorldButtonPos = { nativeResWidth / 2 - 300, nativeResHeight - 100 };
+    const Vector2 loadWorldButtonPos = { nativeResWidth / 2 - 100, nativeResHeight - 100 };
 
     //game elements 
     GameScreen currentScreen = LOGO;
@@ -122,11 +122,11 @@ int main() {
 
     //button hitboxes
     const Rectangle playButtonHitbox { playButtonPos.x , playButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
-    const Rectangle loadGameButtonHitbox { loadGameButtonPos.x , loadGameButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
     const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
     const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
     const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
     const Rectangle createWorldButtonHitbox { createWorldButtonPos.x , createWorldButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    const Rectangle loadWorldButtonHitbox { loadWorldButtonPos.x , loadWorldButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
 
     //frame related stuff
     int frameCounter = 0;
@@ -277,20 +277,9 @@ int main() {
                     }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, playButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, playButtonPos, WHITE);
-                        currentScreen = NEWGAME;
+                        currentScreen = PLAY;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, playButtonPos, WHITE);
-
-                if (!CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
-
-                    DrawTextureRec(buttonsEmpty, buttonNonPressed, loadGameButtonPos , WHITE);
-                }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, loadGameButtonHitbox)){
-                        DrawTextureRec(buttonsEmpty, buttonPressed, loadGameButtonPos, WHITE);
-                        player.loadGame(player.position, "../save/playerSave.dat");
-                        currentScreen = GAMEPLAY;
-                }
-                else DrawTextureRec(buttonsEmpty, buttonHover, loadGameButtonPos, WHITE);
 
                 if (!CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
 
@@ -314,13 +303,12 @@ int main() {
 
                 //draw button text
                 DrawText("PLAY", playButtonPos.x + 20 , playButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
-                DrawText("LOAD GAME", loadGameButtonPos.x + 20 , loadGameButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("SETTINGS", settingsButtonPos.x + 20 , settingsButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("EXIT", exitButtonPos.x + 20 , exitButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
 
             }break;
-            case NEWGAME:
+            case PLAY:
             {
                 //draw background
                 DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
@@ -361,27 +349,6 @@ int main() {
                 ////////////////////////////////////////////////////////
                 //DrawTexture(generated, player.position.x, player.position.y,WHITE);
                 ////////////////////////////////////////////////////////
-            }break;
-            case LOADGAME:
-            {
-                //draw background
-                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
-
-                //draw all buttons
-                if (!CheckCollisionRecs(mousePosition, backButtonHitbox)){
-                    DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
-                }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, backButtonHitbox)){
-                    DrawTextureRec(buttonsEmpty, buttonPressed, backButtonPos, WHITE);
-                    currentScreen = TITLE;
-                }
-                else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
-                DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
-
             }break;
             case SETTINGS:
             {
