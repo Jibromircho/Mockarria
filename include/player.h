@@ -29,7 +29,7 @@ public:
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;
     Vector2 hitboxOffset = { 4 , 4 };
-    Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 7, frameRecIdle.height - 5 };
+    Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
 
     //player stats
     PlayerStats stats;
@@ -70,14 +70,12 @@ public:
             return false;
         }
     }
-
+    //player position fucntions
     void resetPos(){
         position = { 0.0f, 0.0f };
         hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 7, frameRecIdle.height - 5 };
 
     }
-
-
     
 
 private:

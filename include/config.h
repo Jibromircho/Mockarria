@@ -9,7 +9,6 @@
 
 #include <raylib.h>
 
-#include <functions.h>
 
 #include <player.h>
 #include <world.h>
