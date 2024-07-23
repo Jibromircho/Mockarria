@@ -41,7 +41,7 @@ public:
     int level = 1;
     float experience = 0.0f;
 
-    float movementSpeed = 2.0f;
+    float movementSpeed = 1.0f;
 
     //player saving function
     void saveGame (Vector2& position, const std::string& filename){
@@ -69,6 +69,12 @@ public:
             TraceLog(LOG_ERROR, "Failed to open file for loading.");
             return false;
         }
+    }
+
+    void resetPos(){
+        position = { 0.0f, 0.0f };
+        hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 7, frameRecIdle.height - 5 };
+
     }
 
 

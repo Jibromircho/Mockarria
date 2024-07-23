@@ -23,7 +23,7 @@ Block block[worldSizeW][worldSizeH];
 
 // screen constants
 constexpr int workingWidth = 1280;
-constexpr int buttonFontSize = 28;
+constexpr int buttonFontSize = 26;
 constexpr int fps = 60;
 
 //audio volumes
@@ -48,7 +48,7 @@ int main() {
     const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
     const Vector2 backButtonPos { 50 , nativeResHeight - 100};
     const Vector2 createWorldButtonPos = { nativeResWidth / 2 - 300, nativeResHeight - 100 };
-    const Vector2 loadWorldButtonPos = { nativeResWidth / 2 - 100, nativeResHeight - 100 };
+    const Vector2 loadWorldButtonPos = { nativeResWidth / 2 , nativeResHeight - 100 };
 
     //game elements 
     GameScreen currentScreen = LOGO;
@@ -190,7 +190,7 @@ int main() {
             }
             //player actions inputs
             if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 6.0f;
-            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 2.0f;
+            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 1.0f;
 
             if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
             else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
@@ -332,6 +332,7 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, createWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, createWorldButtonPos, WHITE);
+                    player.resetPos();
                     currentScreen = GAMEPLAY;
                     /////////////////////////////////////////////////////
                     
@@ -342,9 +343,18 @@ int main() {
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
 
+                if (!CheckCollisionRecs(mousePosition, loadWorldButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, loadWorldButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, loadWorldButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, loadWorldButtonPos, WHITE);
+                    player.loadGame(player.position, "../save/playerSave.dat");
+                    currentScreen = GAMEPLAY;
+                }
 
                 DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                DrawText("LOAD WORLD", loadWorldButtonPos.x + 20, loadWorldButtonPos.y + buttonFontSize / 2, buttonFontSize, RAYWHITE);
 
                 ////////////////////////////////////////////////////////
                 //DrawTexture(generated, player.position.x, player.position.y,WHITE);
