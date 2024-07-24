@@ -7,8 +7,8 @@ class World {
 public:
     World();
 
-    int getWorldWidth() const;
-    int getWorldHeight() const;
+    float getWorldWidth() const;
+    float getWorldHeight() const;
     float getAcceleration() const;
     float getVelocity() const;
     float getVelocityMax() const;
@@ -19,12 +19,10 @@ public:
     
 
 private:
-    const int worldWidth = 900;
-    const int worldHeight = 400;
-    //const int worldWidth = 6400;
-    //const int worldHeight = 1800;
+    const float worldWidth = 6400.0f;
+    const float worldHeight = 1800.0f;
     float acceleration = 0.1f;
-    float velocity = 0;
+    float velocity = 0.0f;
     const float velocityMax = 15.0f;
 
 };

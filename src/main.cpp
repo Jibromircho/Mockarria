@@ -32,6 +32,9 @@ float volumeMusic = 0.8f;
 float volumeSoundFX = 0.8f;
 float volumeAmbient = 0.8f;
 
+//fucntion definitions
+float cosineInterpolate(float a, float b, float x);
+
 int main() {
     // initialize win
     InitWindow(0, 0, "Mockarria");
@@ -55,44 +58,6 @@ int main() {
     Player player;
     World world;
     Tile tile;
-
-    Texture2D generated;
-
-    //create a map
-    for (int i = 0; i < worldSizeW - 1; i++){
-        for (int j = 0; j < worldSizeH - 1; j++){
-            block[i][j].position.x = worldStartX + i * tile.size;
-            block[i][j].position.y = worldStartY + j * tile.size;
-            block[i][j].hitbox.x = block[i][j].position.x;
-            block[i][j].hitbox.y = block[i][j].position.y;
-
-            int randomNum = GetRandomValue(0, 16);
-            switch (randomNum){
-
-            case 0:
-                block[i][j].type = Block::SKY;
-                block[i][j].solid = false;
-                break;
-            case 1:
-                block[i][j].type = Block::GRASS;
-                block[i][j].solid = true;
-                break;
-            case 2:
-                block[i][j].type = Block::STONE;
-                block[i][j].solid = true;
-                break;
-            case 3:
-                block[i][j].type = Block::ICE;
-                block[i][j].solid = false;
-                break;
-            default:
-                block[i][j].type = Block::SKY;
-                block[i][j].solid = false;
-                break;
-            }
-        }
-    }
-    Rectangle floor = {-300, 100, 8000, 500};
 
     //camera initialization
     Camera2D camera = { 0 };
@@ -334,11 +299,43 @@ int main() {
                     DrawTextureRec(buttonsEmpty, buttonPressed, createWorldButtonPos, WHITE);
                     player.resetPos();
                     currentScreen = GAMEPLAY;
+                    //create a map
+                    for (int i = 0; i < worldSizeW - 1; i++){
+                        for (int j = 0; j < worldSizeH - 1; j++){
+                            block[i][j].position.x = worldStartX + i * tile.size;
+                            block[i][j].position.y = worldStartY + j * tile.size;
+                            block[i][j].hitbox.x = block[i][j].position.x;
+                            block[i][j].hitbox.y = block[i][j].position.y;
+
+                            int randomNum = GetRandomValue(0, 16);
+                            switch (randomNum){
+
+                            case 0:
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
+                                break;
+                            case 1:
+                                block[i][j].type = Block::GRASS;
+                                block[i][j].solid = true;
+                                break;
+                            case 2:
+                                block[i][j].type = Block::STONE;
+                                block[i][j].solid = true;
+                                break;
+                            case 3:
+                                block[i][j].type = Block::ICE;
+                                block[i][j].solid = false;
+                                break;
+                            default:
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
+                                break;
+                            }
+                        }
+                    }
                     /////////////////////////////////////////////////////
-                    
-                    //Image perlin = GenImagePerlinNoise(worldSizeW/10, worldSizeH/10, 50, 50, (float)GetRandomValue(30,100)/100);
-                    //ExportImage(perlin, "../save/map.png");
-                    //generated = LoadTextureFromImage(perlin);
+                    float random = (float) GetRandomValue(-100, 100) / 100;
+                    //cosineInterpolate()
                     //////////////////////////////////////////////////////
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
@@ -437,3 +434,9 @@ int main() {
     return 0;
     
 };
+
+float cosineInterpolate(float a, float b, float x) {
+	                    float ft = x * 3.1415927;
+	                    float f = (1 - cos(ft)) * .5;
+	                    return  a*(1-f) + b*f;
+                    };

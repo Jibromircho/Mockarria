@@ -6,11 +6,11 @@ World::World() {
 }
 
 // Getter methods
-int World::getWorldWidth() const {
+float World::getWorldWidth() const {
     return worldWidth;
 }
 
-int World::getWorldHeight() const {
+float World::getWorldHeight() const {
     return worldHeight;
 }
 
