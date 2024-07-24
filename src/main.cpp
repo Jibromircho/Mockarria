@@ -33,7 +33,10 @@ float volumeSoundFX = 0.8f;
 float volumeAmbient = 0.8f;
 
 //fucntion definitions
-float cosineInterpolate(float a, float b, float x);
+float interpolate(float a0, float a1, float w);
+Vector2 randomGradient(int ix, int iy);
+float dotGridGradient(int ix, int iy, float x, float y);
+float perlin(float x, float y);
 
 int main() {
     // initialize win
@@ -71,6 +74,7 @@ int main() {
     Music mainMenuMusic1 = LoadMusicStream("../sfx/Menu_soundtrack_1.mp3");
     mainMenuMusic1.looping = true;
     SetMusicVolume(mainMenuMusic1, volumeMusic * volumeMaster);
+    PlayMusicStream(mainMenuMusic1);
 
     //initialize textures
     Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
@@ -115,9 +119,6 @@ int main() {
         int lastBlockX = (worldSizeW / 2) + (player.position.x + scissorArea.width) / 16;
         int firstBlockY = (worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
         int lastBlockY = (worldSizeH / 2) + (player.position.y + scissorArea.height) / 16;
-
-
-        PlayMusicStream(mainMenuMusic1);
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -300,15 +301,41 @@ int main() {
                     player.resetPos();
                     currentScreen = GAMEPLAY;
                     //create a map
+                    float randomPoints[worldSizeW];
+                    //////////////////////////////
+                    ///////////////////////////////
+                    
+
+
+                    ///////////////////////////////
+                    /////////////////////////////
                     for (int i = 0; i < worldSizeW - 1; i++){
+                        randomPoints[i] = (float) GetRandomValue(0, 100) / 100;
+
                         for (int j = 0; j < worldSizeH - 1; j++){
                             block[i][j].position.x = worldStartX + i * tile.size;
                             block[i][j].position.y = worldStartY + j * tile.size;
                             block[i][j].hitbox.x = block[i][j].position.x;
                             block[i][j].hitbox.y = block[i][j].position.y;
 
-                            int randomNum = GetRandomValue(0, 16);
-                            switch (randomNum){
+                            float val = 0.0f;
+                            float freq = 1.0f;
+                            float ampl = 1.0f;
+
+                            for (int x = 0; x < 12; x++){
+                                val += perlin(i * freq / worldSizeW, j * freq / worldSizeH) * ampl;
+
+                                freq *= 2;
+                                ampl /= 2;
+                            }
+                            val *= 1.2;
+
+                            //clipping
+                            if (val > 1.0f) val = 1.0f;
+                            else if (val < -1.0f) val = -1.0f;
+                            int blockVal = (int)(((val + 1.0f) * 0.5f) * 4);
+
+                            switch (blockVal){
 
                             case 0:
                                 block[i][j].type = Block::SKY;
@@ -333,10 +360,6 @@ int main() {
                             }
                         }
                     }
-                    /////////////////////////////////////////////////////
-                    float random = (float) GetRandomValue(-100, 100) / 100;
-                    //cosineInterpolate()
-                    //////////////////////////////////////////////////////
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
 
@@ -353,9 +376,6 @@ int main() {
                 DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("LOAD WORLD", loadWorldButtonPos.x + 20, loadWorldButtonPos.y + buttonFontSize / 2, buttonFontSize, RAYWHITE);
 
-                ////////////////////////////////////////////////////////
-                //DrawTexture(generated, player.position.x, player.position.y,WHITE);
-                ////////////////////////////////////////////////////////
             }break;
             case SETTINGS:
             {
@@ -435,8 +455,58 @@ int main() {
     
 };
 
-float cosineInterpolate(float a, float b, float x) {
-	                    float ft = x * 3.1415927;
-	                    float f = (1 - cos(ft)) * .5;
-	                    return  a*(1-f) + b*f;
-                    };
+
+float interpolate(float a0, float a1, float w){
+    return (a1 - a0) * (3.0 - w * 2.0) * w * w + a0;
+}
+Vector2 randomGradient(int ix, int iy){
+    const unsigned w = 8 * sizeof(unsigned);
+    const unsigned s = w / 2;
+    unsigned a = ix, b = iy;
+    a *= 3284157442;
+
+    b ^= a << s | a >> w - s;
+    b *= 2048419352;
+    float random = a * (3.14159265 / ~(~0u >> 1)); // in [0, 2*Pi]
+
+    Vector2 v;
+    v.x = sin(random);
+    v.y = cos(random);
+
+    return v;
+}
+//compute dot product of distance and gradient vector
+float dotGridGradient(int ix, int iy, float x, float y){
+    //get gradient from int coordinates
+    Vector2 gradient = randomGradient (ix, iy);
+
+    //compute distance vector
+    float dx = x - (float)ix;
+    float dy = y - (float)iy;
+
+    return (dx * gradient.x + dy * gradient.y);
+}
+//sample perlin noise at x,y coordinates
+float perlin(float x, float y) {
+
+    //determine grid cell corner
+    int x0 = (int)x;
+    int y0 = (int)y;
+    int x1 = x0 + 1;
+    int y1 = y0 + 1;
+
+    float sx = x - (float)x0;
+    float sy = y - (float)y0;
+
+    float n0 = dotGridGradient(x0, y0, x, y);
+    float n1 = dotGridGradient(x1, y0, x, y);
+    float ix0 = interpolate(n0, n1, sx);
+
+    n0 = dotGridGradient(x0, y1, x, y);
+    n1 = dotGridGradient(x1, y1, x, y);
+    float ix1 = interpolate(n0, n1, sx);
+    
+    float value = interpolate(ix0, ix1, sy);
+
+    return value;
+}
