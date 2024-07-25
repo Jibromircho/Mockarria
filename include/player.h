@@ -73,7 +73,7 @@ public:
     //player position fucntions
     void resetPos(){
         position = { 0.0f, 0.0f };
-        hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 7, frameRecIdle.height - 5 };
+        hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
 
     }
     

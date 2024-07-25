@@ -115,10 +115,10 @@ int main() {
         Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
 
 
-        int firstBlockX = (worldSizeW / 2) + (player.position.x - scissorArea.width) / 16;
-        int lastBlockX = (worldSizeW / 2) + (player.position.x + scissorArea.width) / 16;
-        int firstBlockY = (worldSizeH / 2) + (player.position.y - scissorArea.height) / 16;
-        int lastBlockY = (worldSizeH / 2) + (player.position.y + scissorArea.height) / 16;
+        int firstBlockX = (worldSizeW / 2) + (player.position.x - nativeResWidth) / 16;
+        int lastBlockX = (worldSizeW / 2) + (player.position.x + nativeResWidth) / 16;
+        int firstBlockY = (worldSizeH / 2) + (player.position.y - nativeResHeight) / 16;
+        int lastBlockY = (worldSizeH / 2) + (player.position.y + nativeResHeight) / 16;
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -319,10 +319,11 @@ int main() {
                             block[i][j].hitbox.y = block[i][j].position.y;
 
                             float val = 0.0f;
-                            float freq = 1.0f;
-                            float ampl = 1.0f;
+                            float freq = 2.0f;
+                            float ampl = 0.5f;
+                            int octaves = 6;
 
-                            for (int x = 0; x < 12; x++){
+                            for (int x = 0; x < octaves; x++){
                                 val += perlin(i * freq / worldSizeW, j * freq / worldSizeH) * ampl;
 
                                 freq *= 2;
@@ -333,31 +334,25 @@ int main() {
                             //clipping
                             if (val > 1.0f) val = 1.0f;
                             else if (val < -1.0f) val = -1.0f;
-                            int blockVal = (int)(((val + 1.0f) * 0.5f) * 4);
+                            float blockVal = (((val + 1.0f) * 0.5f) * 4);
+                            std::cout << blockVal << std::endl;
 
-                            switch (blockVal){
-
-                            case 0:
+                            if (blockVal <= 4.0f && blockVal > 2.07f) {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                                break;
-                            case 1:
+                            } else if (blockVal <= 2.07f && blockVal > 2.05f) {
                                 block[i][j].type = Block::GRASS;
                                 block[i][j].solid = true;
-                                break;
-                            case 2:
+                            } else if (blockVal <= 2.05f && blockVal > 1.8f) {
                                 block[i][j].type = Block::STONE;
-                                block[i][j].solid = true;
-                                break;
-                            case 3:
+                                block[i][j].solid = true;                             
+                            } else if (blockVal <= 1.8f && blockVal > 0.0f) {
                                 block[i][j].type = Block::ICE;
                                 block[i][j].solid = false;
-                                break;
-                            default:
+                            } else {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                                break;
-                            }
+                            }                          
                         }
                     }
                 }
