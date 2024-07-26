@@ -9,7 +9,7 @@ typedef enum GameScreen { LOGO = 0, TITLE, PLAY, SETTINGS, GAMEPLAY, ENDING} Gam
 const int worldSizeW = 6400;
 const int worldSizeH = 1800;
 const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
-const float worldStartY = (float) worldSizeH * 16 / 2 * -1;
+const float worldStartY = (float) worldSizeH * 16 / 4 * -1;
 typedef struct Block {
     bool solid = false;
     Vector2 position;
@@ -36,7 +36,7 @@ float volumeAmbient = 0.8f;
 float interpolate(float a0, float a1, float w);
 Vector2 randomGradient(int ix, int iy);
 float dotGridGradient(int ix, int iy, float x, float y);
-float perlin(float x, float y);
+float perlin2D(float x, float y);
 
 int main() {
     // initialize win
@@ -117,8 +117,8 @@ int main() {
 
         int firstBlockX = (worldSizeW / 2) + (player.position.x - nativeResWidth) / 16;
         int lastBlockX = (worldSizeW / 2) + (player.position.x + nativeResWidth) / 16;
-        int firstBlockY = (worldSizeH / 2) + (player.position.y - nativeResHeight) / 16;
-        int lastBlockY = (worldSizeH / 2) + (player.position.y + nativeResHeight) / 16;
+        int firstBlockY = (worldSizeH / 4) + (player.position.y - nativeResHeight) / 16;
+        int lastBlockY = (worldSizeH / 4) + (player.position.y + nativeResHeight) / 16;
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -301,30 +301,29 @@ int main() {
                     player.resetPos();
                     currentScreen = GAMEPLAY;
                     //create a map
-                    float randomPoints[worldSizeW];
+                
                     //////////////////////////////
                     ///////////////////////////////
-                    
+                    // perlin1D[i] = scale * (i, size) + scale / 2 * (i, size / 2) + scale / 4 * (i, size / 4) + scale / 8 * (i, size / 8) + scale / 16 * (i, size / 16);
 
 
                     ///////////////////////////////
                     /////////////////////////////
                     for (int i = 0; i < worldSizeW - 1; i++){
-                        randomPoints[i] = (float) GetRandomValue(0, 100) / 100;
-
                         for (int j = 0; j < worldSizeH - 1; j++){
                             block[i][j].position.x = worldStartX + i * tile.size;
                             block[i][j].position.y = worldStartY + j * tile.size;
                             block[i][j].hitbox.x = block[i][j].position.x;
                             block[i][j].hitbox.y = block[i][j].position.y;
-
+                            
+                            if (j >= lastBlockY){
                             float val = 0.0f;
                             float freq = 2.0f;
                             float ampl = 0.5f;
-                            int octaves = 6;
+                            int octaves = 24;
 
                             for (int x = 0; x < octaves; x++){
-                                val += perlin(i * freq / worldSizeW, j * freq / worldSizeH) * ampl;
+                                val += perlin2D(i * freq / worldSizeW, j * freq / worldSizeH) * ampl;
 
                                 freq *= 2;
                                 ampl /= 2;
@@ -335,23 +334,24 @@ int main() {
                             if (val > 1.0f) val = 1.0f;
                             else if (val < -1.0f) val = -1.0f;
                             float blockVal = (((val + 1.0f) * 0.5f) * 4);
-                            std::cout << blockVal << std::endl;
 
-                            if (blockVal <= 4.0f && blockVal > 2.07f) {
-                                block[i][j].type = Block::SKY;
-                                block[i][j].solid = false;
-                            } else if (blockVal <= 2.07f && blockVal > 2.05f) {
-                                block[i][j].type = Block::GRASS;
-                                block[i][j].solid = true;
-                            } else if (blockVal <= 2.05f && blockVal > 1.8f) {
-                                block[i][j].type = Block::STONE;
-                                block[i][j].solid = true;                             
-                            } else if (blockVal <= 1.8f && blockVal > 0.0f) {
-                                block[i][j].type = Block::ICE;
-                                block[i][j].solid = false;
+                            
+                                if (blockVal <= 4.0f && blockVal > 2.07f) {
+                                    block[i][j].type = Block::SKY;
+                                    block[i][j].solid = false;
+                                } else if (blockVal <= 2.07f && blockVal > 2.05f) {
+                                    block[i][j].type = Block::GRASS;
+                                    block[i][j].solid = true;
+                                } else if (blockVal <= 2.05f && blockVal > 1.8f) {
+                                    block[i][j].type = Block::STONE;
+                                    block[i][j].solid = true;                             
+                                } else if (blockVal <= 1.8f && blockVal > 0.0f) {
+                                    block[i][j].type = Block::ICE;
+                                    block[i][j].solid = false;
                             } else {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
+                            }
                             }                          
                         }
                     }
@@ -482,7 +482,7 @@ float dotGridGradient(int ix, int iy, float x, float y){
     return (dx * gradient.x + dy * gradient.y);
 }
 //sample perlin noise at x,y coordinates
-float perlin(float x, float y) {
+float perlin2D(float x, float y) {
 
     //determine grid cell corner
     int x0 = (int)x;
@@ -504,4 +504,8 @@ float perlin(float x, float y) {
     float value = interpolate(ix0, ix1, sy);
 
     return value;
+}
+
+float perlin1D(float x){
+
 }
