@@ -41,7 +41,7 @@ public:
     int level = 1;
     float experience = 0.0f;
 
-    float movementSpeed = 1.0f;
+    float movementSpeed = 2.0f;
 
     //player saving function
     void saveGame (Vector2& position, const std::string& filename){

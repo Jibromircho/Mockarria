@@ -11,7 +11,7 @@ typedef enum GameScreen { LOGO = 0, TITLE, PLAY, SETTINGS, GAMEPLAY, ENDING} Gam
 const int worldSizeW = 6400;
 const int worldSizeH = 1800;
 const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
-const float worldStartY = (float) worldSizeH * 16 / 4 * -1;
+const float worldStartY = (float) worldSizeH * 16 / 5 * -1;
 typedef struct Block {
     bool solid = false;
     Vector2 position;
@@ -45,18 +45,19 @@ double perlin2D(double x, double y);
 
 ////debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
+
 Color getColorForBlockType(Block::Type type) {
     switch (type) {
         case Block::SKY:
-            return SKYBLUE;   // Light blue
+            return SKYBLUE;   
         case Block::GRASS:
-            return DARKGREEN; // Green
+            return DARKGREEN; 
         case Block::STONE:
-            return GRAY;      // Gray
+            return GRAY;      
         case Block::ICE:
-            return LIGHTGRAY; // Light blue-ish
+            return LIGHTGRAY; 
         default:
-            return BLACK;     // Black for unknown types
+            return BLACK;
     }
 }
 
@@ -88,7 +89,7 @@ int main() {
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
     camera.offset = {nativeResWidth / 2.0f, nativeResHeight / 2.0f};
-    camera.zoom = 1.0f;
+    camera.zoom = 1.8f;
     Rectangle scissorArea = { player.position.x, player.position.y, nativeResWidth,nativeResHeight};
    
     //initialize audio stuff
@@ -139,8 +140,8 @@ int main() {
 
         int firstBlockX = (worldSizeW / 2) + (player.position.x - nativeResWidth) / 16;
         int lastBlockX = (worldSizeW / 2) + (player.position.x + nativeResWidth) / 16;
-        int firstBlockY = (worldSizeH / 4) + (player.position.y - nativeResHeight) / 16;
-        int lastBlockY = (worldSizeH / 4) + (player.position.y + nativeResHeight) / 16;
+        int firstBlockY = (worldSizeH / 5) + (player.position.y - nativeResHeight) / 16;
+        int lastBlockY = (worldSizeH / 5) + (player.position.y + nativeResHeight) / 16;
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -178,7 +179,7 @@ int main() {
             }
             //player actions inputs
             if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 6.0f;
-            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 1.0f;
+            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 2.0f;
 
             if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
             else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
@@ -220,8 +221,8 @@ int main() {
         if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "../save/playerSave.dat");
         // camera follows the player and zoom handling
         camera.zoom += ((float)GetMouseWheelMove()*0.1f);
-        if (camera.zoom > 3.0f) camera.zoom = 3.0f;
-        else if (camera.zoom < 0.6f) camera.zoom = 0.6f;
+        if (camera.zoom > 4.0f) camera.zoom = 4.0f;
+        else if (camera.zoom < 1.2f) camera.zoom = 1.2f;
         camera.target = {player.position.x, player.position.y };
         }
 
@@ -323,7 +324,7 @@ int main() {
                     player.resetPos();
                     currentScreen = GAMEPLAY;
                     //create a map
-                    unsigned int seed = 125245;
+                    unsigned int seed = 1234;
                     initPermutation(seed);
                     for (int i = 0; i < worldSizeW - 1; i++){
 
@@ -336,17 +337,17 @@ int main() {
                             double ni = (double)i / worldSizeW;
                             double nj = (float)j / worldSizeH;
                             double blockHighVal = perlin1D(ni * 20);
-                            if (j < 500 + perlin1D(blockHighVal * 10) * 20) {
+                            if (j < 370 + perlin1D(blockHighVal * 10) * 20 || j > 1650) {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                            } else if(j < 515 + perlin1D(blockHighVal * 20) * 5){
+                            } else if(j < 385 + perlin1D(blockHighVal * 20) * 5){
                                 block[i][j].type = Block::GRASS;
                                 block[i][j].solid = true;
-                            }else if(j < 530 + perlin1D(blockHighVal * 30) * 10){
+                            }else if(j < 400 + perlin1D(blockHighVal * 30) * 10){
                                 block[i][j].type = Block::STONE;
                                 block[i][j].solid = true; 
                             }else {
-                                double blockVal = perlin2D(ni * 300, nj * 300);                           
+                                double blockVal = perlin2D(ni, nj);                           
                                 if (blockVal <= 0.50f && blockVal > 0.0f) {
                                     block[i][j].type = Block::STONE;
                                     block[i][j].solid = true;                             
@@ -529,20 +530,15 @@ void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filen
     int width = worldSizeW;
     int height = worldSizeH;
 
-    // Create an image using Raylib
     Image image = GenImageColor(width, height, BLACK);
 
-    // Fill the image with colors based on the block types
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             Color color = getColorForBlockType(block[x][y].type);
             ImageDrawPixel(&image, x, y, color);
         }
     }
-
-    // Export the image to a file
     ExportImage(image, filename);
 
-    // Unload the image from memory
     UnloadImage(image);
 }
