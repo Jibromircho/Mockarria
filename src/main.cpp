@@ -43,6 +43,22 @@ double grad2D(int hash, double x, double y);
 double perlin1D(double x);
 double perlin2D(double x, double y);
 
+////debug stuff
+void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
+Color getColorForBlockType(Block::Type type) {
+    switch (type) {
+        case Block::SKY:
+            return SKYBLUE;   // Light blue
+        case Block::GRASS:
+            return DARKGREEN; // Green
+        case Block::STONE:
+            return GRAY;      // Gray
+        case Block::ICE:
+            return LIGHTGRAY; // Light blue-ish
+        default:
+            return BLACK;     // Black for unknown types
+    }
+}
 
 int main() {
     // initialize win
@@ -187,7 +203,7 @@ int main() {
                                 player.position.y += collisionArea.height;
                                 player.hitbox.y += collisionArea.height;
                                 world.setVelocity(world.getVelocity() + 1);
-                            }else player.position.y -= collisionArea.height, player.hitbox.y -= collisionArea.height, world.setVelocity(0), player.state = GROUND;
+                            }else player.position.y -= collisionArea.height, player.hitbox.y -= collisionArea.height, world.setVelocity(0), player.state = GROUND, player.resetJump();
                         }
                         if (collisionArea.height > collisionArea.width){
                             if (collisionArea.x == player.hitbox.x) {
@@ -307,19 +323,9 @@ int main() {
                     player.resetPos();
                     currentScreen = GAMEPLAY;
                     //create a map
-                
-                    //////////////////////////////
-                    ///////////////////////////////
                     unsigned int seed = 125245;
-                    initPermutation();
-      
-                    ///////////////////////////////
-                    /////////////////////////////
+                    initPermutation(seed);
                     for (int i = 0; i < worldSizeW - 1; i++){
-
-                        double ni = (double)i / worldSizeW;
-                        double blockHighVal = perlin1D(ni);
-                        std::cout << blockHighVal << std::endl;
 
                         for (int j = 0; j < worldSizeH - 1; j++){
                             block[i][j].position.x = worldStartX + i * tile.size;
@@ -327,32 +333,39 @@ int main() {
                             block[i][j].hitbox.x = block[i][j].position.x;
                             block[i][j].hitbox.y = block[i][j].position.y;
 
+                            double ni = (double)i / worldSizeW;
                             double nj = (float)j / worldSizeH;
-
-                            double blockVal = perlin2D(ni * 30, nj * 30);                           
-
-                                if (blockVal <= 0.1f && blockVal > 0.0f) {
-                                    block[i][j].type = Block::SKY;
-                                    block[i][j].solid = false;
-                                } else if (blockVal <= 0.3f && blockVal > 0.1f) {
-                                    block[i][j].type = Block::GRASS;
-                                    block[i][j].solid = true;
-                                } else if (blockVal <= 0.6f && blockVal > 0.3f) {
+                            double blockHighVal = perlin1D(ni * 20);
+                            if (j < 500 + perlin1D(blockHighVal * 10) * 20) {
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
+                            } else if(j < 515 + perlin1D(blockHighVal * 20) * 5){
+                                block[i][j].type = Block::GRASS;
+                                block[i][j].solid = true;
+                            }else if(j < 530 + perlin1D(blockHighVal * 30) * 10){
+                                block[i][j].type = Block::STONE;
+                                block[i][j].solid = true; 
+                            }else {
+                                double blockVal = perlin2D(ni * 300, nj * 300);                           
+                                if (blockVal <= 0.50f && blockVal > 0.0f) {
                                     block[i][j].type = Block::STONE;
                                     block[i][j].solid = true;                             
-                                } else if (blockVal <= 1.0f && blockVal > 0.6f) {
+                                } else if (blockVal <= 0.98f && blockVal > 0.50f) {
                                     block[i][j].type = Block::ICE;
                                     block[i][j].solid = false;
                             } else {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }                                                     
+
+                            }
                         }
                     }
+                    saveMapAsImage(block, "world_map.png");
                 }
     
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
-
+                
                 if (!CheckCollisionRecs(mousePosition, loadWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, loadWorldButtonPos, WHITE);
                 }
@@ -456,7 +469,6 @@ void initPermutation(unsigned int seed){
     std::shuffle(p.begin(), p.end(), engine);
 
     p.insert(p.end(), p.begin(), p.end());
-    std::cout << seed << std::endl;
 }
 //////////////////
 double fade(double t) {
@@ -471,7 +483,7 @@ double grad1D(int hash, double x) {
     int h = hash & 15;
     double grad = 1 + (h & 7);
     grad = (h & 8) ? -grad : grad;
-    grad = grad / 8.0; 
+    grad = grad / 8.0;
     return grad * x;
 }
 /////////////////
@@ -509,4 +521,28 @@ double perlin2D(double x, double y) {
     double res = lerp(v, lerp(u, grad2D(aa, x, y), grad2D(ba, x - 1, y)),
                          lerp(u, grad2D(ab, x, y - 1), grad2D(bb, x - 1, y - 1)));
     return res;
+}
+
+
+/// debug stuff
+void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename) {
+    int width = worldSizeW;
+    int height = worldSizeH;
+
+    // Create an image using Raylib
+    Image image = GenImageColor(width, height, BLACK);
+
+    // Fill the image with colors based on the block types
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            Color color = getColorForBlockType(block[x][y].type);
+            ImageDrawPixel(&image, x, y, color);
+        }
+    }
+
+    // Export the image to a file
+    ExportImage(image, filename);
+
+    // Unload the image from memory
+    UnloadImage(image);
 }
