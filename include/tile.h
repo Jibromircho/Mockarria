@@ -7,11 +7,13 @@ class Tile
 {
 public:
     //Tile (int x = 0, int y =0, int textureIndex = 0, const std::string& type = "grass", bool isSolid = true);
-    Texture2D tileSet = LoadTexture("../img/tiles/world_tileset.png");
+    Texture2D tileSet = LoadTexture("../img/tiles/world_tileset_d.png");
     const float size = 16.0f;
     Rectangle grass = { 0.0f, 0.0f, size, size };
-    Rectangle stone = { size * 8, 0.0f, size, size};
-    Rectangle ice = { size * 6, size * 2, size, size};
+    Rectangle dirt = { 0.0f, size, size, size};
+    Rectangle stoneTop = { size, 0.0f, size, size};
+    Rectangle stoneMid = { size, size, size, size};
+    Rectangle clay = { size * 2, 0.0f, size, size};
 
 
 private:

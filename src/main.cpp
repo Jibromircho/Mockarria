@@ -16,7 +16,7 @@ typedef struct Block {
     bool solid = false;
     Vector2 position;
     Rectangle hitbox;
-    enum Type { SKY = 0, GRASS, STONE, ICE} type;
+    enum Type { SKY = 0, GRASS, DIRT, STONETOP, STONEMID, CLAY} type;
     // Constructor with default values
     Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -52,10 +52,10 @@ Color getColorForBlockType(Block::Type type) {
             return SKYBLUE;   
         case Block::GRASS:
             return DARKGREEN; 
-        case Block::STONE:
+        case Block::STONEMID:
             return GRAY;      
-        case Block::ICE:
-            return LIGHTGRAY; 
+        case Block::CLAY:
+            return LIGHTGRAY;
         default:
             return BLACK;
     }
@@ -135,7 +135,10 @@ int main() {
     {
         //Constantly updating stuff
         framesCounter++;
-        Rectangle mousePosition = { (float)GetMouseX(), (float)GetMouseY(), 5.0f, 5.0f};
+        Vector2 mousePosition = GetMousePosition();
+        Vector2 worldMousePosition = GetScreenToWorld2D(mousePosition, camera);
+        Rectangle mouseHitbox = { mousePosition.x, mousePosition.y, 5.0f, 5.0f };
+        Rectangle worldMouseHitbox = { worldMousePosition.x, worldMousePosition.y, 0.0f, 0.0f };
 
 
         int firstBlockX = (worldSizeW / 2) + (player.position.x - nativeResWidth) / 16;
@@ -191,12 +194,18 @@ int main() {
 
             player.hitbox.x = player.position.x + player.hitboxOffset.x;
 
-            //player hitbox checks
+            //tile hitbox checks
             if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
+                    if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)){
+                        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+                        block[i][j].type = Block::SKY;
+                        block[i][j].solid = false;
+                        }
+                    }
                     if(block[i][j].solid){
                         Rectangle collisionArea = GetCollisionRec(player.hitbox, block[i][j].hitbox);
                         if (collisionArea.width > collisionArea.height){
@@ -215,7 +224,6 @@ int main() {
                     }
                 }
             }
-
 
         //other keys and inputs
         if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "../save/playerSave.dat");
@@ -261,30 +269,30 @@ int main() {
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all the buttons
-                if (!CheckCollisionRecs(mousePosition, playButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, playButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, playButtonPos, WHITE);
                     }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, playButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, playButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, playButtonPos, WHITE);
                         currentScreen = PLAY;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, playButtonPos, WHITE);
 
-                if (!CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, settingsButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, settingsButtonPos, WHITE);
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, settingsButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, settingsButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, settingsButtonPos, WHITE);
                         currentScreen = SETTINGS;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, settingsButtonPos, WHITE);
 
-                if (!CheckCollisionRecs(mousePosition, exitButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, exitButtonHitbox)){
 
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, exitButtonPos, WHITE);
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, exitButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, exitButtonHitbox)){
                         DrawTextureRec(buttonsEmpty, buttonPressed, exitButtonPos, WHITE);
                         currentScreen = ENDING;
                 }
@@ -307,19 +315,19 @@ int main() {
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
-                if (!CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, backButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, backButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, backButtonPos, WHITE);
                     currentScreen = TITLE;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
 
-                if (!CheckCollisionRecs(mousePosition, createWorldButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, createWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, createWorldButtonPos, WHITE);
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, createWorldButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, createWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, createWorldButtonPos, WHITE);
                     player.resetPos();
                     currentScreen = GAMEPLAY;
@@ -337,22 +345,23 @@ int main() {
                             double ni = (double)i / worldSizeW;
                             double nj = (float)j / worldSizeH;
                             double blockHighVal = perlin1D(ni * 20);
+
                             if (j < 370 + perlin1D(blockHighVal * 10) * 20 || j > 1650) {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                            } else if(j < 385 + perlin1D(blockHighVal * 20) * 5){
-                                block[i][j].type = Block::GRASS;
-                                block[i][j].solid = true;
+                            } else if(j < 385 + perlin1D(blockHighVal * 20) * 5){                                           
+                                block[i][j].type = Block::DIRT;
+                                block[i][j].solid = true;                            
                             }else if(j < 400 + perlin1D(blockHighVal * 30) * 10){
-                                block[i][j].type = Block::STONE;
+                                block[i][j].type = Block::STONEMID;
                                 block[i][j].solid = true; 
                             }else {
-                                double blockVal = perlin2D(ni, nj);                           
+                                double blockVal = perlin2D(ni * 5, nj * 5);                           
                                 if (blockVal <= 0.50f && blockVal > 0.0f) {
-                                    block[i][j].type = Block::STONE;
+                                    block[i][j].type = Block::STONEMID;
                                     block[i][j].solid = true;                             
                                 } else if (blockVal <= 0.98f && blockVal > 0.50f) {
-                                    block[i][j].type = Block::ICE;
+                                    block[i][j].type = Block::CLAY;
                                     block[i][j].solid = false;
                             } else {
                                 block[i][j].type = Block::SKY;
@@ -367,10 +376,10 @@ int main() {
     
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
                 
-                if (!CheckCollisionRecs(mousePosition, loadWorldButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, loadWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, loadWorldButtonPos, WHITE);
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, loadWorldButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, loadWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, loadWorldButtonPos, WHITE);
                     player.loadGame(player.position, "../save/playerSave.dat");
                     currentScreen = GAMEPLAY;
@@ -391,10 +400,10 @@ int main() {
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
-                if (!CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                if (!CheckCollisionRecs(mouseHitbox, backButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
                 }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mousePosition, backButtonHitbox)){
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, backButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, backButtonPos, WHITE);
                     currentScreen = TITLE;
                 }
@@ -409,14 +418,15 @@ int main() {
                         for (int j = firstBlockY; j < lastBlockY; j++){
                             switch (block[i][j].type)
                             {
-                            case Block::GRASS:
-                                DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
+                            case Block::DIRT:
+                                if (block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirt, block[i][j].position, WHITE);
+                                else DrawTextureRec(tile.tileSet, tile.grass, block[i][j].position, WHITE);
                                 break;
-                            case Block::STONE:
-                                DrawTextureRec(tile.tileSet, tile.stone, block[i][j].position, WHITE);
+                            case Block::STONEMID:
+                                DrawTextureRec(tile.tileSet, tile.stoneMid, block[i][j].position, WHITE);
                                 break;
-                            case Block::ICE:
-                                DrawTextureRec(tile.tileSet, tile.ice, block[i][j].position, WHITE);
+                            case Block::CLAY:
+                                DrawTextureRec(tile.tileSet, tile.clay, block[i][j].position, WHITE);
                                 break;
                             default:
                                 break;
