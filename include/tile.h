@@ -18,6 +18,14 @@ public:
     Rectangle dirtTopRight = { 0.0f, size * 6, size, size};
     Rectangle dirtBottRight = { 0.0f, size * 7, size, size};
     Rectangle dirtBottLeft = { 0.0f, size * 8, size, size};
+    Rectangle dirtLeftTopRight = { 0.0f, size * 9, size, size};
+    Rectangle dirtTopRightBott = { 0.0f, size * 10, size, size};
+    Rectangle dirtRightBottLeft = { 0.0f, size * 11, size, size};
+    Rectangle dirtBottLeftTop = { 0.0f, size * 12, size, size};
+    Rectangle dirtAllSide = { 0.0f, size * 13, size, size};
+    Rectangle dirtLeftRight = { 0.0f, size * 14, size, size};
+     Rectangle dirtTopBott = { 0.0f, size * 15, size, size};
+
 
     //////
     Rectangle stoneTop = { size, 0.0f, size, size};

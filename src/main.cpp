@@ -16,7 +16,7 @@ typedef struct Block {
     bool solid = false;
     Vector2 position;
     Rectangle hitbox;
-    enum Type { SKY = 0, GRASS, DIRT, STONETOP, STONEMID, CLAY} type;
+    enum Type { SKY = 0, DIRT, STONE, CLAY} type;
     // Constructor with default values
     Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -50,12 +50,12 @@ Color getColorForBlockType(Block::Type type) {
     switch (type) {
         case Block::SKY:
             return SKYBLUE;   
-        case Block::GRASS:
-            return DARKGREEN; 
-        case Block::STONEMID:
+        case Block::DIRT:
+            return BROWN; 
+        case Block::STONE:
             return GRAY;      
         case Block::CLAY:
-            return LIGHTGRAY;
+            return RED;
         default:
             return BLACK;
     }
@@ -333,7 +333,7 @@ int main() {
                     currentScreen = GAMEPLAY;
                     //create a map
                     unsigned int seed = 1234;
-                    initPermutation(seed);
+                    initPermutation();
                     for (int i = 0; i < worldSizeW - 1; i++){
 
                         for (int j = 0; j < worldSizeH - 1; j++){
@@ -353,21 +353,24 @@ int main() {
                                 block[i][j].type = Block::DIRT;
                                 block[i][j].solid = true;                            
                             }else if(j < 400 + perlin1D(blockHighVal * 30) * 10){
-                                block[i][j].type = Block::STONEMID;
+                                block[i][j].type = Block::STONE;
                                 block[i][j].solid = true; 
                             }else {
-                                double blockVal = perlin2D(ni * 5, nj * 5);                           
-                                if (blockVal <= 0.50f && blockVal > 0.0f) {
-                                    block[i][j].type = Block::STONEMID;
-                                    block[i][j].solid = true;                             
-                                } else if (blockVal <= 0.98f && blockVal > 0.50f) {
+                                double blockVal = perlin2D(ni * 500, nj * 80); 
+                                if (blockVal <= -0.85f && blockVal > -1.0f) {
                                     block[i][j].type = Block::CLAY;
+                                    block[i][j].solid = true;                             
+                                } else if (blockVal <= -0.5f && blockVal > -0.85f) {
+                                    block[i][j].type = Block::DIRT;
+                                    block[i][j].solid = true;
+                                } 
+                                else if (blockVal <= 0.2f && blockVal > -0.5f) {
+                                    block[i][j].type = Block::STONE;
+                                    block[i][j].solid = true;
+                                }else {
+                                    block[i][j].type = Block::SKY;
                                     block[i][j].solid = false;
-                            } else {
-                                block[i][j].type = Block::SKY;
-                                block[i][j].solid = false;
-                            }                                                     
-
+                                }                                                     
                             }
                         }
                     }
@@ -419,17 +422,24 @@ int main() {
                             switch (block[i][j].type)
                             {
                             case Block::DIRT:
-                                if (!block[i][j + 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottLeft, block[i][j].position, WHITE);
+                                if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtAllSide, block[i][j].position, WHITE);
+                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtLeftTopRight, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtRightBottLeft, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtTopRightBott, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottLeftTop, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottLeft, block[i][j].position, WHITE);
                                 else if (!block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtTopLeft, block[i][j].position, WHITE);
                                 else if (!block[i + 1][j].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirtTopRight, block[i][j].position, WHITE);
                                 else if (!block[i][j + 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottRight, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirtLeftRight, block[i][j].position, WHITE);
+                                else if (!block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtTopBott, block[i][j].position, WHITE);                    
                                 else if (!block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtRight, block[i][j].position, WHITE);
                                 else if (!block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtLeft, block[i][j].position, WHITE);
                                 else if (!block[i][j + 1].solid) DrawTextureRec(tile.tileSet, tile.dirtBott, block[i][j].position, WHITE);
                                 else if (!block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirtTop, block[i][j].position, WHITE);     
                                 else DrawTextureRec(tile.tileSet, tile.dirtCenter, block[i][j].position, WHITE);
                                 break;
-                            case Block::STONEMID:
+                            case Block::STONE:
                                 DrawTextureRec(tile.tileSet, tile.stoneMid, block[i][j].position, WHITE);
                                 break;
                             case Block::CLAY:
