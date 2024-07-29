@@ -349,28 +349,35 @@ int main() {
                             if (j < 370 + perlin1D(blockHighVal * 10) * 20 || j > 1650) {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                            } else if(j < 385 + perlin1D(blockHighVal * 20) * 5){                                           
+                            }else if(j < 385 + perlin1D(blockHighVal * 20) * 5){                                           
                                 block[i][j].type = Block::DIRT;
                                 block[i][j].solid = true;                            
                             }else if(j < 400 + perlin1D(blockHighVal * 30) * 10){
                                 block[i][j].type = Block::STONE;
                                 block[i][j].solid = true; 
                             }else {
-                                double blockVal = perlin2D(ni * 500, nj * 80); 
+                                double blockVal = perlin2D(ni * 500, nj * 75);
                                 if (blockVal <= -0.85f && blockVal > -1.0f) {
                                     block[i][j].type = Block::CLAY;
                                     block[i][j].solid = true;                             
-                                } else if (blockVal <= -0.5f && blockVal > -0.85f) {
+                                } else if (blockVal <= -0.2f && blockVal > -0.85f) {
                                     block[i][j].type = Block::DIRT;
                                     block[i][j].solid = true;
                                 } 
-                                else if (blockVal <= 0.2f && blockVal > -0.5f) {
+                                else if (blockVal <= 1.0f && blockVal > -0.2f) {
                                     block[i][j].type = Block::STONE;
                                     block[i][j].solid = true;
-                                }else {
-                                    block[i][j].type = Block::SKY;
-                                    block[i][j].solid = false;
                                 }                                                     
+                            }
+                            double perlinCaves = perlin2D(ni * 10, nj * 35);
+                            /*if (j > 450 && perlinCaves <= -0.3f && perlinCaves > -1.0f){
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
+                            }*/
+                            perlinCaves = perlin2D(ni * 25, nj * 30);
+                            if (perlinCaves <= 0.06f && perlinCaves > -0.02f){
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
                             }
                         }
                     }
