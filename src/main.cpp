@@ -369,13 +369,18 @@ int main() {
                                     block[i][j].solid = true;
                                 }                                                     
                             }
-                            double perlinCaves = perlin2D(ni * 10, nj * 35);
-                            /*if (j > 450 && perlinCaves <= -0.3f && perlinCaves > -1.0f){
+                            double perlinCaves = perlin2D(ni * 15, nj * 25);
+                            if (j > 450 && perlinCaves <= -0.58f && perlinCaves > -0.68f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                            }*/
-                            perlinCaves = perlin2D(ni * 25, nj * 30);
-                            if (perlinCaves <= 0.06f && perlinCaves > -0.02f){
+                            }
+                            perlinCaves = perlin2D(ni * 10, nj * 20);
+                            if (perlinCaves <= 0.025f && perlinCaves > -0.02f){
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
+                            }
+                            perlinCaves = perlin2D(ni * 20, nj * 12);
+                            if (perlinCaves <= 0.22f && perlinCaves > 0.2f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
