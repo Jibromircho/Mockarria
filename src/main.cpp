@@ -346,41 +346,45 @@ int main() {
                             double nj = (float)j / worldSizeH;
                             double blockHighVal = perlin1D(ni * 20);
 
-                            if (j < 370 + perlin1D(blockHighVal * 10) * 20 || j > 1650) {
+                            double frequency = 1.0;
+                            double amplitude = 1.0;
+                            double persistence = 0.5;
+                            double totalAmplitude = 0.0;
+                            double height = 0.0;
+
+                            for (int octave = 0; octave < 12; octave++) {
+                                height += perlin1D(ni * frequency * 20) * amplitude;
+                                totalAmplitude += amplitude;
+                                amplitude *= persistence;
+                                frequency *= 2.0;
+                            }
+                            height /= totalAmplitude;
+                            height = (height + 1) / 2;
+                            int terrainHeight = (int)(height * (worldSizeH / 3));
+
+                            if (j < terrainHeight) { //shapes bigger hills on surfice
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
-                            }else if(j < 385 + perlin1D(blockHighVal * 20) * 5){                                           
+                            }
+                            else if(j < terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)){ //makes dirt layeer near surfice                                 
                                 block[i][j].type = Block::DIRT;
                                 block[i][j].solid = true;                            
-                            }else if(j < 400 + perlin1D(blockHighVal * 30) * 10){
+                            }else{                                      // makes stone layer bellow sirfice
                                 block[i][j].type = Block::STONE;
                                 block[i][j].solid = true; 
-                            }else {
-                                double blockVal = perlin2D(ni * 500, nj * 75);
-                                if (blockVal <= -0.85f && blockVal > -1.0f) {
-                                    block[i][j].type = Block::CLAY;
-                                    block[i][j].solid = true;                             
-                                } else if (blockVal <= -0.2f && blockVal > -0.85f) {
-                                    block[i][j].type = Block::DIRT;
-                                    block[i][j].solid = true;
-                                } 
-                                else if (blockVal <= 1.0f && blockVal > -0.2f) {
-                                    block[i][j].type = Block::STONE;
-                                    block[i][j].solid = true;
-                                }                                                     
                             }
                             double perlinCaves = perlin2D(ni * 10, nj * 35); //perfect for bigger caves
                             if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
-                            perlinCaves = perlin2D(ni * 35, nj * 55);//working on tunnels
+                            perlinCaves = perlin2D(ni * 95, nj * 30);//working on tunnels
                             if (perlinCaves <= 0.767f && perlinCaves > 0.483f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
                             perlinCaves = perlin2D(ni * 90, nj * 90); //perfect for small caves
-                            if (j > 400 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
+                            if (perlinCaves <= -0.5f && perlinCaves > -1.0f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
