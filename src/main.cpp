@@ -334,6 +334,7 @@ int main() {
                     currentScreen = GAMEPLAY;
                     //create a map
                     unsigned int seed = 1234;
+                    int* terrainHeight = new int(0);
                     initPermutation();
                     for (int i = 0; i < worldSizeW - 1; i++){
 
@@ -361,13 +362,13 @@ int main() {
                             }
                             height /= totalAmplitude;
                             height = (height + 1) / 2;
-                            int terrainHeight = (int)(height * (worldSizeH / 3));
+                            *terrainHeight = static_cast<int>(height * (worldSizeH / 3));
 
-                            if (j < terrainHeight) { //shapes bigger hills on surfice
+                            if (j < *terrainHeight) { //shapes bigger hills on surfice
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
-                            else if(j < terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)){ //makes dirt layeer near surfice                                 
+                            else if(j < *terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)){ //makes dirt layeer near surfice                                 
                                 block[i][j].type = Block::DIRT;
                                 block[i][j].solid = true;                            
                             }else{                                      // makes stone layer bellow sirfice
@@ -389,9 +390,14 @@ int main() {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
+                            
                         }
                     }
-                    saveMapAsImage(block, "world_map.png");
+                    player.position.y = worldStartY + (*terrainHeight - 4) * tile.size;
+                    player.hitbox.y = player.position.y + player.hitboxOffset.y;
+                    delete terrainHeight;
+
+                saveMapAsImage(block, "world_map.png");
                 }
     
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
@@ -477,7 +483,7 @@ int main() {
                 //Drawing ui elemnts
                 DrawTextureEx(healthUi,Vector2{ 16.0f, 8.0f}, 0.0f, resolutionScale / 1.6, WHITE);
                 for (int i = 0; i < 10; i++){
-                    DrawTextureEx(inventorySlot, Vector2 { (nativeResWidth / 3) + (i * 48.0f) + 32.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
+                    DrawTextureEx(inventorySlot, Vector2 { (nativeResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
                 }
                 DrawFPS ( 200, 200 );
 
