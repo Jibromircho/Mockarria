@@ -100,7 +100,8 @@ int main() {
     PlayMusicStream(mainMenuMusic1);
 
     //initialize textures
-    Texture2D healthUi = LoadTexture("../img/ui/Health_blank_x3.png");
+    Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");
+    Texture2D inventorySlot = LoadTexture("../img/ui/Inventory_Slot.png");
     Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen_no_sky.png");
     Texture2D loadScreenSky = LoadTexture("../img/backgrounds/main_menu_sky.png");
     Texture2D loadScreenCloud_1 = LoadTexture("../img/backgrounds/main_menu_cloud_1.png");
@@ -474,8 +475,11 @@ int main() {
                 EndMode2D();
 
                 //Drawing ui elemnts
-                DrawTextureEx(healthUi,Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale / 2, WHITE);
-                DrawFPS ( 20, 20);
+                DrawTextureEx(healthUi,Vector2{ 16.0f, 8.0f}, 0.0f, resolutionScale / 1.6, WHITE);
+                for (int i = 0; i < 10; i++){
+                    DrawTextureEx(inventorySlot, Vector2 { (nativeResWidth / 3) + (i * 48.0f) + 32.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
+                }
+                DrawFPS ( 200, 200 );
 
             }break;
             case ENDING:
