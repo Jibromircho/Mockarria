@@ -348,7 +348,7 @@ int main() {
                             double nj = (float)j / worldSizeH;
                             double blockHighVal = perlin1D(ni * 20);
 
-                            double frequency = 1.0;
+                            double frequency = 0.5;
                             double amplitude = 1.0;
                             double persistence = 0.5;
                             double totalAmplitude = 0.0;
