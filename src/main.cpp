@@ -182,23 +182,14 @@ int main() {
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
             //player actions inputs
-            if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 6.0f;
-            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 2.0f;
+            player.updatePlayer();
 
-            if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
-            else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
+            world.updateWorld();
 
-
-
-            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
-            else world.setVelocity(world.getVelocityMax());
-
-            player.hitbox.x = player.position.x + player.hitboxOffset.x;
-
-            //tile hitbox checks
             if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
+            //tile hitbox checks
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
                     if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)){
@@ -348,7 +339,7 @@ int main() {
                             double nj = (float)j / worldSizeH;
                             double blockHighVal = perlin1D(ni * 20);
 
-                            double frequency = 1.0;
+                            double frequency = 0.5;
                             double amplitude = 1.0;
                             double persistence = 0.5;
                             double totalAmplitude = 0.0;
@@ -475,9 +466,7 @@ int main() {
                     }
                     DrawRectangleLinesEx(player.hitbox, 2, GREEN);
                     //player drawing
-                    if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
-                    else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
-                    else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
+                    player.drawPlayer();
                 EndMode2D();
 
                 //Drawing ui elemnts

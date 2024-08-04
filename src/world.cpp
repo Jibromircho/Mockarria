@@ -43,3 +43,8 @@ void World::setVelocity(float vel) {
     }
 }
 
+void World::updateWorld() {
+    if (velocity < velocityMax) velocity += acceleration;
+    else velocity = velocityMax;
+}
+

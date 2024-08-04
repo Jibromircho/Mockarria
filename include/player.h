@@ -43,6 +43,24 @@ public:
 
     float movementSpeed = 2.0f;
 
+    void updatePlayer() //player update functions
+    {   
+        //input movement
+        if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) movementSpeed = 6.0f;
+        if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) movementSpeed = 2.0f;
+        if (IsKeyDown(KEY_A)) position.x -= movementSpeed;
+        if (IsKeyDown(KEY_D)) position.x += movementSpeed;
+
+        //always updating 
+        hitbox.x = position.x + hitboxOffset.x;
+    }
+
+    void drawPlayer() const {
+        if(IsKeyDown(KEY_A)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
+        if(IsKeyDown(KEY_D)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
+        if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(model_movement, frameRecIdle, position, WHITE);
+    }
+
     //player saving function
     void saveGame (Vector2& position, const std::string& filename){
         std::ofstream file(filename, std::ios::binary);
