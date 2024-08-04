@@ -24,7 +24,7 @@ private:
     const float worldHeight = 1800.0f;
     float acceleration = 0.1f;
     float velocity = 0.0f;
-    const float velocityMax = 15.0f;
+    const float velocityMax = 12.0f;
 
 };
 

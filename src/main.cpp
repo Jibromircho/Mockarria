@@ -466,9 +466,7 @@ int main() {
                     }
                     DrawRectangleLinesEx(player.hitbox, 2, GREEN);
                     //player drawing
-                    if(IsKeyDown(KEY_A)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
-                    else if(IsKeyDown(KEY_D)) DrawTextureRec(player.model_movement, player.frameRecMove, player.position, WHITE);
-                    else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(player.model_movement, player.frameRecIdle, player.position, WHITE);
+                    player.drawPlayer();
                 EndMode2D();
 
                 //Drawing ui elemnts

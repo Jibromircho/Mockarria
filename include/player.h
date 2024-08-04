@@ -55,6 +55,12 @@ public:
         hitbox.x = position.x + hitboxOffset.x;
     }
 
+    void drawPlayer() const {
+        if(IsKeyDown(KEY_A)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
+        if(IsKeyDown(KEY_D)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
+        if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(model_movement, frameRecIdle, position, WHITE);
+    }
+
     //player saving function
     void saveGame (Vector2& position, const std::string& filename){
         std::ofstream file(filename, std::ios::binary);
