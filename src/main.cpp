@@ -182,23 +182,14 @@ int main() {
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
             //player actions inputs
-            if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) player.movementSpeed = 6.0f;
-            if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) player.movementSpeed = 2.0f;
+            player.updatePlayer();
 
-            if (IsKeyDown(KEY_A)) player.position.x -= player.movementSpeed;
-            else if (IsKeyDown(KEY_D)) player.position.x += player.movementSpeed;
+            world.updateWorld();
 
-
-
-            if (world.getVelocity() < world.getVelocityMax()) world.setVelocity(world.getVelocity() + world.getAcceleration());
-            else world.setVelocity(world.getVelocityMax());
-
-            player.hitbox.x = player.position.x + player.hitboxOffset.x;
-
-            //tile hitbox checks
             if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
             player.position.y += world.getVelocity();
             player.hitbox.y += world.getVelocity();
+            //tile hitbox checks
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
                     if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)){

@@ -16,6 +16,7 @@ public:
 
     void setAcceleration(float acc);
     void setVelocity(float vel);
+    void updateWorld();
     
 
 private:
