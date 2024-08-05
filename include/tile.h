@@ -7,7 +7,7 @@ class Tile
 {
 public:
     //Tile (int x = 0, int y =0, int textureIndex = 0, const std::string& type = "grass", bool isSolid = true);
-    Texture2D tileSet = LoadTexture("../img/tiles/world_tileset_d.png");
+    Texture2D tileSet = LoadTexture("../img/tiles/world_tileset.png");
     const float size = 16.0f;
     Rectangle dirtTop = { 0.0f, 0.0f, size, size };
     Rectangle dirtCenter = { 0.0f, size, size, size};

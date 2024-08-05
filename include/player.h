@@ -57,8 +57,8 @@ public:
 
     void drawPlayer() const {
         if(IsKeyDown(KEY_A)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
-        if(IsKeyDown(KEY_D)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
-        if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(model_movement, frameRecIdle, position, WHITE);
+        else if(IsKeyDown(KEY_D)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
+        else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(model_movement, frameRecIdle, position, WHITE);
     }
 
     //player saving function
