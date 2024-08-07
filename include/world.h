@@ -12,7 +12,6 @@ public:
     float getAcceleration() const;
     float getVelocity() const;
     float getVelocityMax() const;
-    int getTileMap(int x) const;
 
     void setAcceleration(float acc);
     void setVelocity(float vel);

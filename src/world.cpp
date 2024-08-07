@@ -26,10 +26,6 @@ float World::getVelocityMax() const {
     return velocityMax;
 }
 
-int World::getTileMap(int x) const {
-    //return tileMap[x];
-}
-
 // Setter methods
 void World::setAcceleration(float acc) {
     acceleration = acc;
