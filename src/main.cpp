@@ -454,7 +454,22 @@ int main() {
                                 else DrawTextureRec(tile.tileSet, tile.dirtCenter, block[i][j].position, WHITE);
                                 break;
                             case Block::STONE:
-                                DrawTextureRec(tile.tileSet, tile.stoneMid, block[i][j].position, WHITE);
+                                if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneAllSide, block[i][j].position, WHITE);
+                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneLeftTopRight, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneRightBottLeft, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneTopRightBott, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneBottLeftTop, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneBottLeft, block[i][j].position, WHITE);
+                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneTopLeft, block[i][j].position, WHITE);
+                                else if (!block[i + 1][j].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.stoneTopRight, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneBottRight, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.stoneLeftRight, block[i][j].position, WHITE);
+                                else if (!block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneTopBott, block[i][j].position, WHITE);                    
+                                else if (!block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneRight, block[i][j].position, WHITE);
+                                else if (!block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneLeft, block[i][j].position, WHITE);
+                                else if (!block[i][j + 1].solid) DrawTextureRec(tile.tileSet, tile.stoneBott, block[i][j].position, WHITE);
+                                else if (!block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.stoneTop, block[i][j].position, WHITE);     
+                                else DrawTextureRec(tile.tileSet, tile.stoneCenter, block[i][j].position, WHITE);
                                 break;
                             case Block::CLAY:
                                 DrawTextureRec(tile.tileSet, tile.clay, block[i][j].position, WHITE);
