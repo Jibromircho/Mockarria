@@ -31,6 +31,13 @@ public:
     Vector2 hitboxOffset = { 4 , 4 };
     Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
 
+    Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");
+    Rectangle healthUi20 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
+    Rectangle healthUi15 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
+    Rectangle healthUi10 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
+    Rectangle healthUi5 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
+    Rectangle healthUi0 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
+
     //player stats
     PlayerStats stats;
     const int maxJump = 100;
@@ -59,6 +66,15 @@ public:
         if(IsKeyDown(KEY_A)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
         else if(IsKeyDown(KEY_D)) DrawTextureRec(model_movement, frameRecMove, position, WHITE);
         else if(IsKeyUp(KEY_A && KEY_D)) DrawTextureRec(model_movement, frameRecIdle, position, WHITE);
+    }
+    
+    void drawPlayerHealth(float resolutionScale) const {
+        Vector2 position = { 16.0f, 8.0f };
+        float scaleFactor = resolutionScale / 1.6;
+        Rectangle destRec = { position.x, position.y, healthUi20.width * scaleFactor, healthUi20.height * scaleFactor };
+        if ((health % 20) > 0){
+            DrawTexturePro(healthUi,healthUi20, (Rectangle{ 16.0f, 8.0f , 0.0f, 0.0f }),Vector2{ 0.0f, 0.0f }, resolutionScale / 1.6, WHITE);
+        }
     }
 
     //player saving function

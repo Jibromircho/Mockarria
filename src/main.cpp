@@ -100,7 +100,6 @@ int main() {
     PlayMusicStream(mainMenuMusic1);
 
     //initialize textures
-    Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");
     Texture2D inventorySlot = LoadTexture("../img/ui/Inventory_Slot.png");
     Texture2D loadScreen = LoadTexture("../img/backgrounds/Initial_load_screen_no_sky.png");
     Texture2D loadScreenSky = LoadTexture("../img/backgrounds/main_menu_sky.png");
@@ -485,7 +484,7 @@ int main() {
                 EndMode2D();
 
                 //Drawing ui elemnts
-                DrawTextureEx(healthUi,Vector2{ 16.0f, 8.0f}, 0.0f, resolutionScale / 1.6, WHITE);
+                player.drawPlayerHealth(resolutionScale);
                 for (int i = 0; i < 10; i++){
                     DrawTextureEx(inventorySlot, Vector2 { (nativeResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
                 }
