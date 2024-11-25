@@ -8,6 +8,7 @@ std::vector<int> p;
 //game current screen
 typedef enum GameScreen { LOGO = 0, TITLE, PLAY, SETTINGS, GAMEPLAY, ENDING} GameScreen;
 
+
 const int worldSizeW = 6400;
 const int worldSizeH = 1800;
 const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
@@ -64,20 +65,25 @@ Color getColorForBlockType(Block::Type type) {
 int main() {
     // initialize win
     InitWindow(0, 0, "Mockarria");
-    float nativeResWidth = GetScreenWidth();
-    float nativeResHeight = GetScreenHeight();
-    SetWindowSize(nativeResWidth, nativeResHeight);
+    float currentResWidth = GetScreenWidth();
+    float currentResHeight = GetScreenHeight();
+    SetWindowSize(currentResWidth, currentResHeight);
     ToggleFullscreen();
     SetExitKey(0);
 
     //button positions
-    float resolutionScale = nativeResWidth / workingWidth;
-    const Vector2 playButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2 - 100 };
-    const Vector2 settingsButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  - 25 };
-    const Vector2 exitButtonPos { nativeResWidth / 2 - 100, nativeResHeight / 2  + 50 };
-    const Vector2 backButtonPos { 50 , nativeResHeight - 100};
-    const Vector2 createWorldButtonPos = { nativeResWidth / 2 - 300, nativeResHeight - 100 };
-    const Vector2 loadWorldButtonPos = { nativeResWidth / 2 , nativeResHeight - 100 };
+    float resolutionScale = currentResWidth / workingWidth;
+    const Vector2 playButtonPos { currentResWidth / 2 - 100, currentResHeight / 2 - 100 };
+    const Vector2 settingsButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
+    const Vector2 exitButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  + 50 };
+    const Vector2 backButtonPos { 50 , currentResHeight - 100};
+
+    const Vector2 fullscreenButtonPos { currentResWidth / 2 - 100, currentResHeight / 2 - 100 };
+    const Vector2 resolutionButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
+    const Vector2 soundButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  + 50 };
+
+    const Vector2 createWorldButtonPos = { currentResWidth / 2 - 300, currentResHeight - 100 };
+    const Vector2 loadWorldButtonPos = { currentResWidth / 2 , currentResHeight - 100 };
 
     //game elements 
     GameScreen currentScreen = LOGO;
@@ -88,9 +94,9 @@ int main() {
     //camera initialization
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
-    camera.offset = {nativeResWidth / 2.0f, nativeResHeight / 2.0f};
+    camera.offset = {currentResWidth / 2.0f, currentResHeight / 2.0f};
     camera.zoom = 1.8f;
-    Rectangle scissorArea = { player.position.x, player.position.y, nativeResWidth,nativeResHeight};
+    Rectangle scissorArea = { player.position.x, player.position.y, currentResWidth,currentResHeight};
    
     //initialize audio stuff
     InitAudioDevice();
@@ -107,16 +113,21 @@ int main() {
     Texture2D buttonsEmpty = LoadTexture("../img/ui/ui_buttons_x2.png");
 
 
-    Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
-    Rectangle buttonPressed = { (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2, (float)buttonsEmpty.width/2, (float)buttonsEmpty.height/2 };
+    Rectangle buttonNonPressed = { 0.0f, 0.0f, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    Rectangle buttonHover = { 0.0f, (float)buttonsEmpty.height / 2, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    Rectangle buttonPressed = { (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
     Vector2 mainMenuCloudPos = Vector2{ 0.0f, 0.0f};
 
     //button hitboxes
-    const Rectangle playButtonHitbox { playButtonPos.x , playButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
-    const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
-    const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
-    const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width/2, (float)buttonsEmpty.height / 2 };
+    const Rectangle playButtonHitbox { playButtonPos.x , playButtonPos.y , (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    const Rectangle settingsButtonHitbox { settingsButtonPos.x , settingsButtonPos.y , (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    const Rectangle exitButtonHitbox { exitButtonPos.x , exitButtonPos.y , (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+
+    const Rectangle fullscreenButtonHitbox { fullscreenButtonPos.x, fullscreenButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    const Rectangle resolutionButtonHitbox { resolutionButtonPos.x, resolutionButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+    const Rectangle soundButtonHitbox { soundButtonPos.x, soundButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
+
     const Rectangle createWorldButtonHitbox { createWorldButtonPos.x , createWorldButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
     const Rectangle loadWorldButtonHitbox { loadWorldButtonPos.x , loadWorldButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
 
@@ -130,6 +141,7 @@ int main() {
     int framesCounter = 0;
     int framesSpeed = 8;
 
+
     // Main game loop
     while (!WindowShouldClose()) // detect window closure
     {
@@ -141,10 +153,10 @@ int main() {
         Rectangle worldMouseHitbox = { worldMousePosition.x, worldMousePosition.y, 0.0f, 0.0f };
 
 
-        int firstBlockX = (worldSizeW / 2) + (player.position.x - nativeResWidth) / 16;
-        int lastBlockX = (worldSizeW / 2) + (player.position.x + nativeResWidth) / 16;
-        int firstBlockY = (worldSizeH / 5) + (player.position.y - nativeResHeight) / 16;
-        int lastBlockY = (worldSizeH / 5) + (player.position.y + nativeResHeight) / 16;
+        int firstBlockX = (worldSizeW / 2) + (player.position.x - currentResWidth) / 16;
+        int lastBlockX = (worldSizeW / 2) + (player.position.x + currentResWidth) / 16;
+        int firstBlockY = (worldSizeH / 5) + (player.position.y - currentResHeight) / 16;
+        int lastBlockY = (worldSizeH / 5) + (player.position.y + currentResHeight) / 16;
         
    
         UpdateMusicStream(mainMenuMusic1);
@@ -416,6 +428,8 @@ int main() {
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
+
+                //back button
                 if (!CheckCollisionRecs(mouseHitbox, backButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonNonPressed, backButtonPos, WHITE);
                 }
@@ -425,6 +439,32 @@ int main() {
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, backButtonPos, WHITE);
                 DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+
+                //fulscreen button
+                if (!CheckCollisionRecs(mouseHitbox, fullscreenButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, fullscreenButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, fullscreenButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, fullscreenButtonPos, WHITE);
+                    if (IsWindowFullscreen()) ToggleFullscreen();   
+                    else if (!IsWindowFullscreen()) ToggleFullscreen();
+
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, fullscreenButtonPos, WHITE);
+                if (IsWindowFullscreen()) DrawText("FULLSCREEN : OFF", fullscreenButtonPos.x + 20 , fullscreenButtonPos.y + buttonFontSize / 1.4 , buttonFontSize / 1.4, RAYWHITE);
+                if (!IsWindowFullscreen()) DrawText("FULLSCREEN : ON", fullscreenButtonPos.x + 20 , fullscreenButtonPos.y + buttonFontSize / 1.4 , buttonFontSize / 1.4, RAYWHITE);
+                //resolution button
+                if (!CheckCollisionRecs(mouseHitbox, resolutionButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, resolutionButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, resolutionButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, resolutionButtonPos, WHITE);
+                    //SetWindowSize()
+
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, resolutionButtonPos, WHITE);
+
+
 
             }break;
             case GAMEPLAY:
@@ -486,7 +526,7 @@ int main() {
                 //Drawing ui elemnts
                 player.drawPlayerHealth(resolutionScale);
                 for (int i = 0; i < 10; i++){
-                    DrawTextureEx(inventorySlot, Vector2 { (nativeResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
+                    DrawTextureEx(inventorySlot, Vector2 { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
                 }
                 DrawFPS ( 200, 200 );
 
