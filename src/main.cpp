@@ -102,7 +102,8 @@ int main() {
     InitAudioDevice();
     Music mainMenuMusic1 = LoadMusicStream("../sfx/Menu_soundtrack_1.mp3");
     mainMenuMusic1.looping = true;
-    SetMusicVolume(mainMenuMusic1, volumeMusic * volumeMaster);
+    SetMasterVolume(volumeMaster);
+    SetMusicVolume(mainMenuMusic1, volumeMusic);
     PlayMusicStream(mainMenuMusic1);
 
     //initialize textures
@@ -446,8 +447,7 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, fullscreenButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, fullscreenButtonPos, WHITE);
-                    if (IsWindowFullscreen()) ToggleFullscreen();   
-                    else if (!IsWindowFullscreen()) ToggleFullscreen();
+                    ToggleFullscreen();
 
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, fullscreenButtonPos, WHITE);
@@ -463,6 +463,24 @@ int main() {
 
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, resolutionButtonPos, WHITE);
+
+                //sound on/off button
+                if (!CheckCollisionRecs(mouseHitbox, soundButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonNonPressed, soundButtonPos, WHITE);
+                }
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, soundButtonHitbox)){
+                    DrawTextureRec(buttonsEmpty, buttonPressed, soundButtonPos, WHITE);
+                    if (GetMasterVolume() == 0.0f) {
+                        SetMasterVolume(volumeMaster);
+                    }
+                    else {
+                        SetMasterVolume(0.0f);
+                    }
+
+                }
+                else DrawTextureRec(buttonsEmpty, buttonHover, soundButtonPos, WHITE);
+                if (GetMasterVolume() > 0) DrawText("SOUND : ON", soundButtonPos.x + 20, soundButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
+                if (GetMasterVolume() == 0) DrawText("SOUND : OFF", soundButtonPos.x + 20, soundButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
 
 
 
