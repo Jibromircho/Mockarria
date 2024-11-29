@@ -29,7 +29,9 @@ public:
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;
     Vector2 hitboxOffset = { 4 , 4 };
+    Vector2 centerOffset = { 12.0f , 21.0f };
     Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
+    Vector2 center = { position.x + centerOffset.x, position.y + centerOffset.y };
 
     Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");
     Rectangle healthUi20 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
@@ -60,6 +62,7 @@ public:
 
         //always updating 
         hitbox.x = position.x + hitboxOffset.x;
+        center = { position.x + centerOffset.x, position.y + centerOffset.y };
     }
 
     void drawPlayer() const {
@@ -97,6 +100,7 @@ public:
             file.close();
             hitbox.x = position.x + hitboxOffset.x;
             hitbox.y = position.y + hitboxOffset.y;
+            center = { position.x + centerOffset.x, position.y + centerOffset.y };
             TraceLog(LOG_INFO, "Game loaded successfully.");
             return true;
         } else {

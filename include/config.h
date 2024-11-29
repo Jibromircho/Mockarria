@@ -13,6 +13,7 @@
 
 
 #include <raylib.h>
+#include <raymath.h>
 
 
 #include <player.h>

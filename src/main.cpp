@@ -159,7 +159,9 @@ int main() {
         //Constantly updating stuff
         framesCounter++;
         Vector2 mousePosition = GetMousePosition();
+        Vector2 playerCenterPos = player.center;
         Vector2 worldMousePosition = GetScreenToWorld2D(mousePosition, camera);
+        float mouse_playerDistance = Vector2Distance(playerCenterPos, worldMousePosition);
         Rectangle mouseHitbox = { mousePosition.x, mousePosition.y, 5.0f, 5.0f };
         Rectangle worldMouseHitbox = { worldMousePosition.x, worldMousePosition.y, 0.0f, 0.0f };
 
@@ -214,10 +216,10 @@ int main() {
             //tile hitbox checks
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
-                    if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)){
+                    if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox) && mouse_playerDistance <= 100){
                         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
                             if (block[i][j].health > 0) {
-                                block[i][j].health -= 20;
+                                block[i][j].health -= 10;
                             } else if (block[i][j].health == 0) {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
@@ -388,11 +390,11 @@ int main() {
                             }
                             else if(j < *terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)){ //makes dirt layeer near surfice                                 
                                 block[i][j].type = Block::DIRT;
-                                block[i][j].health = 800;
+                                block[i][j].health = 300;
                                 block[i][j].solid = true;                            
                             }else{                                      // makes stone layer bellow sirfice
                                 block[i][j].type = Block::STONE;
-                                block[i][j].health = 1000;
+                                block[i][j].health = 600;
                                 block[i][j].solid = true; 
                             }
                             double perlinCaves = perlin2D(ni * 10, nj * 35); //perfect for bigger caves
@@ -433,6 +435,7 @@ int main() {
                     player.loadGame(player.position, "../save/playerSave.dat");
                     currentScreen = GAMEPLAY;
                 }
+                else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
 
                 DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
