@@ -17,6 +17,7 @@ typedef struct Block {
     bool solid = false;
     Vector2 position;
     Rectangle hitbox;
+    int health;
     enum Type { SKY = 0, DIRT, STONE, CLAY} type;
     // Constructor with default values
     Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
@@ -25,7 +26,16 @@ typedef struct Block {
 Block block[worldSizeW][worldSizeH];
 
 // screen constants
-constexpr int workingWidth = 1280;
+constexpr float workingHeight = 720.0f;
+constexpr float workingWidth = 1280.0f;
+Vector2 supportedResolutions[] = {
+    {2560, 1440},
+    {1920, 1080},
+    {1440, 900},
+    {1280, 720},
+    {640, 480}
+};
+int currentResolutionIndex = 3;
 constexpr int buttonFontSize = 26;
 constexpr int fps = 60;
 
@@ -65,14 +75,14 @@ Color getColorForBlockType(Block::Type type) {
 int main() {
     // initialize win
     InitWindow(0, 0, "Mockarria");
-    float currentResWidth = GetScreenWidth();
-    float currentResHeight = GetScreenHeight();
+    float currentResWidth = (float)GetScreenWidth();
+    float currentResHeight = (float)GetScreenHeight();
     SetWindowSize(currentResWidth, currentResHeight);
     ToggleFullscreen();
     SetExitKey(0);
 
     //button positions
-    float resolutionScale = currentResWidth / workingWidth;
+    float resolutionScale = currentResHeight / workingHeight;
     const Vector2 playButtonPos { currentResWidth / 2 - 100, currentResHeight / 2 - 100 };
     const Vector2 settingsButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
     const Vector2 exitButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  + 50 };
@@ -206,8 +216,12 @@ int main() {
                 for (int j = firstBlockY; j < lastBlockY; j++){
                     if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)){
                         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
-                        block[i][j].type = Block::SKY;
-                        block[i][j].solid = false;
+                            if (block[i][j].health > 0) {
+                                block[i][j].health -= 20;
+                            } else if (block[i][j].health == 0) {
+                                block[i][j].type = Block::SKY;
+                                block[i][j].solid = false;
+                            }
                         }
                     }
                     if(block[i][j].solid){
@@ -369,28 +383,34 @@ int main() {
 
                             if (j < *terrainHeight) { //shapes bigger hills on surfice
                                 block[i][j].type = Block::SKY;
+                                block[i][j].health = 0;
                                 block[i][j].solid = false;
                             }
                             else if(j < *terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)){ //makes dirt layeer near surfice                                 
                                 block[i][j].type = Block::DIRT;
+                                block[i][j].health = 800;
                                 block[i][j].solid = true;                            
                             }else{                                      // makes stone layer bellow sirfice
                                 block[i][j].type = Block::STONE;
+                                block[i][j].health = 1000;
                                 block[i][j].solid = true; 
                             }
                             double perlinCaves = perlin2D(ni * 10, nj * 35); //perfect for bigger caves
                             if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
                                 block[i][j].type = Block::SKY;
+                                block[i][j].health = 0;
                                 block[i][j].solid = false;
                             }
                             perlinCaves = perlin2D(ni * 95, nj * 30);//working on tunnels
                             if (perlinCaves <= 0.767f && perlinCaves > 0.483f){
                                 block[i][j].type = Block::SKY;
+                                block[i][j].health = 0;
                                 block[i][j].solid = false;
                             }
                             perlinCaves = perlin2D(ni * 90, nj * 90); //perfect for small caves
                             if (perlinCaves <= -0.5f && perlinCaves > -1.0f){
                                 block[i][j].type = Block::SKY;
+                                block[i][j].health = 0;
                                 block[i][j].solid = false;
                             }
                             
@@ -459,7 +479,8 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, resolutionButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, resolutionButtonPos, WHITE);
-                    //SetWindowSize()
+                    currentResolutionIndex = (currentResolutionIndex + 1) % (sizeof(supportedResolutions) / sizeof(supportedResolutions[0]));
+                    SetWindowSize(supportedResolutions[currentResolutionIndex].x, supportedResolutions[currentResolutionIndex].y);
 
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, resolutionButtonPos, WHITE);
@@ -656,3 +677,4 @@ void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filen
 
     UnloadImage(image);
 }
+
