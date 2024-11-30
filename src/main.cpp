@@ -98,6 +98,7 @@ int main() {
     //game elements 
     GameScreen currentScreen = LOGO;
     Player player;
+    Inventory inventory;
     World world;
     Tile tile;
 
@@ -247,6 +248,10 @@ int main() {
 
         //other keys and inputs
         if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "../save/playerSave.dat");
+
+        inventory.selectHotbarSlot();
+        if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
+        //hotbar slot select
         // camera follows the player and zoom handling
         camera.zoom += ((float)GetMouseWheelMove()*0.1f);
         if (camera.zoom > 4.0f) camera.zoom = 4.0f;
@@ -583,7 +588,9 @@ int main() {
                 //Drawing ui elemnts
                 player.drawPlayerHealth(resolutionScale);
                 for (int i = 0; i < 10; i++){
-                    DrawTextureEx(inventorySlot, Vector2 { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
+                    if (i == inventory.hotbarIndex) {
+                        DrawTextureEx(inventorySlot, Vector2 { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale + 0.5f, WHITE);
+                    } else DrawTextureEx(inventorySlot, Vector2 { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
                 }
                 DrawFPS ( 200, 200 );
 

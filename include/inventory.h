@@ -24,12 +24,25 @@ public:
     Inventory() {
         for (int i = 0; i < hotbarSize; ++i) {
             for (int j = 0; j < inventoryRows; ++j) {
-                slots[i][j].itemID = -1; // Initialize as empty
-                slots[i][j].selected = false;
+                slots[i][j].itemID = -1;
                 slots[i][j].stack = 0;
+
+                if (j == 0 && i == hotbarIndex) {
+                    slots[i][j].selected = true;
+                } else slots[i][j].selected = false;
             }
         }
     }
+
+    void selectHotbarSlot() {
+        for (int i = 0; i < hotbarSize; ++i) {
+            if (IsKeyPressed('0' + ((i + 1) % 10))) {
+                hotbarIndex = i;
+                break;
+            }
+        }
+    }
+
 };
 
 #endif
