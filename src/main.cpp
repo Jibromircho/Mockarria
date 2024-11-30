@@ -587,10 +587,20 @@ int main() {
 
                 //Drawing ui elemnts
                 player.drawPlayerHealth(resolutionScale);
-                for (int i = 0; i < 10; i++){
+                for (int i = 0; i < 10; i++) {
+                    Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f };
+                    Color tint;
+                    float selectedSlotScale;
+
                     if (i == inventory.hotbarIndex) {
-                        DrawTextureEx(inventorySlot, Vector2 { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale + 0.5f, WHITE);
-                    } else DrawTextureEx(inventorySlot, Vector2 { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f}, 0.0f, resolutionScale, WHITE);
+                        tint = { 211, 211, 150, 255 };
+                        selectedSlotScale = 0.2f;
+                    } else {
+                        tint = WHITE;
+                        selectedSlotScale = 0.0f;
+                    }
+
+                    DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
                 }
                 DrawFPS ( 200, 200 );
 
