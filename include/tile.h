@@ -46,7 +46,22 @@ public:
     Rectangle stoneTopBott = { size, size * 15, size, size};
 
 
-    Rectangle clay = { size * 2, 0.0f, size, size};
+    Rectangle clayTop = { size, 0.0f, size, size };
+    Rectangle clayCenter = { size, size, size, size};
+    Rectangle clayRight = { size, size * 2, size, size};
+    Rectangle clayLeft = { size, size * 3, size, size};
+    Rectangle clayBott =  { size, size * 4, size, size};
+    Rectangle clayTopLeft = { size, size * 5, size, size};
+    Rectangle clayTopRight = { size, size * 6, size, size};
+    Rectangle clayBottRight = { size, size * 7, size, size};
+    Rectangle clayBottLeft = { size, size * 8, size, size};
+    Rectangle clayLeftTopRight = { size, size * 9, size, size};
+    Rectangle clayTopRightBott = { size, size * 10, size, size};
+    Rectangle clayRightBottLeft = { size, size * 11, size, size};
+    Rectangle clayBottLeftTop = { size, size * 12, size, size};
+    Rectangle clayAllSide = { size, size * 13, size, size};
+    Rectangle clayLeftRight = { size, size * 14, size, size};
+    Rectangle clayTopBott = { size, size * 15, size, size};
 
 
 private:
