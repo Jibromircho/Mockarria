@@ -450,7 +450,6 @@ int main() {
                 DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("LOAD WORLD", loadWorldButtonPos.x + 20, loadWorldButtonPos.y + buttonFontSize / 2, buttonFontSize, RAYWHITE);
-
             }break;
             case SETTINGS:
             {
@@ -592,10 +591,10 @@ int main() {
 
                 //Drawing ui elemnts
                 player.drawPlayerHealth(resolutionScale);
+                float selectedSlotScale;
                 for (int i = 0; i < 10; i++) {
                     Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f };
                     Color tint;
-                    float selectedSlotScale;
 
                     if (i == inventory.hotbarIndex) {
                         tint = { 211, 211, 150, 255 };

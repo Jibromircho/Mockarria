@@ -30,7 +30,7 @@ public:
     PlayerState state = GROUND;
     Vector2 hitboxOffset = { 4 , 4 };
     Vector2 centerOffset = { 12.0f , 21.0f };
-    Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
+    Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 5, frameRecIdle.height - 5 };
     Vector2 center = { position.x + centerOffset.x, position.y + centerOffset.y };
 
     Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");

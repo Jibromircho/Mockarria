@@ -70,7 +70,15 @@ public:
     void drawHotbarItems(Tile tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
             if (slots[i][0].itemID >= 0) {
-                DrawTextureRec(tile.tileSet, tile.getRecSource(slots[i][0].itemID),{position.x + (i * 48.0f), position.y},WHITE);
+                int xOffset = 20;
+                int yOffset = 20;
+                DrawTextureRec(tile.tileSet, tile.getRecSource(slots[i][0].itemID),{position.x + (i * 48.0f) + (xOffset/2), position.y + (yOffset/2)},WHITE);
+
+                Font font = GetFontDefault();
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + xOffset, position.y + yOffset}, 20, 2,BLACK);
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + xOffset + 0.3f, position.y + yOffset + 0.3f}, 20, 2,BLACK);
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + xOffset + 0.6f, position.y + yOffset + 0.6f}, 20, 2,BLACK);
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + xOffset + 0.9f, position.y + yOffset + 0.9f}, 20, 2,BLACK);
             }
         }
     }
