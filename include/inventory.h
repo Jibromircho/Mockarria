@@ -70,7 +70,7 @@ public:
     void drawHotbarItems(Tile tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
             if (slots[i][0].itemID >= 0) {
-                DrawTextureRec(tile.tileSet, tile.dirtCenter,{position.x + (i * 48.0f), position.y},WHITE);
+                DrawTextureRec(tile.tileSet, tile.getRecSource(slots[i][0].itemID),{position.x + (i * 48.0f), position.y},WHITE);
             }
         }
     }

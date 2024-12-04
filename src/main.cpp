@@ -414,6 +414,10 @@ int main() {
                                 block[i][j].type = Block::SKY;
                                 block[i][j].health = 0;
                                 block[i][j].solid = false;
+                            } else if (perlinCaves <= 1.0f && perlinCaves > 0.767f) {
+                                block[i][j].type = Block::CLAY;
+                                block[i][j].health = 300;
+                                block[i][j].solid = true;
                             }
                             perlinCaves = perlin2D(ni * 90, nj * 90); //perfect for small caves
                             if (perlinCaves <= -0.5f && perlinCaves > -1.0f){

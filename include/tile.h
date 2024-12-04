@@ -3,12 +3,21 @@
 
 #include <config.h>
 
+
+enum TileType {
+    DIRT,
+    STONE,
+    CLAY,
+};
+
+
 class Tile
 {
 public:
     //Tile (int x = 0, int y =0, int textureIndex = 0, const std::string& type = "grass", bool isSolid = true);
     Texture2D tileSet = LoadTexture("../img/tiles/world_tileset.png");
     const float size = 16.0f;
+    
     // Set dirt rectangles
     Rectangle dirtTop = { 0.0f, 0.0f, size, size };
     Rectangle dirtCenter = { 0.0f, size, size, size};
@@ -46,31 +55,26 @@ public:
     Rectangle stoneTopBott = { size, size * 15, size, size};
 
 
-    Rectangle clayTop = { size, 0.0f, size, size };
-    Rectangle clayCenter = { size, size, size, size};
-    Rectangle clayRight = { size, size * 2, size, size};
-    Rectangle clayLeft = { size, size * 3, size, size};
-    Rectangle clayBott =  { size, size * 4, size, size};
-    Rectangle clayTopLeft = { size, size * 5, size, size};
-    Rectangle clayTopRight = { size, size * 6, size, size};
-    Rectangle clayBottRight = { size, size * 7, size, size};
-    Rectangle clayBottLeft = { size, size * 8, size, size};
-    Rectangle clayLeftTopRight = { size, size * 9, size, size};
-    Rectangle clayTopRightBott = { size, size * 10, size, size};
-    Rectangle clayRightBottLeft = { size, size * 11, size, size};
-    Rectangle clayBottLeftTop = { size, size * 12, size, size};
-    Rectangle clayAllSide = { size, size * 13, size, size};
-    Rectangle clayLeftRight = { size, size * 14, size, size};
-    Rectangle clayTopBott = { size, size * 15, size, size};
+    Rectangle clayTop = { size * 2, 0.0f, size, size };
+    Rectangle clayCenter = { size * 2, size, size, size};
+    Rectangle clayRight = { size * 2, size * 2, size, size};
+    Rectangle clayLeft = { size * 2, size * 3, size, size};
+    Rectangle clayBott =  { size * 2, size * 4, size, size};
+    Rectangle clayTopLeft = { size * 2, size * 5, size, size};
+    Rectangle clayTopRight = { size * 2, size * 6, size, size};
+    Rectangle clayBottRight = { size * 2, size * 7, size, size};
+    Rectangle clayBottLeft = { size * 2, size * 8, size, size};
+    Rectangle clayLeftTopRight = { size * 2, size * 9, size, size};
+    Rectangle clayTopRightBott = { size * 2, size * 10, size, size};
+    Rectangle clayRightBottLeft = { size * 2, size * 11, size, size};
+    Rectangle clayBottLeftTop = { size * 2, size * 12, size, size};
+    Rectangle clayAllSide = { size * 2, size * 13, size, size};
+    Rectangle clayLeftRight = { size * 2, size * 14, size, size};
+    Rectangle clayTopBott = { size * 2, size * 15, size, size};
 
-
-
-private:
-    Vector2 possition;
-    int textureIndex; //referance in sprite sheet
-    std::string type; // type of tile
-    bool isSolid; // collision
-
+    Rectangle getRecSource(int id) {
+        return { ((float)id * size) , size * 13, size, size };
+    };
 
 };
 
