@@ -220,7 +220,7 @@ int main() {
                     if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox) && mouse_playerDistance <= 100){
                         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
                             if (block[i][j].health > 0) {
-                                block[i][j].health -= 10;
+                                block[i][j].health -= 100;
                             } else if (block[i][j].health == 0) {
                                 inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
@@ -441,7 +441,7 @@ int main() {
                     player.loadGame(player.position, "../save/playerSave.dat");
                     currentScreen = GAMEPLAY;
                 }
-                else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
+                else DrawTextureRec(buttonsEmpty, buttonHover, loadWorldButtonPos, WHITE);
 
                 DrawText("BACK", backButtonPos.x + 20 , backButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
                 DrawText("NEW WORLD", createWorldButtonPos.x + 20 , createWorldButtonPos.y + buttonFontSize / 2 , buttonFontSize, RAYWHITE);
@@ -601,8 +601,10 @@ int main() {
                         selectedSlotScale = 0.0f;
                     }
                     DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
-                    inventory.drawHotbarItems(tile,position);
                 }
+
+                inventory.drawHotbarItems(tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
+
                 DrawFPS ( 200, 200 );
 
             }break;

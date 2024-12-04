@@ -51,17 +51,27 @@ public:
     }
 
     void addItem(int id, int quantity) {
-        for (int i = 0; i < hotbarSize; ++i) {
-            for (int j = 0; j < inventoryRows; ++j) {
-                if (slots[i][j].itemID == -1) slots[i][j].itemID = id;
-                else if (slots[i][j].itemID == id) slots[i][j].stack += quantity;    
+        for (int j = 0; j < inventoryRows; ++j) {
+            for (int i = 0; i < hotbarSize; ++i) {
+                if (slots[i][j].itemID == -1) {
+                    slots[i][j].itemID = id;
+                    slots[i][j].stack = quantity;
+                    return;
+                }
+                else if (slots[i][j].itemID == id) {
+
+                    slots[i][j].stack += quantity;
+                    return;
+                }
             }
         }
     }
 
     void drawHotbarItems(Tile tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
-            if (slots[i][0].itemID >= 0) DrawTextureRec(tile.tileSet, tile.dirtCenter,position,WHITE);
+            if (slots[i][0].itemID >= 0) {
+                DrawTextureRec(tile.tileSet, tile.dirtCenter,{position.x + (i * 48.0f), position.y},WHITE);
+            }
         }
     }
 
