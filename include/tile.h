@@ -64,6 +64,7 @@ public:
     Rectangle clayTopBott = { size, size * 15, size, size};
 
 
+
 private:
     Vector2 possition;
     int textureIndex; //referance in sprite sheet

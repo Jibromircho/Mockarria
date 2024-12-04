@@ -18,7 +18,7 @@ typedef struct Block {
     Vector2 position;
     Rectangle hitbox;
     int health;
-    enum Type { SKY = 0, DIRT, STONE, CLAY} type;
+    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2} type;
     // Constructor with default values
     Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -222,6 +222,7 @@ int main() {
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 10;
                             } else if (block[i][j].health == 0) {
+                                inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                             }
@@ -594,13 +595,13 @@ int main() {
 
                     if (i == inventory.hotbarIndex) {
                         tint = { 211, 211, 150, 255 };
-                        selectedSlotScale = 0.2f;
+                        selectedSlotScale = 0.25f;
                     } else {
                         tint = WHITE;
                         selectedSlotScale = 0.0f;
                     }
-
                     DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
+                    inventory.drawHotbarItems(tile,position);
                 }
                 DrawFPS ( 200, 200 );
 
