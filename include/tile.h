@@ -72,7 +72,7 @@ public:
     Rectangle clayLeftRight = { size * 2, size * 14, size, size};
     Rectangle clayTopBott = { size * 2, size * 15, size, size};
 
-    Rectangle getRecSource(int id) {
+    Rectangle getIconRecSource(int id) {
         return { ((float)id * size) , size * 13, size, size };
     };
 

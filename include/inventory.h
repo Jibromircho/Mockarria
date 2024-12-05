@@ -7,6 +7,7 @@ struct Slot {
     int itemID = -1;
     bool selected = false;
     int stack = 0;
+    bool placeable = true;
 
 };
 
@@ -66,13 +67,20 @@ public:
             }
         }
     }
+    
+    int useItem(int id) {
+        if (slots[hotbarIndex][0].stack > 0) {
+            slots[hotbarIndex][0].stack -= 1;
+            return slots[hotbarIndex][0].itemID;
+        } else return -1;
+    }
 
     void drawHotbarItems(Tile tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
             if (slots[i][0].itemID >= 0) {
                 int xOffset = 20;
                 int yOffset = 20;
-                DrawTextureRec(tile.tileSet, tile.getRecSource(slots[i][0].itemID),{position.x + (i * 48.0f) + (xOffset/2), position.y + (yOffset/2)},WHITE);
+                DrawTextureRec(tile.tileSet, tile.getIconRecSource(slots[i][0].itemID),{position.x + (i * 48.0f) + (xOffset/2), position.y + (yOffset/2)},WHITE);
 
                 Font font = GetFontDefault();
                 DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + xOffset, position.y + yOffset}, 20, 2,BLACK);

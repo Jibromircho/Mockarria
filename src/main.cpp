@@ -228,6 +228,19 @@ int main() {
                             }
                         }
                     }
+                    if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)) {
+                        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+                            if (block[i][j].type == -1 && mouse_playerDistance <= 100) {
+                                int itemID = inventory.useItem(block[i][j].type);
+                                if (itemID != -1) {
+                                    block[i][j].type = static_cast<Block::Type>(itemID);
+                                    block[i][j].solid = true;
+                                    std::cout << block[i][j].type << std::endl;
+                                }                        
+                            }
+                        }
+                    }
+
                     if(block[i][j].solid){
                         Rectangle collisionArea = GetCollisionRec(player.hitbox, block[i][j].hitbox);
                         if (collisionArea.width > collisionArea.height){
