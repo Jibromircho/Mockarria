@@ -77,7 +77,7 @@ public:
 
     void drawHotbarItems(Tile tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
-            if (slots[i][0].itemID >= 0) {
+            if (slots[i][0].itemID >= 0 && !slots[i][0].stack == 0) {
                 int xOffset = 20;
                 int yOffset = 20;
                 DrawTextureRec(tile.tileSet, tile.getIconRecSource(slots[i][0].itemID),{position.x + (i * 48.0f) + (xOffset/2), position.y + (yOffset/2)},WHITE);
