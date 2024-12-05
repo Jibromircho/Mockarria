@@ -57,6 +57,9 @@ double perlin2D(double x, double y);
 ////debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
 
+void saveWorld(const Block block[worldSizeW][worldSizeH], const std::string& filename);
+void loadWorld(Block block[worldSizeW][worldSizeH], const std::string& filename);
+
 Color getColorForBlockType(Block::Type type) {
     switch (type) {
         case Block::SKY:
@@ -101,7 +104,6 @@ int main() {
     Inventory inventory;
     World world;
     Tile tile;
-
     //camera initialization
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
@@ -261,8 +263,11 @@ int main() {
             }
 
         //other keys and inputs
-        if (IsKeyDown(KEY_ESCAPE)) currentScreen = TITLE, player.saveGame(player.position, "../save/playerSave.dat");
-
+        if (IsKeyDown(KEY_ESCAPE)) {
+            currentScreen = TITLE;
+            player.saveGame(player.position, "../save/playerSave.dat");
+            saveWorld(block, "../save/worldSave.dat");
+        }
         inventory.selectHotbarSlot();
         if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
         //hotbar slot select
@@ -456,6 +461,7 @@ int main() {
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, loadWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, loadWorldButtonPos, WHITE);
                     player.loadGame(player.position, "../save/playerSave.dat");
+                    loadWorld(block, "../save/worldSave.dat");
                     currentScreen = GAMEPLAY;
                 }
                 else DrawTextureRec(buttonsEmpty, buttonHover, loadWorldButtonPos, WHITE);
@@ -731,4 +737,33 @@ void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filen
 
     UnloadImage(image);
 }
+
+void saveWorld(const Block block[6400][1800], const std::string& filename) {
+    std::ofstream outFile(filename, std::ios::binary);
+    if (!outFile) {
+        std::cerr << "Error: Could not open file for saving.\n";
+        return;
+    }
+
+    // Write the entire block array to the file
+    outFile.write(reinterpret_cast<const char*>(&block[0][0]), sizeof(Block) * 6400 * 1800);
+
+    outFile.close();
+    std::cout << "World saved successfully.\n";
+}
+
+void loadWorld(Block block[6400][1800], const std::string& filename) {
+    std::ifstream inFile(filename, std::ios::binary);
+    if (!inFile) {
+        std::cerr << "Error: Could not open file for loading.\n";
+        return;
+    }
+
+    // Read the entire block array from the file
+    inFile.read(reinterpret_cast<char*>(&block[0][0]), sizeof(Block) * 6400 * 1800);
+
+    inFile.close();
+    std::cout << "World loaded successfully.\n";
+}
+
 
