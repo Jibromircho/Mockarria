@@ -81,10 +81,26 @@ public:
     }
 
     //player saving function
-    void saveGame (Vector2& position, const std::string& filename){
+    void saveGame(const std::string& filename, const Inventory& inventory) const {
         std::ofstream file(filename, std::ios::binary);
-        if(file.is_open()){
+        if (file.is_open()) {
+            // Save Player data
             file.write(reinterpret_cast<const char*>(&position), sizeof(Vector2));
+            file.write(reinterpret_cast<const char*>(&health), sizeof(health));
+            file.write(reinterpret_cast<const char*>(&mana), sizeof(mana));
+            file.write(reinterpret_cast<const char*>(&level), sizeof(level));
+            file.write(reinterpret_cast<const char*>(&experience), sizeof(experience));
+            file.write(reinterpret_cast<const char*>(&jumpCount), sizeof(jumpCount));
+            file.write(reinterpret_cast<const char*>(&stats), sizeof(PlayerStats));
+
+            // Save Inventory data
+            file.write(reinterpret_cast<const char*>(&inventory.hotbarIndex), sizeof(inventory.hotbarIndex));
+            for (int i = 0; i < inventory.hotbarSize; ++i) {
+                for (int j = 0; j < inventory.inventoryRows; ++j) {
+                    file.write(reinterpret_cast<const char*>(&inventory.slots[i][j]), sizeof(Slot));
+                }
+            }
+
             file.close();
             TraceLog(LOG_INFO, "Game saved successfully.");
         } else {
@@ -93,14 +109,31 @@ public:
     }
 
     //player load function 
-    bool loadGame(Vector2& position, const std::string& filename) {
+    bool loadGame(const std::string& filename, Inventory& inventory) {
         std::ifstream file(filename, std::ios::binary);
         if (file.is_open()) {
+            // Load Player data
             file.read(reinterpret_cast<char*>(&position), sizeof(Vector2));
-            file.close();
+            file.read(reinterpret_cast<char*>(&health), sizeof(health));
+            file.read(reinterpret_cast<char*>(&mana), sizeof(mana));
+            file.read(reinterpret_cast<char*>(&level), sizeof(level));
+            file.read(reinterpret_cast<char*>(&experience), sizeof(experience));
+            file.read(reinterpret_cast<char*>(&jumpCount), sizeof(jumpCount));
+            file.read(reinterpret_cast<char*>(&stats), sizeof(PlayerStats));
+
             hitbox.x = position.x + hitboxOffset.x;
             hitbox.y = position.y + hitboxOffset.y;
             center = { position.x + centerOffset.x, position.y + centerOffset.y };
+
+            // Load Inventory data
+            file.read(reinterpret_cast<char*>(&inventory.hotbarIndex), sizeof(inventory.hotbarIndex));
+            for (int i = 0; i < inventory.hotbarSize; ++i) {
+                for (int j = 0; j < inventory.inventoryRows; ++j) {
+                    file.read(reinterpret_cast<char*>(&inventory.slots[i][j]), sizeof(Slot));
+                }
+            }
+
+            file.close();
             TraceLog(LOG_INFO, "Game loaded successfully.");
             return true;
         } else {

@@ -14,12 +14,11 @@ struct Slot {
 
 class Inventory 
 {
-private:
-    static constexpr int hotbarSize = 10;
-    static constexpr int inventoryRows = 6;
 
 public:
 
+    static constexpr int hotbarSize = 10;
+    static constexpr int inventoryRows = 6;
     int hotbarIndex = 0;
 
     Slot slots[hotbarSize][inventoryRows];

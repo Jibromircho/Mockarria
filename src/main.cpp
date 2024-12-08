@@ -266,7 +266,7 @@ int main() {
         //other keys and inputs
         if (IsKeyDown(KEY_ESCAPE)) {
             currentScreen = TITLE;
-            player.saveGame(player.position, "../save/playerSave.dat");
+            player.saveGame("../save/playerSave.dat", inventory);
             saveWorld(block, "../save/worldSave.dat");
         }
         for (int i = 0; i < 10; i++) {
@@ -464,7 +464,7 @@ int main() {
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, loadWorldButtonHitbox)){
                     DrawTextureRec(buttonsEmpty, buttonPressed, loadWorldButtonPos, WHITE);
-                    player.loadGame(player.position, "../save/playerSave.dat");
+                    player.loadGame("../save/playerSave.dat", inventory);
                     loadWorld(block, "../save/worldSave.dat");
                     currentScreen = GAMEPLAY;
                 }
