@@ -76,6 +76,10 @@ public:
         return { ((float)id * size) , size * 13, size, size };
     };
 
+    void drawTileTexture() {
+        
+    };
+
 };
 
 #endif

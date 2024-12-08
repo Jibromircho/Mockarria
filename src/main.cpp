@@ -223,7 +223,7 @@ int main() {
                         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
-                            } else if (block[i][j].health == 0) {
+                            } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) {
                                 inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
@@ -269,7 +269,10 @@ int main() {
             player.saveGame(player.position, "../save/playerSave.dat");
             saveWorld(block, "../save/worldSave.dat");
         }
-        inventory.selectHotbarSlot();
+        for (int i = 0; i < 10; i++) {
+            if (IsKeyPressed('0' + ((i + 1) % 10))) inventory.selectHotbarSlot(i);
+        }
+
         if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
         //hotbar slot select
         // camera follows the player and zoom handling
@@ -624,9 +627,10 @@ int main() {
                         selectedSlotScale = 0.0f;
                     }
                     DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
+
+                    inventory.drawHotbarItems(tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
                 }
 
-                inventory.drawHotbarItems(tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
 
                 DrawFPS ( 200, 200 );
 
