@@ -620,10 +620,10 @@ int main() {
                     Color tint;
 
                     if (i == inventory.hotbarIndex) {
-                        tint = { 211, 211, 150, 255 };
+                        tint = { 211, 211, 150, 220 };
                         selectedSlotScale = 0.25f;
                     } else {
-                        tint = WHITE;
+                        tint = { 255, 255, 255, 220 };
                         selectedSlotScale = 0.0f;
                     }
                     DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);

@@ -102,8 +102,9 @@ public:
                 DrawTexturePro(tile.tileSet, sourceRec, destRec, origin, 0.0f, WHITE);
 
                 Font font = GetFontDefault();
-                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + (xOffset / 2), position.y + (yOffset / 2)}, 16 * scaleFactor, 2,BLACK);
-                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + (xOffset / 2) + 0.3f, position.y + (yOffset / 2) + 0.3f}, 16 * scaleFactor, 2,BLACK);
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + (xOffset ), position.y + (yOffset )}, 8 * scaleFactor, 2,WHITE);
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + (xOffset ) + 0.3f, position.y + (yOffset ) + 0.3f}, 8 * scaleFactor, 2,WHITE);
+                DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + (xOffset ) + 0.6f, position.y + (yOffset ) + 0.6f}, 8 * scaleFactor, 2,WHITE);
 
             }
         }
