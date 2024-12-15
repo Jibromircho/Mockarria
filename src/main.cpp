@@ -37,6 +37,7 @@ Vector2 supportedResolutions[] = {
 };
 int currentResolutionIndex = 3;
 constexpr int buttonFontSize = 26;
+bool inventoryOpened = false;
 constexpr int fps = 60;
 
 //audio volumes
@@ -108,7 +109,7 @@ int main() {
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
     camera.offset = {currentResWidth / 2.0f, currentResHeight / 2.0f};
-    camera.zoom = 1.8f;
+    camera.zoom = 1.6f;
     Rectangle scissorArea = { player.position.x, player.position.y, currentResWidth,currentResHeight};
    
     //initialize audio stuff
@@ -269,12 +270,15 @@ int main() {
             player.saveGame("../save/playerSave.dat", inventory);
             saveWorld(block, "../save/worldSave.dat");
         }
+        //hotbar slot select
         for (int i = 0; i < 10; i++) {
             if (IsKeyPressed('0' + ((i + 1) % 10))) inventory.selectHotbarSlot(i);
         }
-
-        //hotbar slot select
-        if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
+        //open invetory
+        if (IsKeyDown(KEY_B)) {
+            if(inventoryOpened) inventoryOpened = false;
+            else inventoryOpened = true;
+        }
         // camera follows the player
         camera.target = {player.position.x, player.position.y };
         }
