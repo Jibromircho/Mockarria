@@ -273,10 +273,11 @@ int main() {
             if (IsKeyPressed('0' + ((i + 1) % 10))) inventory.selectHotbarSlot(i);
         }
 
-        if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
         //hotbar slot select
+        if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
         // camera follows the player
         camera.target = {player.position.x, player.position.y };
+        }
 
         // screen selector
         if (currentScreen == LOGO)
