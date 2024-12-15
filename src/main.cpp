@@ -275,12 +275,8 @@ int main() {
 
         if (IsKeyDown(KEY_K)) std::cout << inventory.hotbarIndex << std::endl;
         //hotbar slot select
-        // camera follows the player and zoom handling
-        camera.zoom += ((float)GetMouseWheelMove()*0.1f);
-        if (camera.zoom > 4.0f) camera.zoom = 4.0f;
-        else if (camera.zoom < 1.2f) camera.zoom = 1.2f;
+        // camera follows the player
         camera.target = {player.position.x, player.position.y };
-        }
 
         // screen selector
         if (currentScreen == LOGO)
