@@ -78,6 +78,20 @@ public:
         }
     }
 
+    void resetInventory() {
+        for (int i = 0; i < hotbarSize; ++i) {
+            for (int j = 0; j < inventoryRows; ++j) {
+                slots[i][j].itemID = -1;
+                slots[i][j].stack = 0;
+                slots[i][j].placeable = false;
+
+                if (j == 0 && i == hotbarIndex) {
+                    slots[i][j].selected = true;
+                } else slots[i][j].selected = false;
+            }
+        }
+    }
+
     void drawHotbarItems(Tile tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
             float scaleFactor = 1.0f;

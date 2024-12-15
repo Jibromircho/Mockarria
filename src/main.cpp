@@ -452,6 +452,7 @@ int main() {
                     }
                     player.position.y = worldStartY + (*terrainHeight - 4) * tile.size;
                     player.hitbox.y = player.position.y + player.hitboxOffset.y;
+                    inventory.resetInventory();
                     delete terrainHeight;
 
                 saveMapAsImage(block, "world_map.png");
