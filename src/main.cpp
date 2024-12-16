@@ -275,7 +275,7 @@ int main() {
             if (IsKeyPressed('0' + ((i + 1) % 10))) inventory.selectHotbarSlot(i);
         }
         //open invetory
-        if (IsKeyDown(KEY_B)) {
+        if (IsKeyPressed(KEY_B)) {
             if(inventoryOpened) inventoryOpened = false;
             else inventoryOpened = true;
         }
@@ -631,6 +631,15 @@ int main() {
                     DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
 
                     inventory.drawHotbarItems(tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
+                }
+                if (inventoryOpened) {
+                    for (int i = 0; i < inventory.hotbarSize; i++) {
+                        for (int j = 1; j < inventory.inventoryRows; j++) {
+                            Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, (j * 48.0f) + 16.0f };
+                            Color tint = { 255, 255, 255, 220 };
+                            DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + 0.25f , tint);
+                        }
+                    }
                 }
 
 
