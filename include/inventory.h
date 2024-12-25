@@ -20,6 +20,7 @@ public:
     static constexpr int hotbarSize = 10;
     static constexpr int inventoryRows = 6;
     int hotbarIndex = 0;
+    bool inventoryOpened = false;
 
     Slot slots[hotbarSize][inventoryRows];
     
@@ -84,10 +85,7 @@ public:
                 slots[i][j].itemID = -1;
                 slots[i][j].stack = 0;
                 slots[i][j].placeable = false;
-
-                if (j == 0 && i == hotbarIndex) {
-                    slots[i][j].selected = true;
-                } else slots[i][j].selected = false;
+                hotbarIndex = 0;
             }
         }
     }

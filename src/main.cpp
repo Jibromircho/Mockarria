@@ -38,7 +38,7 @@ Vector2 supportedResolutions[] = {
 };
 int currentResolutionIndex = 3;
 constexpr int buttonFontSize = 26;
-bool inventoryOpened = false;
+bool mapOpened = false;
 constexpr int fps = 60;
 
 //audio volumes
@@ -55,7 +55,7 @@ double grad1D(int hash, double x);
 double grad2D(int hash, double x, double y);
 double perlin1D(double x);
 double perlin2D(double x, double y);
-void generateNewWorldMap(Tile tile,Player player,Inventory inventory);
+void generateNewWorldMap(Tile* tile,Player* player,Inventory* inventory);
 
 ////debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
@@ -278,8 +278,13 @@ int main() {
         }
         //open invetory
         if (IsKeyPressed(KEY_B)) {
-            if(inventoryOpened) inventoryOpened = false;
-            else inventoryOpened = true;
+            if(inventory.inventoryOpened) inventory.inventoryOpened = false;
+            else inventory.inventoryOpened = true;
+        }
+        //open world map
+        if (IsKeyPressed(KEY_M)) {
+            if (mapOpened) mapOpened = false;
+            else mapOpened = true;
         }
         // camera follows the player
         camera.target = {player.position.x, player.position.y };
@@ -383,7 +388,7 @@ int main() {
                     player.resetPos();
                     currentScreen = GAMEPLAY;
                     //create a map
-                    generateNewWorldMap(tile, player, inventory);
+                    generateNewWorldMap(&tile, &player, &inventory);
                     
                 saveMapAsImage(block, "../save/world_map_1.png");
                 }
@@ -523,7 +528,7 @@ int main() {
 
                     inventory.drawHotbarItems(tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
                 }
-                if (inventoryOpened) {
+                if (inventory.inventoryOpened) {
                     for (int i = 0; i < inventory.hotbarSize; i++) {
                         for (int j = 1; j < inventory.inventoryRows; j++) {
                             Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, (j * 48.0f) + 16.0f };
@@ -672,15 +677,15 @@ void loadWorld(Block block[6400][1800], const std::string& filename) {
     std::cout << "World loaded successfully.\n";
 }
 
-void generateNewWorldMap(Tile tile, Player player, Inventory inventory) {
+void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
     unsigned int seed = 1234;
-    int* terrainHeight = new int(0);
+    int terrainHeight;
     initPermutation();
             
     for (int i = 0; i < worldSizeW - 1; i++){
         for (int j = 0; j < worldSizeH - 1; j++){
-            block[i][j].position.x = worldStartX + i * tile.size;
-            block[i][j].position.y = worldStartY + j * tile.size;
+            block[i][j].position.x = worldStartX + i * tile->size;
+            block[i][j].position.y = worldStartY + j * tile->size;
             block[i][j].hitbox.x = block[i][j].position.x;
             block[i][j].hitbox.y = block[i][j].position.y;
 
@@ -702,14 +707,14 @@ void generateNewWorldMap(Tile tile, Player player, Inventory inventory) {
             }
             height /= totalAmplitude;
             height = (height + 1) / 2;
-            *terrainHeight = static_cast<int>(height * (worldSizeH / 3));
+            terrainHeight = static_cast<int>(height * (worldSizeH / 3));
 
-            if (j < *terrainHeight) { //shapes bigger hills on surfice
+            if (j < terrainHeight) { //shapes bigger hills on surfice
                 block[i][j].type = Block::SKY;
                 block[i][j].health = 0;
                 block[i][j].solid = false;
             }
-            else if(j < *terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)) { //makes dirt layeer near surfice                                 
+            else if(j < terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)) { //makes dirt layeer near surfice                                 
                 block[i][j].type = Block::DIRT;
                 block[i][j].health = 300;
                 block[i][j].solid = true;                            
@@ -719,25 +724,25 @@ void generateNewWorldMap(Tile tile, Player player, Inventory inventory) {
                 block[i][j].solid = true; 
             }
             double perlinCaves = perlin2D(ni * 10, nj * 35); //perfect for bigger caves
-            if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
+            if (j > terrainHeight && perlinCaves <= -0.5f && perlinCaves > -1.0f){
                 block[i][j].type = Block::SKY;
                 block[i][j].health = 0;
                 block[i][j].solid = false;
             }
             perlinCaves = perlin2D(ni * 95, nj * 30);//working on tunnels
-            if (perlinCaves <= 0.600f && perlinCaves > 0.483f){
+            if (j > terrainHeight && perlinCaves <= 0.600f && perlinCaves > 0.483f){
                 block[i][j].type = Block::SKY;
                 block[i][j].health = 0;
                 block[i][j].solid = false;
-            } else if (perlinCaves <= 0.790f && perlinCaves > 0.600f) {
+            } else if (j > terrainHeight && perlinCaves <= 0.790f && perlinCaves > 0.600f) {
                 block[i][j].type = Block::CLAY;
                 block[i][j].health = 300;
                 block[i][j].solid = true;
-            } else if (perlinCaves <= 0.81f && perlinCaves > 0.790f) {
+            } else if (j > terrainHeight && perlinCaves <= 0.81f && perlinCaves > 0.790f) {
                 block[i][j].type = Block::MUD;
                 block[i][j].health = 300;
                 block[i][j].solid = true;
-            } else if (perlinCaves <= 1.0f && perlinCaves > 0.81f) {
+            } else if (j > terrainHeight && perlinCaves <= 1.0f && perlinCaves > 0.81f) {
                 block[i][j].type = Block::SAND;
                 block[i][j].health = 300;
                 block[i][j].solid = true;
@@ -750,8 +755,7 @@ void generateNewWorldMap(Tile tile, Player player, Inventory inventory) {
             }             
         }
     }
-    player.position.y = worldStartY + (*terrainHeight - 4) * tile.size;
-    player.hitbox.y = player.position.y + player.hitboxOffset.y;
-    inventory.resetInventory();
-    delete terrainHeight;
+    player->position.y = worldStartY + (terrainHeight - 4) * tile->size;
+    player->hitbox.y = player->position.y + player->hitboxOffset.y;
+    inventory->resetInventory();
 }
