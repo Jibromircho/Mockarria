@@ -123,6 +123,9 @@ public:
             }
         }
     }
+    void drawInventoryItems(Tile tile, Vector2 position) {
+        
+    }
 
 };
 

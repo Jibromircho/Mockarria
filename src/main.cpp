@@ -638,6 +638,7 @@ int main() {
                             Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, (j * 48.0f) + 16.0f };
                             Color tint = { 255, 255, 255, 220 };
                             DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + 0.25f , tint);
+                            inventory.drawInventoryItems(tile, { (currentResWidth / 3) + 48.0f, 16.0f });
                         }
                     }
                 }
