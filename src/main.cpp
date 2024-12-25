@@ -49,7 +49,7 @@ float volumeAmbient = 0.8f;
 //fucntion definitions
 void initPermutation(unsigned int seed = std::time(nullptr));
 double fade(double t);
-double lerp(double t, double a, double b);
+double lerpgpt(double t, double a, double b);
 double grad1D(int hash, double x);
 double grad2D(int hash, double x, double y);
 double perlin1D(double x);
@@ -715,7 +715,7 @@ double perlin1D(double x) {
     int a = p[X];
     int b = p[X + 1];
 
-    return lerp(u, grad1D(a, x), grad1D(b, x - 1));
+    return lerpgpt(u, grad1D(a, x), grad1D(b, x - 1));
 }
 ////////////////
 double perlin2D(double x, double y) {
@@ -731,8 +731,8 @@ double perlin2D(double x, double y) {
     int ba = p[p[X + 1] + Y];
     int bb = p[p[X + 1] + Y + 1];
 
-    double res = lerp(v, lerp(u, grad2D(aa, x, y), grad2D(ba, x - 1, y)),
-                         lerp(u, grad2D(ab, x, y - 1), grad2D(bb, x - 1, y - 1)));
+    double res = lerpgpt(v, lerpgpt(u, grad2D(aa, x, y), grad2D(ba, x - 1, y)),
+                         lerpgpt(u, grad2D(ab, x, y - 1), grad2D(bb, x - 1, y - 1)));
     return res;
 }
 
