@@ -90,13 +90,13 @@ public:
         }
     }
 
-    void drawHotbarItems(Tile tile,Vector2 position) {
+    void drawHotbarItems(Tile* tile,Vector2 position) {
         for (int i = 0; i < hotbarSize; i++) {
             float scaleFactor = 1.0f;
             if (slots[i][0].itemID >= 0 && slots[i][0].stack > 0) {
                 int xOffset = 23;
                 int yOffset = 23;
-                Rectangle sourceRec = tile.getIconRecSource(slots[i][0].itemID);
+                Rectangle sourceRec = tile->getIconRecSource(slots[i][0].itemID);
                 Vector2 origin = { sourceRec.width / 2, sourceRec.height / 2 };
                 if (slots[i][0].selected == true) {
                     scaleFactor = 1.9f;
@@ -111,7 +111,7 @@ public:
                 sourceRec.height * scaleFactor         
                 };
 
-                DrawTexturePro(tile.tileSet, sourceRec, destRec, origin, 0.0f, WHITE);
+                DrawTexturePro(tile->tileSet, sourceRec, destRec, origin, 0.0f, WHITE);
 
                 Font font = GetFontDefault();
                 DrawTextEx( font, (std::to_string(slots[i][0].stack).c_str()), {position.x + (i * 48.0f) + (xOffset ), position.y + (yOffset )}, 8 * scaleFactor, 2,WHITE);
@@ -121,7 +121,7 @@ public:
             }
         }
     }
-    void drawInventoryItems(Tile tile, Vector2 position) {
+    void drawInventoryItems(Tile* tile, Vector2 position) {
         
     }
 

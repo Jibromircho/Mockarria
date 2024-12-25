@@ -526,7 +526,7 @@ int main() {
                     }
                     DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
 
-                    inventory.drawHotbarItems(tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
+                    inventory.drawHotbarItems(&tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
                 }
                 if (inventory.inventoryOpened) {
                     for (int i = 0; i < inventory.hotbarSize; i++) {
@@ -534,7 +534,7 @@ int main() {
                             Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, (j * 48.0f) + 16.0f };
                             Color tint = { 255, 255, 255, 220 };
                             DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + 0.25f , tint);
-                            inventory.drawInventoryItems(tile, { (currentResWidth / 3) + 48.0f, 16.0f });
+                            inventory.drawInventoryItems(&tile, { (currentResWidth / 3) + 48.0f, 16.0f });
                         }
                     }
                 }
@@ -649,7 +649,7 @@ void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filen
     UnloadImage(image);
 }
 
-void saveWorld(const Block block[6400][1800], const std::string& filename) {
+void saveWorld(const Block block[worldSizeW][worldSizeH], const std::string& filename) {
     std::ofstream outFile(filename, std::ios::binary);
     if (!outFile) {
         std::cerr << "Error: Could not open file for saving.\n";
@@ -680,6 +680,7 @@ void loadWorld(Block block[6400][1800], const std::string& filename) {
 void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
     unsigned int seed = 1234;
     int terrainHeight;
+    int terrainEdge = 100;
     initPermutation();
             
     for (int i = 0; i < worldSizeW - 1; i++){
@@ -717,7 +718,12 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
             else if(j < terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)) { //makes dirt layeer near surfice                                 
                 block[i][j].type = Block::DIRT;
                 block[i][j].health = 300;
-                block[i][j].solid = true;                            
+                block[i][j].solid = true;
+                if (i < terrainEdge + (perlin1D(nj * 20) + 0.3) * 250 + GetRandomValue(-5, 5)|| i > worldSizeW - terrainEdge + (perlin1D(nj * 20) + 0.3) * 250 + GetRandomValue(-5, 5)) {
+                    block[i][j].type = Block::SAND;
+                    block[i][j].health = 300;
+                    block[i][j].solid = true;
+                }                           
             }else{           // makes stone layer bellow sirfice
                 block[i][j].type = Block::STONE;
                 block[i][j].health = 600;
@@ -743,7 +749,7 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
                 block[i][j].health = 300;
                 block[i][j].solid = true;
             } else if (j > terrainHeight && perlinCaves <= 1.0f && perlinCaves > 0.81f) {
-                block[i][j].type = Block::SAND;
+                block[i][j].type = Block::MUD;
                 block[i][j].health = 300;
                 block[i][j].solid = true;
             }
@@ -759,3 +765,4 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
     player->hitbox.y = player->position.y + player->hitboxOffset.y;
     inventory->resetInventory();
 }
+ 
