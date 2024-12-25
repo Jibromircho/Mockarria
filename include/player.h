@@ -42,7 +42,7 @@ public:
 
     //player stats
     PlayerStats stats;
-    const int maxJump = 100;
+    int maxJump = 100;
     int jumpCount = maxJump;
     float jumpStrength = -3.5f;
     int health = 50 + level * 5 + stats.vigor * 10;

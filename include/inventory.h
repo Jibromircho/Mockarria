@@ -5,8 +5,8 @@
 
 struct Slot {
     int itemID = -1;
-    bool selected = false;
     int stack = 0;
+    bool selected = false;
     bool placeable = false;
 
 };

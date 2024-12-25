@@ -14,12 +14,12 @@ const int worldSizeH = 1800;
 const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
 const float worldStartY = (float) worldSizeH * 16 / 5 * -1;
 typedef struct Block {
+    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
+    Rectangle hitbox;
+    Vector2 position;
+    int health;
     bool solid = false;
     bool directional = false;
-    Vector2 position;
-    Rectangle hitbox;
-    int health;
-    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
     // Constructor with default values
     Block() : solid(false), directional(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -679,9 +679,9 @@ void loadWorld(Block block[6400][1800], const std::string& filename) {
 }
 
 void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
-    unsigned int seed = 1234;
     int terrainHeight;
     int terrainEdge = 200;
+    unsigned int seed = 1234;
     initPermutation();
             
     for (int i = 0; i < worldSizeW - 1; i++){
