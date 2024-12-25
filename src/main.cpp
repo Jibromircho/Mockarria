@@ -474,65 +474,26 @@ int main() {
                 BeginMode2D(camera);
                     for (int i = firstBlockX; i < lastBlockX; i++){
                         for (int j = firstBlockY; j < lastBlockY; j++){
-                            switch (block[i][j].type)
-                            {
-                            case Block::DIRT:
-                                if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtAllSide, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtLeftTopRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtRightBottLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtTopRightBott, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottLeftTop, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtTopLeft, block[i][j].position, WHITE);
-                                else if (!block[i + 1][j].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirtTopRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtBottRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirtLeftRight, block[i][j].position, WHITE);
-                                else if (!block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtTopBott, block[i][j].position, WHITE);                    
-                                else if (!block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtRight, block[i][j].position, WHITE);
-                                else if (!block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.dirtLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid) DrawTextureRec(tile.tileSet, tile.dirtBott, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.dirtTop, block[i][j].position, WHITE);     
-                                else DrawTextureRec(tile.tileSet, tile.dirtCenter, block[i][j].position, WHITE);
-                                break;
-                            case Block::STONE:
-                                if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneAllSide, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneLeftTopRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneRightBottLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneTopRightBott, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneBottLeftTop, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneBottLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneTopLeft, block[i][j].position, WHITE);
-                                else if (!block[i + 1][j].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.stoneTopRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneBottRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.stoneLeftRight, block[i][j].position, WHITE);
-                                else if (!block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneTopBott, block[i][j].position, WHITE);                    
-                                else if (!block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneRight, block[i][j].position, WHITE);
-                                else if (!block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.stoneLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid) DrawTextureRec(tile.tileSet, tile.stoneBott, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.stoneTop, block[i][j].position, WHITE);     
-                                else DrawTextureRec(tile.tileSet, tile.stoneCenter, block[i][j].position, WHITE);
-                                break;
-                            case Block::CLAY:
-                                if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayAllSide, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayLeftTopRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayRightBottLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayTopRightBott, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayBottLeftTop, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayBottLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid && !block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayTopLeft, block[i][j].position, WHITE);
-                                else if (!block[i + 1][j].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.clayTopRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayBottRight, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid && !block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.clayLeftRight, block[i][j].position, WHITE);
-                                else if (!block[i - 1][j].solid && !block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayTopBott, block[i][j].position, WHITE);                    
-                                else if (!block[i + 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayRight, block[i][j].position, WHITE);
-                                else if (!block[i - 1][j].solid) DrawTextureRec(tile.tileSet, tile.clayLeft, block[i][j].position, WHITE);
-                                else if (!block[i][j + 1].solid) DrawTextureRec(tile.tileSet, tile.clayBott, block[i][j].position, WHITE);
-                                else if (!block[i][j - 1].solid) DrawTextureRec(tile.tileSet, tile.clayTop, block[i][j].position, WHITE);     
-                                else DrawTextureRec(tile.tileSet, tile.clayCenter, block[i][j].position, WHITE);
-                                break;
-                            default:
-                                break;
-                            }
+                            Rectangle sourceRec;
+                            if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);   
+                            else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid && !block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j - 1].solid && !block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i + 1][j].solid && !block[i][j - 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);              
+                            else if (!block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j + 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else if (!block[i][j - 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
+                            else sourceRec = tile.getTileTexture(block[i][j].type);
+
+                            DrawTextureRec(tile.tileSet, sourceRec, block[i][j].position, WHITE);
+
                         }
                     }
                     DrawRectangleLinesEx(player.hitbox, 2, GREEN);

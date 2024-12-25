@@ -78,8 +78,8 @@ public:
         return { ((float)id * size) , size * 13, size, size };
     };
 
-    Rectangle getTileTexture() {
-        
+    Rectangle getTileTexture(int blockType) {
+        return { blockType * size, size * 13, size, size};
     };
 
 };
