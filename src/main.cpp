@@ -15,12 +15,13 @@ const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
 const float worldStartY = (float) worldSizeH * 16 / 5 * -1;
 typedef struct Block {
     bool solid = false;
+    bool directional = false;
     Vector2 position;
     Rectangle hitbox;
     int health;
     enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SAND = 4 } type;
     // Constructor with default values
-    Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
+    Block() : solid(false), directional(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
 
 Block block[worldSizeW][worldSizeH];
@@ -226,6 +227,7 @@ int main() {
                                 inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
+                                block[i][j].directional = false;
                             }
                         }
                     }
@@ -237,6 +239,7 @@ int main() {
                                     if (itemID != -1) {
                                         block[i][j].type = static_cast<Block::Type>(itemID);
                                         block[i][j].solid = true;
+                                        block[i][j].directional = true;
                                     }                        
                                 }
                             }
@@ -474,23 +477,24 @@ int main() {
                 BeginMode2D(camera);
                     for (int i = firstBlockX; i < lastBlockX; i++){
                         for (int j = firstBlockY; j < lastBlockY; j++){
-                            Rectangle sourceRec;
-                            if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);   
-                            else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid && !block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j - 1].solid && !block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i + 1][j].solid && !block[i][j - 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i - 1][j].solid && !block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);              
-                            else if (!block[i + 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i - 1][j].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j + 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else if (!block[i][j - 1].solid) sourceRec = tile.getTileTexture(block[i][j].type);
-                            else sourceRec = tile.getTileTexture(block[i][j].type);
+                            std::string blockWrap;
+                            if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) blockWrap = "a" ;
+                            else if (!block[i][j - 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) blockWrap = "ltr" ;
+                            else if (!block[i][j + 1].solid && !block[i - 1][j].solid && !block[i + 1][j].solid) blockWrap = "rbl" ;
+                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i + 1][j].solid) blockWrap = "trb" ;
+                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid && !block[i - 1][j].solid) blockWrap = "blt" ;
+                            else if (!block[i][j + 1].solid && !block[i - 1][j].solid) blockWrap = "bl" ;
+                            else if (!block[i][j - 1].solid && !block[i - 1][j].solid) blockWrap = "tl" ;
+                            else if (!block[i + 1][j].solid && !block[i][j - 1].solid) blockWrap = "tr" ;
+                            else if (!block[i][j + 1].solid && !block[i + 1][j].solid) blockWrap = "br" ;
+                            else if (!block[i][j + 1].solid && !block[i][j - 1].solid) blockWrap = "lr" ;
+                            else if (!block[i - 1][j].solid && !block[i + 1][j].solid) blockWrap = "tb" ;              
+                            else if (!block[i + 1][j].solid) blockWrap = "r" ;
+                            else if (!block[i - 1][j].solid) blockWrap = "l" ;
+                            else if (!block[i][j + 1].solid) blockWrap = "b" ;
+                            else if (!block[i][j - 1].solid) blockWrap = "t" ;
+                            else blockWrap = "c";
+                            Rectangle sourceRec = tile.getTileTexture(block[i][j].type, blockWrap);
 
                             DrawTextureRec(tile.tileSet, sourceRec, block[i][j].position, WHITE);
 
