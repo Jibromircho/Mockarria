@@ -19,7 +19,7 @@ typedef struct Block {
     Vector2 position;
     Rectangle hitbox;
     int health;
-    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SAND = 4 } type;
+    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
     // Constructor with default values
     Block() : solid(false), directional(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -71,6 +71,7 @@ Color getColorForBlockType(Block::Type type) {
         case Block::CLAY: return RED;
         case Block::MUD: return LIGHTGRAY;
         case Block::SAND: return YELLOW;
+        case Block::SNOW: return { 224, 247, 250, 255 };
         default: return BLACK;
     }
 }
@@ -680,7 +681,7 @@ void loadWorld(Block block[6400][1800], const std::string& filename) {
 void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
     unsigned int seed = 1234;
     int terrainHeight;
-    int terrainEdge = 100;
+    int terrainEdge = 200;
     initPermutation();
             
     for (int i = 0; i < worldSizeW - 1; i++){
@@ -719,7 +720,7 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
                 block[i][j].type = Block::DIRT;
                 block[i][j].health = 300;
                 block[i][j].solid = true;
-                if (i < terrainEdge + (perlin1D(nj * 20) + 0.3) * 250 + GetRandomValue(-5, 5)|| i > worldSizeW - terrainEdge + (perlin1D(nj * 20) + 0.3) * 250 + GetRandomValue(-5, 5)) {
+                if (i < terrainEdge + (perlin1D(nj * 20) + 0.3) * 100 + GetRandomValue(-5, 5)|| i > worldSizeW - terrainEdge + (perlin1D(nj * 20) + 0.3) * 100 + GetRandomValue(-5, 5)) {
                     block[i][j].type = Block::SAND;
                     block[i][j].health = 300;
                     block[i][j].solid = true;
@@ -749,7 +750,7 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
                 block[i][j].health = 300;
                 block[i][j].solid = true;
             } else if (j > terrainHeight && perlinCaves <= 1.0f && perlinCaves > 0.81f) {
-                block[i][j].type = Block::MUD;
+                block[i][j].type = Block::SNOW;
                 block[i][j].health = 300;
                 block[i][j].solid = true;
             }

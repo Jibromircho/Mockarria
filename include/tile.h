@@ -12,12 +12,12 @@ public:
     const float size = 16.0f;
     
     Rectangle getIconRecSource(int id) {
-        return { ((float)id * size) , size * 13, size, size };
+        return { ((float)id * size) , 0.0f , size, size };
     };
 
     Rectangle getTileTexture(int blockType, std::string emptySides) {
         int blockWrap;
-        if (emptySides == "t") blockWrap = 0;
+        if (emptySides == "a") blockWrap = 0;
         else if (emptySides == "c") blockWrap = 1;
         else if (emptySides == "r") blockWrap = 2;
         else if (emptySides == "l") blockWrap = 3;
@@ -30,7 +30,7 @@ public:
         else if (emptySides == "trb") blockWrap = 10;
         else if (emptySides == "rbl") blockWrap = 11;
         else if (emptySides == "blt") blockWrap = 12;
-        else if (emptySides == "a") blockWrap = 13;
+        else if (emptySides == "t") blockWrap = 13;
         else if (emptySides == "lr") blockWrap = 14;
         else if (emptySides == "tb") blockWrap = 15;
 
