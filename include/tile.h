@@ -8,6 +8,8 @@ enum TileType {
     DIRT,
     STONE,
     CLAY,
+    MUD,
+    SAND,
 };
 
 

@@ -18,7 +18,7 @@ typedef struct Block {
     Vector2 position;
     Rectangle hitbox;
     int health;
-    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2} type;
+    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SAND = 4 } type;
     // Constructor with default values
     Block() : solid(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -63,16 +63,13 @@ void loadWorld(Block block[worldSizeW][worldSizeH], const std::string& filename)
 
 Color getColorForBlockType(Block::Type type) {
     switch (type) {
-        case Block::SKY:
-            return SKYBLUE;   
-        case Block::DIRT:
-            return BROWN; 
-        case Block::STONE:
-            return GRAY;      
-        case Block::CLAY:
-            return RED;
-        default:
-            return BLACK;
+        case Block::SKY: return SKYBLUE;
+        case Block::DIRT: return BROWN;
+        case Block::STONE: return GRAY;
+        case Block::CLAY: return RED;
+        case Block::MUD: return LIGHTGRAY;
+        case Block::SAND: return YELLOW;
+        default: return BLACK;
     }
 }
 
@@ -269,6 +266,7 @@ int main() {
             currentScreen = TITLE;
             player.saveGame("../save/playerSave.dat", inventory);
             saveWorld(block, "../save/worldSave.dat");
+            saveMapAsImage(block, "../save/world_map_1.png");
         }
         //hotbar slot select
         for (int i = 0; i < 10; i++) {
@@ -433,17 +431,25 @@ int main() {
                                 block[i][j].solid = false;
                             }
                             perlinCaves = perlin2D(ni * 95, nj * 30);//working on tunnels
-                            if (perlinCaves <= 0.767f && perlinCaves > 0.483f){
+                            if (perlinCaves <= 0.600f && perlinCaves > 0.483f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].health = 0;
                                 block[i][j].solid = false;
-                            } else if (perlinCaves <= 1.0f && perlinCaves > 0.767f) {
+                            } else if (perlinCaves <= 0.790f && perlinCaves > 0.600f) {
                                 block[i][j].type = Block::CLAY;
+                                block[i][j].health = 300;
+                                block[i][j].solid = true;
+                            } else if (perlinCaves <= 0.81f && perlinCaves > 0.790f) {
+                                block[i][j].type = Block::MUD;
+                                block[i][j].health = 300;
+                                block[i][j].solid = true;
+                            } else if (perlinCaves <= 1.0f && perlinCaves > 0.81f) {
+                                block[i][j].type = Block::SAND;
                                 block[i][j].health = 300;
                                 block[i][j].solid = true;
                             }
                             perlinCaves = perlin2D(ni * 90, nj * 90); //perfect for small caves
-                            if (perlinCaves <= -0.5f && perlinCaves > -1.0f){
+                            if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
                                 block[i][j].type = Block::SKY;
                                 block[i][j].health = 0;
                                 block[i][j].solid = false;
@@ -456,7 +462,7 @@ int main() {
                     inventory.resetInventory();
                     delete terrainHeight;
 
-                saveMapAsImage(block, "world_map.png");
+                saveMapAsImage(block, "../save/world_map_1.png");
                 }
     
                 else DrawTextureRec(buttonsEmpty, buttonHover, createWorldButtonPos, WHITE);
@@ -688,7 +694,7 @@ double fade(double t) {
     return t * t * t * (t * (t * 6 - 15) + 10);
 }
 ///////////////
-double lerp(double t, double a, double b) {
+double lerpgpt(double t, double a, double b) {
     return a + t * (b - a);
 }
 //////////////////
@@ -739,13 +745,11 @@ double perlin2D(double x, double y) {
 
 /// debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename) {
-    int width = worldSizeW;
-    int height = worldSizeH;
 
-    Image image = GenImageColor(width, height, BLACK);
+    Image image = GenImageColor(width, worldSizeH, BLACK);
 
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    for (int y = 0; y < worldSizeH; y++) {
+        for (int x = 0; x < worldSizeW; x++) {
             Color color = getColorForBlockType(block[x][y].type);
             ImageDrawPixel(&image, x, y, color);
         }
