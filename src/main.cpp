@@ -54,6 +54,7 @@ double grad1D(int hash, double x);
 double grad2D(int hash, double x, double y);
 double perlin1D(double x);
 double perlin2D(double x, double y);
+void generateNewWorldMap(Tile tile,Player player,Inventory inventory);
 
 ////debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
@@ -379,89 +380,8 @@ int main() {
                     player.resetPos();
                     currentScreen = GAMEPLAY;
                     //create a map
-                    unsigned int seed = 1234;
-                    int* terrainHeight = new int(0);
-                    initPermutation();
-                    for (int i = 0; i < worldSizeW - 1; i++){
-
-                        for (int j = 0; j < worldSizeH - 1; j++){
-                            block[i][j].position.x = worldStartX + i * tile.size;
-                            block[i][j].position.y = worldStartY + j * tile.size;
-                            block[i][j].hitbox.x = block[i][j].position.x;
-                            block[i][j].hitbox.y = block[i][j].position.y;
-
-                            double ni = (double)i / worldSizeW;
-                            double nj = (float)j / worldSizeH;
-                            double blockHighVal = perlin1D(ni * 20);
-
-                            double frequency = 0.5;
-                            double amplitude = 1.0;
-                            double persistence = 0.5;
-                            double totalAmplitude = 0.0;
-                            double height = 0.0;
-
-                            for (int octave = 0; octave < 12; octave++) {
-                                height += perlin1D(ni * frequency * 20) * amplitude;
-                                totalAmplitude += amplitude;
-                                amplitude *= persistence;
-                                frequency *= 2.0;
-                            }
-                            height /= totalAmplitude;
-                            height = (height + 1) / 2;
-                            *terrainHeight = static_cast<int>(height * (worldSizeH / 3));
-
-                            if (j < *terrainHeight) { //shapes bigger hills on surfice
-                                block[i][j].type = Block::SKY;
-                                block[i][j].health = 0;
-                                block[i][j].solid = false;
-                            }
-                            else if(j < *terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)){ //makes dirt layeer near surfice                                 
-                                block[i][j].type = Block::DIRT;
-                                block[i][j].health = 300;
-                                block[i][j].solid = true;                            
-                            }else{                                      // makes stone layer bellow sirfice
-                                block[i][j].type = Block::STONE;
-                                block[i][j].health = 600;
-                                block[i][j].solid = true; 
-                            }
-                            double perlinCaves = perlin2D(ni * 10, nj * 35); //perfect for bigger caves
-                            if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
-                                block[i][j].type = Block::SKY;
-                                block[i][j].health = 0;
-                                block[i][j].solid = false;
-                            }
-                            perlinCaves = perlin2D(ni * 95, nj * 30);//working on tunnels
-                            if (perlinCaves <= 0.600f && perlinCaves > 0.483f){
-                                block[i][j].type = Block::SKY;
-                                block[i][j].health = 0;
-                                block[i][j].solid = false;
-                            } else if (perlinCaves <= 0.790f && perlinCaves > 0.600f) {
-                                block[i][j].type = Block::CLAY;
-                                block[i][j].health = 300;
-                                block[i][j].solid = true;
-                            } else if (perlinCaves <= 0.81f && perlinCaves > 0.790f) {
-                                block[i][j].type = Block::MUD;
-                                block[i][j].health = 300;
-                                block[i][j].solid = true;
-                            } else if (perlinCaves <= 1.0f && perlinCaves > 0.81f) {
-                                block[i][j].type = Block::SAND;
-                                block[i][j].health = 300;
-                                block[i][j].solid = true;
-                            }
-                            perlinCaves = perlin2D(ni * 90, nj * 90); //perfect for small caves
-                            if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
-                                block[i][j].type = Block::SKY;
-                                block[i][j].health = 0;
-                                block[i][j].solid = false;
-                            }
-                            
-                        }
-                    }
-                    player.position.y = worldStartY + (*terrainHeight - 4) * tile.size;
-                    player.hitbox.y = player.position.y + player.hitboxOffset.y;
-                    inventory.resetInventory();
-                    delete terrainHeight;
-
+                    generateNewWorldMap(tile, player, inventory);
+                    
                 saveMapAsImage(block, "../save/world_map_1.png");
                 }
     
@@ -746,7 +666,7 @@ double perlin2D(double x, double y) {
 /// debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename) {
 
-    Image image = GenImageColor(width, worldSizeH, BLACK);
+    Image image = GenImageColor(worldSizeW, worldSizeH, BLACK);
 
     for (int y = 0; y < worldSizeH; y++) {
         for (int x = 0; x < worldSizeW; x++) {
@@ -787,4 +707,86 @@ void loadWorld(Block block[6400][1800], const std::string& filename) {
     std::cout << "World loaded successfully.\n";
 }
 
+void generateNewWorldMap(Tile tile, Player player, Inventory inventory) {
+    unsigned int seed = 1234;
+    int* terrainHeight = new int(0);
+    initPermutation();
+            
+    for (int i = 0; i < worldSizeW - 1; i++){
+        for (int j = 0; j < worldSizeH - 1; j++){
+            block[i][j].position.x = worldStartX + i * tile.size;
+            block[i][j].position.y = worldStartY + j * tile.size;
+            block[i][j].hitbox.x = block[i][j].position.x;
+            block[i][j].hitbox.y = block[i][j].position.y;
 
+            double ni = (double)i / worldSizeW;
+            double nj = (float)j / worldSizeH;
+            double blockHighVal = perlin1D(ni * 20);
+
+            double frequency = 0.5;
+            double amplitude = 1.0;
+            double persistence = 0.5;
+            double totalAmplitude = 0.0;
+            double height = 0.0;
+
+            for (int octave = 0; octave < 12; octave++) {
+                height += perlin1D(ni * frequency * 20) * amplitude;
+                totalAmplitude += amplitude;
+                amplitude *= persistence;
+                frequency *= 2.0;
+            }
+            height /= totalAmplitude;
+            height = (height + 1) / 2;
+            *terrainHeight = static_cast<int>(height * (worldSizeH / 3));
+
+            if (j < *terrainHeight) { //shapes bigger hills on surfice
+                block[i][j].type = Block::SKY;
+                block[i][j].health = 0;
+                block[i][j].solid = false;
+            }
+            else if(j < *terrainHeight + 50 + (perlin1D(ni * 20) + 0.3) * 150 + GetRandomValue(-3, 3)) { //makes dirt layeer near surfice                                 
+                block[i][j].type = Block::DIRT;
+                block[i][j].health = 300;
+                block[i][j].solid = true;                            
+            }else{           // makes stone layer bellow sirfice
+                block[i][j].type = Block::STONE;
+                block[i][j].health = 600;
+                block[i][j].solid = true; 
+            }
+            double perlinCaves = perlin2D(ni * 10, nj * 35); //perfect for bigger caves
+            if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
+                block[i][j].type = Block::SKY;
+                block[i][j].health = 0;
+                block[i][j].solid = false;
+            }
+            perlinCaves = perlin2D(ni * 95, nj * 30);//working on tunnels
+            if (perlinCaves <= 0.600f && perlinCaves > 0.483f){
+                block[i][j].type = Block::SKY;
+                block[i][j].health = 0;
+                block[i][j].solid = false;
+            } else if (perlinCaves <= 0.790f && perlinCaves > 0.600f) {
+                block[i][j].type = Block::CLAY;
+                block[i][j].health = 300;
+                block[i][j].solid = true;
+            } else if (perlinCaves <= 0.81f && perlinCaves > 0.790f) {
+                block[i][j].type = Block::MUD;
+                block[i][j].health = 300;
+                block[i][j].solid = true;
+            } else if (perlinCaves <= 1.0f && perlinCaves > 0.81f) {
+                block[i][j].type = Block::SAND;
+                block[i][j].health = 300;
+                block[i][j].solid = true;
+            }
+            perlinCaves = perlin2D(ni * 90, nj * 90); //perfect for small caves
+            if (j > 450 && perlinCaves <= -0.5f && perlinCaves > -1.0f){
+                block[i][j].type = Block::SKY;
+                block[i][j].health = 0;
+                block[i][j].solid = false;
+            }             
+        }
+    }
+    player.position.y = worldStartY + (*terrainHeight - 4) * tile.size;
+    player.hitbox.y = player.position.y + player.hitboxOffset.y;
+    inventory.resetInventory();
+    delete terrainHeight;
+}
