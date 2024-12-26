@@ -41,7 +41,7 @@ public:
     int price;
 
     Item(std::string itemName, ItemType itemType, ItemRarity itemRarity, Rectangle itemTexture, int itemId, 
-         int itemStackSize, bool isPlaceable, float itemWeight, int itemDurability, int itemPrice)
+         int itemStackSize, int itemPrice)
         : name(itemName), type(itemType), rarity(itemRarity), texture(itemTexture), id(itemId), 
           stackSize(itemStackSize), price(itemPrice) {}
 
