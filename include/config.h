@@ -17,8 +17,8 @@
 
 
 #include <tile.h>
-#include <item.h>
 #include <inventory.h>
+#include <item.h>
 #include <player.h>
 #include <world.h>
 

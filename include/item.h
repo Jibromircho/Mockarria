@@ -1,5 +1,5 @@
-#ifndef TILE_H
-#define TILE_H
+#ifndef ITEM_H
+#define ITEM_H
 
 #include <config.h>
 
