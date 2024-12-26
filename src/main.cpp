@@ -27,7 +27,8 @@ typedef struct Block {
 Block block[worldSizeW][worldSizeH];
 
 // screen constants
-
+const float workingWidth = 1980.0f;
+const float workingHeight = 1080.0f;
 constexpr int buttonFontSize = 26;
 bool mapOpened = false;
 constexpr int fps = 60;
@@ -47,7 +48,7 @@ double grad2D(int hash, double x, double y);
 double perlin1D(double x);
 double perlin2D(double x, double y);
 void generateNewWorldMap(Tile* tile,Player* player,Inventory* inventory);
-void drawMenuBackground(Texture2D* loadScreenSky, Vector2* mainMenuCloudPos, Texture2D* loadScreenCloud_1, Texture2D* loadScreen);
+void drawMenuBackground(Texture2D* loadScreenSky, Vector2* mainMenuCloudPos, Texture2D* loadScreenCloud_1, Texture2D* loadScreen, float resolutionScale);
 
 ////debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
@@ -73,8 +74,11 @@ int main() {
     InitWindow(0, 0, "Mockarria");
     float currentResWidth = (float)GetScreenWidth();
     float currentResHeight = (float)GetScreenHeight();
+    float resolutionScale = 1.0f;
+    
     SetWindowSize(currentResWidth, currentResHeight);
     ToggleFullscreen();
+    
     SetExitKey(0);
 
     //button positions
@@ -298,12 +302,12 @@ int main() {
             switch (currentScreen)
             {
             case LOGO:
-                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen,resolutionScale);
                 break;
             case TITLE:
             {
                 //draw title screen elements
-                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen,resolutionScale);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all the buttons
@@ -346,7 +350,7 @@ int main() {
             case PLAY:
             {
                 //draw background
-                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen, resolutionScale);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -392,7 +396,7 @@ int main() {
             case SETTINGS:
             {
                 //draw background
-                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen, resolutionScale);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -731,10 +735,10 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
     inventory->resetInventory();
 }
 
-void drawMenuBackground(Texture2D* loadScreenSky, Vector2* mainMenuCloudPos, Texture2D* loadScreenCloud_1, Texture2D* loadScreen) {
-    DrawTextureEx(*loadScreenSky, *mainMenuCloudPos, 0.0f, 1.5f, WHITE);
-    DrawTextureEx(*loadScreenSky, (Vector2) { (mainMenuCloudPos->x - loadScreenSky->width), mainMenuCloudPos->y}, 0.0f, 1.5f, WHITE);
-    DrawTextureEx(*loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, 1.5f, WHITE);
-    DrawTextureEx(*loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, 1.5f, WHITE);
+void drawMenuBackground(Texture2D* loadScreenSky, Vector2* mainMenuCloudPos, Texture2D* loadScreenCloud_1, Texture2D* loadScreen, float resolutionScale) {
+    DrawTextureEx(*loadScreenSky, *mainMenuCloudPos, 0.0f, resolutionScale * 1.5f, WHITE);
+    DrawTextureEx(*loadScreenSky, (Vector2) { (mainMenuCloudPos->x - loadScreenSky->width), mainMenuCloudPos->y}, 0.0f, resolutionScale * 1.5f, WHITE);
+    DrawTextureEx(*loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale * 1.5f, WHITE);
+    DrawTextureEx(*loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale * 1.5f, WHITE);
 }
  
