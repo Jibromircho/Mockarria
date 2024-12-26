@@ -15,8 +15,8 @@ const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
 const float worldStartY = (float) worldSizeH * 16 / 5 * -1;
 typedef struct Block {
     enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
-    Rectangle hitbox;
     Vector2 position;
+    Rectangle hitbox;
     int health;
     bool solid = false;
     bool directional = false;
@@ -27,14 +27,14 @@ typedef struct Block {
 Block block[worldSizeW][worldSizeH];
 
 // screen constants
-constexpr float workingHeight = 720.0f;
-constexpr float workingWidth = 1280.0f;
+constexpr float virtualWidth = 1920.0f;
+constexpr float virtualHeight = 1080.0f;
+
 Vector2 supportedResolutions[] = {
     {2560, 1440},
     {1920, 1080},
     {1440, 900},
-    {1280, 720},
-    {640, 480}
+    {1280, 720}
 };
 int currentResolutionIndex = 3;
 constexpr int buttonFontSize = 26;
@@ -81,12 +81,13 @@ int main() {
     InitWindow(0, 0, "Mockarria");
     float currentResWidth = (float)GetScreenWidth();
     float currentResHeight = (float)GetScreenHeight();
+    RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
     SetWindowSize(currentResWidth, currentResHeight);
     ToggleFullscreen();
     SetExitKey(0);
 
     //button positions
-    float resolutionScale = currentResHeight / workingHeight;
+    float resolutionScale = currentResHeight / virtualHeight;
     const Vector2 playButtonPos { currentResWidth / 2 - 100, currentResHeight / 2 - 100 };
     const Vector2 settingsButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
     const Vector2 exitButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  + 50 };
@@ -679,9 +680,9 @@ void loadWorld(Block block[6400][1800], const std::string& filename) {
 }
 
 void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
+    unsigned int seed = 1234;
     int terrainHeight;
     int terrainEdge = 200;
-    unsigned int seed = 1234;
     initPermutation();
             
     for (int i = 0; i < worldSizeW - 1; i++){
