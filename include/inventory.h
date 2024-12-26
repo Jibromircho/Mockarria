@@ -99,14 +99,14 @@ public:
                 Rectangle sourceRec = tile->getIconRecSource(slots[i][0].itemID);
                 Vector2 origin = { sourceRec.width / 2, sourceRec.height / 2 };
                 if (slots[i][0].selected == true) {
-                    scaleFactor = 1.9f;
+                    scaleFactor = 2.25f;
                 } else if (slots[i][0].selected == false) {
-                    scaleFactor = 1.6f;
+                    scaleFactor = 2.0f;
                 };
 
                 Rectangle destRec = { 
-                position.x + (i * 48.0f) + (xOffset / 2), 
-                position.y + (yOffset / 2),       
+                position.x + (i * 48.0f) + (xOffset / 1.75f), 
+                position.y + (yOffset / 1.75f),       
                 sourceRec.width * scaleFactor,            
                 sourceRec.height * scaleFactor         
                 };

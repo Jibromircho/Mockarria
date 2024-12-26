@@ -14,12 +14,12 @@ const int worldSizeH = 1800;
 const float worldStartX = (float)worldSizeW * 16 / 2 * - 1;
 const float worldStartY = (float) worldSizeH * 16 / 5 * -1;
 typedef struct Block {
-    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
+    bool solid = false;
+    bool directional = false;
     Vector2 position;
     Rectangle hitbox;
     int health;
-    bool solid = false;
-    bool directional = false;
+    enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
     // Constructor with default values
     Block() : solid(false), directional(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
 } Block;
@@ -27,8 +27,6 @@ typedef struct Block {
 Block block[worldSizeW][worldSizeH];
 
 // screen constants
-constexpr float virtualWidth = 1920.0f;
-constexpr float virtualHeight = 1080.0f;
 
 Vector2 supportedResolutions[] = {
     {2560, 1440},
@@ -56,6 +54,7 @@ double grad2D(int hash, double x, double y);
 double perlin1D(double x);
 double perlin2D(double x, double y);
 void generateNewWorldMap(Tile* tile,Player* player,Inventory* inventory);
+void drawMenuBackground(Texture2D* loadScreenSky, Vector2* mainMenuCloudPos, Texture2D* loadScreenCloud_1, Texture2D* loadScreen);
 
 ////debug stuff
 void saveMapAsImage(const Block block[worldSizeW][worldSizeH], const char* filename);
@@ -81,13 +80,11 @@ int main() {
     InitWindow(0, 0, "Mockarria");
     float currentResWidth = (float)GetScreenWidth();
     float currentResHeight = (float)GetScreenHeight();
-    RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
     SetWindowSize(currentResWidth, currentResHeight);
     ToggleFullscreen();
     SetExitKey(0);
 
     //button positions
-    float resolutionScale = currentResHeight / virtualHeight;
     const Vector2 playButtonPos { currentResWidth / 2 - 100, currentResHeight / 2 - 100 };
     const Vector2 settingsButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
     const Vector2 exitButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  + 50 };
@@ -310,20 +307,12 @@ int main() {
             switch (currentScreen)
             {
             case LOGO:
-            {
-                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
-            } break;
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
+                break;
             case TITLE:
             {
                 //draw title screen elements
-                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all the buttons
@@ -366,10 +355,7 @@ int main() {
             case PLAY:
             {
                 //draw background
-                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -415,10 +401,7 @@ int main() {
             case SETTINGS:
             {
                 //draw background
-                DrawTextureEx(loadScreenSky, mainMenuCloudPos, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenSky, (Vector2) { (mainMenuCloudPos.x - loadScreenSky.width) * resolutionScale, mainMenuCloudPos.y}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
-                DrawTextureEx(loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, resolutionScale, WHITE);
+                drawMenuBackground(&loadScreenSky, &mainMenuCloudPos, &loadScreenCloud_1, &loadScreen);
                 DrawText("MOCKARRIA by Didi", 20, 20, 36, LIGHTGRAY);
 
                 //draw all buttons
@@ -513,7 +496,7 @@ int main() {
                 EndMode2D();
 
                 //Drawing ui elemnts
-                player.drawPlayerHealth(resolutionScale);
+                //player.drawPlayerHealth(resolutionScale);
                 float selectedSlotScale;
                 for (int i = 0; i < 10; i++) {
                     Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, 16.0f };
@@ -526,7 +509,7 @@ int main() {
                         tint = { 255, 255, 255, 220 };
                         selectedSlotScale = 0.0f;
                     }
-                    DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + selectedSlotScale, tint);
+                    DrawTextureEx(inventorySlot, position, 0.0f, 2.0f + selectedSlotScale, tint);
 
                     inventory.drawHotbarItems(&tile,{ (currentResWidth / 3) + 48.0f, 16.0f });
                 }
@@ -535,7 +518,7 @@ int main() {
                         for (int j = 1; j < inventory.inventoryRows; j++) {
                             Vector2 position = { (currentResWidth / 3) + (i * 48.0f) + 48.0f, (j * 48.0f) + 16.0f };
                             Color tint = { 255, 255, 255, 220 };
-                            DrawTextureEx(inventorySlot, position, 0.0f, resolutionScale + 0.25f , tint);
+                            DrawTextureEx(inventorySlot, position, 0.0f, 2.25f , tint);
                             inventory.drawInventoryItems(&tile, { (currentResWidth / 3) + 48.0f, 16.0f });
                         }
                     }
@@ -766,5 +749,12 @@ void generateNewWorldMap(Tile* tile, Player* player, Inventory* inventory) {
     player->position.y = worldStartY + (terrainHeight - 4) * tile->size;
     player->hitbox.y = player->position.y + player->hitboxOffset.y;
     inventory->resetInventory();
+}
+
+void drawMenuBackground(Texture2D* loadScreenSky, Vector2* mainMenuCloudPos, Texture2D* loadScreenCloud_1, Texture2D* loadScreen) {
+    DrawTextureEx(*loadScreenSky, *mainMenuCloudPos, 0.0f, 1.5f, WHITE);
+    DrawTextureEx(*loadScreenSky, (Vector2) { (mainMenuCloudPos->x - loadScreenSky->width), mainMenuCloudPos->y}, 0.0f, 1.5f, WHITE);
+    DrawTextureEx(*loadScreenCloud_1, Vector2{ 0.0f, 0.0f}, 0.0f, 1.5f, WHITE);
+    DrawTextureEx(*loadScreen, Vector2{ 0.0f, 0.0f}, 0.0f, 1.5f, WHITE);
 }
  
