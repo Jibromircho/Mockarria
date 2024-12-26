@@ -28,13 +28,6 @@ Block block[worldSizeW][worldSizeH];
 
 // screen constants
 
-Vector2 supportedResolutions[] = {
-    {2560, 1440},
-    {1920, 1080},
-    {1440, 900},
-    {1280, 720}
-};
-int currentResolutionIndex = 3;
 constexpr int buttonFontSize = 26;
 bool mapOpened = false;
 constexpr int fps = 60;
@@ -91,8 +84,7 @@ int main() {
     const Vector2 backButtonPos { 50 , currentResHeight - 100};
 
     const Vector2 fullscreenButtonPos { currentResWidth / 2 - 100, currentResHeight / 2 - 100 };
-    const Vector2 resolutionButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
-    const Vector2 soundButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  + 50 };
+    const Vector2 soundButtonPos { currentResWidth / 2 - 100, currentResHeight / 2  - 25 };
 
     const Vector2 createWorldButtonPos = { currentResWidth / 2 - 300, currentResHeight - 100 };
     const Vector2 loadWorldButtonPos = { currentResWidth / 2 , currentResHeight - 100 };
@@ -138,7 +130,6 @@ int main() {
     const Rectangle backButtonHitbox { backButtonPos.x , backButtonPos.y , (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
 
     const Rectangle fullscreenButtonHitbox { fullscreenButtonPos.x, fullscreenButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
-    const Rectangle resolutionButtonHitbox { resolutionButtonPos.x, resolutionButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
     const Rectangle soundButtonHitbox { soundButtonPos.x, soundButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
 
     const Rectangle createWorldButtonHitbox { createWorldButtonPos.x , createWorldButtonPos.y, (float)buttonsEmpty.width / 2, (float)buttonsEmpty.height / 2 };
@@ -429,17 +420,6 @@ int main() {
                 else DrawTextureRec(buttonsEmpty, buttonHover, fullscreenButtonPos, WHITE);
                 if (IsWindowFullscreen()) DrawText("FULLSCREEN : OFF", fullscreenButtonPos.x + 20 , fullscreenButtonPos.y + buttonFontSize / 1.4 , buttonFontSize / 1.4, RAYWHITE);
                 if (!IsWindowFullscreen()) DrawText("FULLSCREEN : ON", fullscreenButtonPos.x + 20 , fullscreenButtonPos.y + buttonFontSize / 1.4 , buttonFontSize / 1.4, RAYWHITE);
-                //resolution button
-                if (!CheckCollisionRecs(mouseHitbox, resolutionButtonHitbox)){
-                    DrawTextureRec(buttonsEmpty, buttonNonPressed, resolutionButtonPos, WHITE);
-                }
-                else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionRecs(mouseHitbox, resolutionButtonHitbox)){
-                    DrawTextureRec(buttonsEmpty, buttonPressed, resolutionButtonPos, WHITE);
-                    currentResolutionIndex = (currentResolutionIndex + 1) % (sizeof(supportedResolutions) / sizeof(supportedResolutions[0]));
-                    SetWindowSize(supportedResolutions[currentResolutionIndex].x, supportedResolutions[currentResolutionIndex].y);
-
-                }
-                else DrawTextureRec(buttonsEmpty, buttonHover, resolutionButtonPos, WHITE);
 
                 //sound on/off button
                 if (!CheckCollisionRecs(mouseHitbox, soundButtonHitbox)){
