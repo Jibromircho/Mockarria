@@ -49,6 +49,8 @@ public:
     int stackSize = 0;
     int maxStackSize = 255; 
     int price;
+    Vector2 position;
+    Rectangle hitbox;
     
     void useItem() {
 
@@ -58,8 +60,11 @@ public:
 
     };
 
-    void spawnItem() {
-
+    void spawnItem(Vector2 spawnPoint) {
+        position = spawnPoint;
+        hitbox.x = spawnPoint.x;
+        hitbox.y = spawnPoint.y;
+        place = ItemPlace::GROUND;
     };
 
     void displayItemDetails() {

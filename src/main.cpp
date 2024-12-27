@@ -99,6 +99,7 @@ int main() {
     Inventory inventory;
     World world;
     Tile tile;
+    Item item;
     //camera initialization
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
@@ -215,6 +216,7 @@ int main() {
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
                             } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) {
+                                item.spawnItem(block[i][j].position);
                                 inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;

@@ -37,19 +37,20 @@ public:
     void addItem(int id, int quantity) {
         for (int j = 0; j < inventoryRows; ++j) {
             for (int i = 0; i < hotbarSize; ++i) {
-                if (slots[i][j].empty) {
+                if (slots[i][j].empty && quantity <= slots[i][j].item.maxStackSize) {
                     slots[i][j].item.id = id;
                     slots[i][j].item.stackSize = quantity;
                     slots[i][j].empty = false;
-                    return;
+                    
                 }
-                else if (!slots[i][j].empty && slots[i][j].item.id == id) {
+                else if (!slots[i][j].empty && slots[i][j].item.id == id && slots[i][j].item.stackSize + quantity < slots[i][j].item.maxStackSize) {
                     slots[i][j].item.stackSize += quantity;
                     return;
                 }
             }
         }
     }
+
     void removeItem(int id, int quantity) {
         for (int j = 0; j < inventoryRows; ++j) {
             for (int i = 0; i < hotbarSize; ++i) {
