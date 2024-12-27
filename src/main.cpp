@@ -99,7 +99,7 @@ int main() {
     Inventory inventory;
     World world;
     Tile tile;
-    Item item;
+    std::vector<Item> existingItems;
     //camera initialization
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
@@ -216,8 +216,9 @@ int main() {
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
                             } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) {
-                                item.spawnItem(block[i][j].position);
-                                inventory.addItem(block[i][j].type, 1);
+                                Item item(block[i][j].type , block[i][j].position,1);
+                                existingItems.push_back(item);
+                                //inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                                 block[i][j].directional = false;
@@ -253,9 +254,37 @@ int main() {
                                 player.hitbox.x += collisionArea.width;
                             }else player.position.x -= collisionArea.width, player.hitbox.x -= collisionArea.width;
                         }
+                        for (Item& item : existingItems) {
+                            if (item.place == ItemPlace::GROUND) {
+                                if(!CheckCollisionRecs(item.hitbox,block[i][j].hitbox)) {
+                                    item.position.y += world.velocity * 0.001f;
+                                    item.hitbox.y = item.position.y;                                
+                            } 
+                        }
+                    }
                     }
                 }
             }
+            
+            existingItems.erase(
+                std::remove_if(
+                    existingItems.begin(),
+                    existingItems.end(),
+                    [&](Item& item) {
+                        if (CheckCollisionRecs(player.pickupHitbox, item.hitbox)) {
+                            Vector2 itemMagnetism = item.position - player.center;
+                            item.position -= itemMagnetism * 0.03;
+                            item.hitbox.x = item.position.x;
+                            item.hitbox.y = item.position.y;
+                            if(CheckCollisionRecs(player.hitbox,item.hitbox)) {
+                                inventory.addItem(item.id, item.stackSize);
+                                item.place = ItemPlace::INVENTORY;
+                                return true;
+                            }
+                        }
+                        return false; 
+                    }),
+            existingItems.end());
 
         //other keys and inputs
         if (IsKeyDown(KEY_ESCAPE)) {
@@ -476,9 +505,14 @@ int main() {
                     //player drawing
                     player.drawPlayer();
                     
-                    if (item.place == ItemPlace::GROUND) {
-                        DrawTexture(item.texture, item.position.x, item.position.y,WHITE);
+                    for (Item item : existingItems) {
+                        if (item.place == ItemPlace::GROUND) {
+                            Rectangle itemRecSource = tile.getIconRecSource(item.id);
+                            Vector2 itemPosition = { item.position.x, item.position.y };
+                            DrawTextureRec(tile.tileSet,itemRecSource, itemPosition, WHITE);
+                        }
                     }
+                    
 
                 EndMode2D();
 

@@ -9,7 +9,7 @@ struct PlayerStats {
     float criticalChance = 1.0f;
     float healthRegeneration = 0.4f;
     float manaRegeneration = 0.1f;
-    float pickUpRange = 150.0f;
+    float pickUpRange = 100.0f;
 } ;
 
 class Player
