@@ -21,7 +21,7 @@ typedef struct Block {
     int health;
     enum Type { SKY = -1, DIRT = 0, STONE = 1, CLAY = 2, MUD = 3, SNOW = 4, SAND = 5, } type;
     // Constructor with default values
-    Block() : solid(false), directional(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), type(SKY) {}
+    Block() : solid(false), directional(false), position({ worldStartX, worldStartY}), hitbox({worldStartX, worldStartY, 16,16}), health(300), type(SKY){}
 } Block;
 
 Block block[worldSizeW][worldSizeH];
@@ -225,7 +225,7 @@ int main() {
                         if (!CheckCollisionRecs(block[i][j].hitbox,player.hitbox)){
                             if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
                                 if (block[i][j].type == -1 && mouse_playerDistance <= 100) {
-                                    int itemID = inventory.useItem(block[i][j].type);
+                                    int itemID = inventory.slots[inventory.hotbarIndex][0].item.id;
                                     if (itemID != -1) {
                                         block[i][j].type = static_cast<Block::Type>(itemID);
                                         block[i][j].solid = true;
@@ -264,7 +264,7 @@ int main() {
         }
         //hotbar slot select
         for (int i = 0; i < 10; i++) {
-            if (IsKeyPressed('0' + ((i + 1) % 10))) inventory.selectHotbarSlot(i);
+            if (IsKeyPressed('0' + ((i + 1) % 10))) inventory.hotbarIndex = i;
         }
         //open invetory
         if (IsKeyPressed(KEY_B)) {
