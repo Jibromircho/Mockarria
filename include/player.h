@@ -25,8 +25,8 @@ public:
     Vector2 hitboxOffset = { 3 , 4 };
     Vector2 centerOffset = { 12.0f , 21.0f };
     Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 5, frameRecIdle.height - 5 };
-    Rectangle pickupHitbox = { position.x - stats.pickUpRange / 2, position.y - stats.pickUpRange / 2 , stats.pickUpRange, stats.pickUpRange };
     Vector2 center = { position.x + centerOffset.x, position.y + centerOffset.y };
+    Rectangle pickupHitbox = { center.x - stats.pickUpRange / 2, center.y - stats.pickUpRange / 2, stats.pickUpRange, stats.pickUpRange };
 
     Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");
     Rectangle healthUi20 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
@@ -63,9 +63,9 @@ public:
         //always updating 
         hitbox.x = position.x + hitboxOffset.x;
         hitbox.y = position.y + hitboxOffset.y;
-        pickupHitbox.x = position.x - stats.pickUpRange / 2;
-        pickupHitbox.y = position.y - stats.pickUpRange / 2;
         center = { position.x + centerOffset.x, position.y + centerOffset.y };
+        pickupHitbox.x = center.x - stats.pickUpRange / 2;
+        pickupHitbox.y = center.y - stats.pickUpRange / 2;
     }
 
     void drawPlayer() const {
@@ -126,8 +126,8 @@ public:
 
             hitbox.x = position.x + hitboxOffset.x;
             hitbox.y = position.y + hitboxOffset.y;
-            pickupHitbox.x = position.x -  stats.pickUpRange / 2;
-            pickupHitbox.y = position.y - stats.pickUpRange / 2;
+            pickupHitbox.x = center.x - stats.pickUpRange / 2;
+            pickupHitbox.y = center.y - stats.pickUpRange / 2;
             center = { position.x + centerOffset.x, position.y + centerOffset.y };
 
             // Load Inventory data
@@ -150,7 +150,7 @@ public:
     void resetPos(){
         position = { 0.0f, 0.0f };
         hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
-        pickupHitbox = { position.x - stats.pickUpRange / 2, position.y - stats.pickUpRange / 2, stats.pickUpRange, stats.pickUpRange };
+        pickupHitbox = { center.x - stats.pickUpRange / 2, center.x - stats.pickUpRange / 2, stats.pickUpRange, stats.pickUpRange };
     }
     void resetJump(){
         jumpCount = maxJump;
