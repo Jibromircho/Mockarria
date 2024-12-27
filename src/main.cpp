@@ -228,13 +228,12 @@ int main() {
                     if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)) {
                         if (!CheckCollisionRecs(block[i][j].hitbox,player.hitbox)){
                             if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-                                if (block[i][j].type == -1 && mouse_playerDistance <= 100) {
-                                    int itemID = inventory.slots[inventory.hotbarIndex][0].item.id;
-                                    if (itemID != -1) {
-                                        block[i][j].type = static_cast<Block::Type>(itemID);
-                                        block[i][j].solid = true;
-                                        block[i][j].directional = true;
-                                    }                        
+                                if (block[i][j].type == -1 && mouse_playerDistance <= 100 && !inventory.slots[inventory.hotbarIndex][0].empty) {           
+                                    block[i][j].type = static_cast<Block::Type>(inventory.slots[inventory.hotbarIndex][0].item.id);
+                                    block[i][j].solid = true;
+                                    block[i][j].directional = true;
+                                    inventory.removeItem(inventory.slots[inventory.hotbarIndex][0].item.id, 1);
+                                                            
                                 }
                             }
                         }

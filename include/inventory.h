@@ -6,10 +6,8 @@
 
 
 struct Slot {
-    int itemID = -1;
-    bool empty = false;
     Item item;
-
+    bool empty = false;
 };
 
 
@@ -29,7 +27,7 @@ public:
     Inventory() {
         for (int i = 0; i < hotbarSize; ++i) {
             for (int j = 0; j < inventoryRows; ++j) {
-                slots[i][j].itemID = -1;
+                slots[i][j].item.id = -1;
                 slots[i][j].empty = true;
             }
         }
@@ -39,13 +37,29 @@ public:
     void addItem(int id, int quantity) {
         for (int j = 0; j < inventoryRows; ++j) {
             for (int i = 0; i < hotbarSize; ++i) {
-                if (slots[i][j].itemID == -1) {
-                    slots[i][j].itemID = id;
+                if (slots[i][j].empty) {
+                    slots[i][j].item.id = id;
+                    slots[i][j].item.stackSize = quantity;
                     slots[i][j].empty = false;
                     return;
                 }
-                else if (slots[i][j].itemID == id) {
+                else if (!slots[i][j].empty && slots[i][j].item.id == id) {
                     slots[i][j].item.stackSize += quantity;
+                    return;
+                }
+            }
+        }
+    }
+    void removeItem(int id, int quantity) {
+        for (int j = 0; j < inventoryRows; ++j) {
+            for (int i = 0; i < hotbarSize; ++i) {
+                if (slots[i][j].item.stackSize <= 0) {
+                    slots[i][j].item.id = -1;
+                    slots[i][j].empty = true;
+                    return;
+                }
+                else if (slots[i][j].item.stackSize > 0 && slots[i][j].item.id == id) {
+                    slots[i][j].item.stackSize -= quantity;
                     return;
                 }
             }
@@ -55,7 +69,7 @@ public:
     void resetInventory() {
         for (int i = 0; i < hotbarSize; ++i) {
             for (int j = 0; j < inventoryRows; ++j) {
-                slots[i][j].itemID = -1;
+                slots[i][j].item.id = -1;
                 slots[i][j].empty = true;
                 hotbarIndex = 0;
             }
@@ -68,7 +82,7 @@ public:
             if (!slots[i][0].empty) {
                 int xOffset = 23;
                 int yOffset = 23;
-                Rectangle sourceRec = tile->getIconRecSource(slots[i][0].itemID);
+                Rectangle sourceRec = tile->getIconRecSource(slots[i][0].item.id);
                 Vector2 origin = { sourceRec.width / 2, sourceRec.height / 2 };
                 if (i == hotbarIndex) {
                     scaleFactor = 2.25f;
