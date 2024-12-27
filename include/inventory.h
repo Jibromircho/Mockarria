@@ -50,6 +50,23 @@ public:
             }
         }
     }
+    void pickUpItem(int id, int quantity) {
+        for (int j = 0; j < inventoryRows; ++j) {
+            for (int i = 0; i < hotbarSize; ++i) {
+                if (slots[i][j].empty && quantity <= slots[i][j].item.maxStackSize) {
+                    slots[i][j].item.id = id;
+                    slots[i][j].item.place = ItemPlace::INVENTORY;
+                    slots[i][j].item.stackSize = quantity;
+                    slots[i][j].empty = false;
+                    return;
+                }
+                else if (slots[i][j].item.id == id && slots[i][j].item.stackSize + quantity <= slots[i][j].item.maxStackSize) {
+                    slots[i][j].item.stackSize += quantity;
+                    return;
+                }
+            }
+        }
+    }
 
     void removeItem(int id, int quantity) {
             if (slots[hotbarIndex][0].item.stackSize > 0) {

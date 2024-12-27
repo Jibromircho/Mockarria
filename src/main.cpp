@@ -475,6 +475,11 @@ int main() {
                     DrawRectangleLinesEx(player.pickupHitbox, 2, GREEN);
                     //player drawing
                     player.drawPlayer();
+                    
+                    if (item.place == ItemPlace::GROUND) {
+                        DrawTexture(item.texture, item.position.x, item.position.y,WHITE);
+                    }
+
                 EndMode2D();
 
                 //Drawing ui elemnts
