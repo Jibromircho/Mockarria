@@ -9,8 +9,8 @@ struct PlayerStats {
     float criticalChance = 1.0f;
     float healthRegeneration = 0.4f;
     float manaRegeneration = 0.1f;
+    float pickUpRange = 70.0f;
 } ;
-
 
 class Player
 {
@@ -21,9 +21,11 @@ public:
     Rectangle frameRecMove = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     Rectangle frameRecIdle = { 0.0f, 0.0f, (float)model_movement.width/8, (float)model_movement.height/3 };
     PlayerState state = GROUND;
+    PlayerStats stats;
     Vector2 hitboxOffset = { 3 , 4 };
     Vector2 centerOffset = { 12.0f , 21.0f };
     Rectangle hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 5, frameRecIdle.height - 5 };
+    Rectangle pickupHitbox = { position.x, position.y, stats.pickUpRange, stats.pickUpRange };
     Vector2 center = { position.x + centerOffset.x, position.y + centerOffset.y };
 
     Texture2D healthUi = LoadTexture("../img/ui/Hearts.png");
@@ -34,7 +36,6 @@ public:
     Rectangle healthUi0 = { 0.0f, 0.0f, (float)healthUi.width/5, 0.0f };
 
     //player stats
-    PlayerStats stats;
     int maxJump = 100;
     int jumpCount = maxJump;
     float jumpStrength = -3.5f;
@@ -45,16 +46,25 @@ public:
 
     float movementSpeed = 2.0f;
 
-    void updatePlayer() //player update functions
+    void updatePlayer(World* world) //player update functions
     {   
         //input movement
         if (IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown(KEY_RIGHT_SHIFT)) movementSpeed = 6.0f;
         if (IsKeyReleased(KEY_LEFT_SHIFT)||IsKeyReleased(KEY_RIGHT_SHIFT)) movementSpeed = 2.0f;
         if (IsKeyDown(KEY_A)) position.x -= movementSpeed;
         if (IsKeyDown(KEY_D)) position.x += movementSpeed;
+        if (IsKeyPressed(KEY_SPACE) && jumpCount > 0) {
+            world->velocity += jumpStrength;
+            state = JUMPING;
+            jumpCount--;
+        }
+        position.y += world->velocity;
 
         //always updating 
         hitbox.x = position.x + hitboxOffset.x;
+        hitbox.y = position.y + hitboxOffset.y;
+        pickupHitbox.x = position.x;
+        pickupHitbox.y = position.y;
         center = { position.x + centerOffset.x, position.y + centerOffset.y };
     }
 
@@ -116,6 +126,8 @@ public:
 
             hitbox.x = position.x + hitboxOffset.x;
             hitbox.y = position.y + hitboxOffset.y;
+            pickupHitbox.x = position.x;
+            pickupHitbox.y = position.y;
             center = { position.x + centerOffset.x, position.y + centerOffset.y };
 
             // Load Inventory data
@@ -138,6 +150,7 @@ public:
     void resetPos(){
         position = { 0.0f, 0.0f };
         hitbox = { position.x + hitboxOffset.x, position.y + hitboxOffset.y, frameRecIdle.width - 6, frameRecIdle.height - 5 };
+        pickupHitbox = { position.x, position.y, stats.pickUpRange, stats.pickUpRange };
     }
     void resetJump(){
         jumpCount = maxJump;

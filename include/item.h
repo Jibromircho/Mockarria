@@ -21,6 +21,14 @@ enum class ItemRarity {
     LEGENDARY
 };
 
+enum class ItemPlace {
+    GROUND,
+    HOTBAR,
+    INVENTORY,
+    EQUIPED,
+    MOUSE,
+};
+
 struct ItemEffect {
     std::string effectName;
     int effectValue;
@@ -34,6 +42,7 @@ public:
     Texture2D texture = LoadTexture("../img/items/weapon_1.png");
     ItemType type;
     ItemRarity rarity;
+    ItemPlace place;
     std::string name;
     std::string description;
     int id = -1;  
@@ -49,7 +58,7 @@ public:
 
     };
 
-    void dropItem() {
+    void spawnItem() {
 
     };
 

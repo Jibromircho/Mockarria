@@ -203,13 +203,10 @@ int main() {
                 if(IsKeyDown(KEY_D)) currentFrameIdle = 0, player.frameRecMove.y = player.model_movement.height/3;
             }
             //player actions inputs
-            player.updatePlayer();
+            player.updatePlayer(&world);
 
             world.updateWorld();
 
-            if (IsKeyPressed(KEY_SPACE) && player.jumpCount > 0) world.setVelocity(player.jumpStrength), player.state = JUMPING, player.jumpCount--;
-            player.position.y += world.getVelocity();
-            player.hitbox.y += world.getVelocity();
             //tile hitbox checks
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
@@ -245,8 +242,8 @@ int main() {
                             if (collisionArea.y == player.hitbox.y){
                                 player.position.y += collisionArea.height;
                                 player.hitbox.y += collisionArea.height;
-                                world.setVelocity(world.getVelocity() + 1);
-                            }else player.position.y -= collisionArea.height, player.hitbox.y -= collisionArea.height, world.setVelocity(0), player.state = GROUND, player.resetJump();
+                                world.velocity += 1;
+                            }else player.position.y -= collisionArea.height, player.hitbox.y -= collisionArea.height, world.velocity = 0, player.state = GROUND, player.resetJump();
                         }
                         if (collisionArea.height > collisionArea.width){
                             if (collisionArea.x == player.hitbox.x) {
@@ -473,7 +470,7 @@ int main() {
 
                         }
                     }
-                    DrawRectangleLinesEx(player.hitbox, 2, GREEN);
+                    DrawRectangleLinesEx(player.pickupHitbox, 2, GREEN);
                     //player drawing
                     player.drawPlayer();
                 EndMode2D();

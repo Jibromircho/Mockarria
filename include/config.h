@@ -19,6 +19,6 @@
 #include <tile.h>
 #include <inventory.h>
 #include <item.h>
-#include <player.h>
 #include <world.h>
+#include <player.h>
 
