@@ -254,17 +254,17 @@ int main() {
                                 player.hitbox.x += collisionArea.width;
                             }else player.position.x -= collisionArea.width, player.hitbox.x -= collisionArea.width;
                         }
-                        for (Item& item : existingItems) {
-                            if (item.place == ItemPlace::GROUND) {
-                                if(!CheckCollisionRecs(item.hitbox,block[i][j].hitbox)) {
-                                    item.position.y += world.velocity * 0.001f;
-                                    item.hitbox.y = item.position.y;                                
-                            } 
-                        }
-                    }
+                        // for (Item& item : existingItems) {
+                        //     if (item.place == ItemPlace::GROUND && !CheckCollisionRecs(item.hitbox,block[i][j].hitbox)) {
+                    
+                        //             item.position.y += world.velocity * 0.001f;
+                        //             item.hitbox.y = item.position.y;                                
+                        //     }
+                        // }
                     }
                 }
             }
+        
             
             existingItems.erase(
                 std::remove_if(
@@ -272,8 +272,9 @@ int main() {
                     existingItems.end(),
                     [&](Item& item) {
                         if (CheckCollisionRecs(player.pickupHitbox, item.hitbox)) {
-                            Vector2 itemMagnetism = item.position - player.center;
-                            item.position -= itemMagnetism * 0.03;
+                            Vector2 itemMagnetism = { item.position.x - player.center.x, item.position.y - player.center.y };
+                            item.position.x -= itemMagnetism.x * 0.025;
+                            item.position.y -= itemMagnetism.y * 0.025;
                             item.hitbox.x = item.position.x;
                             item.hitbox.y = item.position.y;
                             if(CheckCollisionRecs(player.hitbox,item.hitbox)) {
@@ -508,8 +509,15 @@ int main() {
                     for (Item item : existingItems) {
                         if (item.place == ItemPlace::GROUND) {
                             Rectangle itemRecSource = tile.getIconRecSource(item.id);
-                            Vector2 itemPosition = { item.position.x, item.position.y };
-                            DrawTextureRec(tile.tileSet,itemRecSource, itemPosition, WHITE);
+
+                            Rectangle itemDest = {
+                                item.position.x,
+                                item.position.y,
+                                itemRecSource.height * 0.8f,
+                                itemRecSource.width * 0.8f,
+                            };
+
+                            DrawTexturePro(tile.tileSet,itemRecSource,itemDest,{ 0 ,0 }, 0.0f, WHITE);
                         }
                     }
                     
