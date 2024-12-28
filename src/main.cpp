@@ -255,25 +255,7 @@ int main() {
                         }
                     }
                 }
-            }
-            for (Item& item : existingItems) {
-                world.itemVelocity += world.itemAcceleration;
-                item.position.y += world.itemVelocity;
-                item.hitbox.x = item.position.x;
-                item.hitbox.y = item.position.y;
-
-                for (int i = firstBlockX; i < lastBlockX; i++) {
-                    for (int j = firstBlockY; j < lastBlockY; j++) {
-                        if (block[i][j].solid && CheckCollisionRecs(item.hitbox, block[i][j].hitbox)) {
-                            world.itemVelocity = 0;
-                            item.position.y = block[i][j].hitbox.y - item.hitbox.height;
-                            item.hitbox.y = item.position.y;
-                            break;
-                        }
-                    }
-                }
-            }
-        
+            }    
             
             existingItems.erase(
                 std::remove_if(
