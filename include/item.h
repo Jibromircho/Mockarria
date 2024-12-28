@@ -51,7 +51,7 @@ public:
     Vector2 position;
     Rectangle hitbox;
 
-    Item(int id = -1, Vector2 position = {0, 0}, int stackSize = 0, Rectangle hitbox = {0, 0, 16.0f, 16.0f}, ItemPlace place = ItemPlace::GROUND) : id(id), position(position),stackSize(stackSize), hitbox({position.x,position.y,16.0f,16.0f}), place(place) {}
+    Item(int id = -1, Vector2 position = {0, 0}, int stackSize = 0, Rectangle hitbox = {0, 0, 12.0f, 12.0f}, ItemPlace place = ItemPlace::GROUND) : id(id), position(position),stackSize(stackSize), hitbox({position.x,position.y,12.0f,12.0f}), place(place) {}
 
     void useItem() {
 

@@ -218,7 +218,6 @@ int main() {
                             } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) {
                                 Item item(block[i][j].type , block[i][j].position,1);
                                 existingItems.push_back(item);
-                                //inventory.addItem(block[i][j].type, 1);
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                                 block[i][j].directional = false;
@@ -254,13 +253,23 @@ int main() {
                                 player.hitbox.x += collisionArea.width;
                             }else player.position.x -= collisionArea.width, player.hitbox.x -= collisionArea.width;
                         }
-                        // for (Item& item : existingItems) {
-                        //     if (item.place == ItemPlace::GROUND && !CheckCollisionRecs(item.hitbox,block[i][j].hitbox)) {
-                    
-                        //             item.position.y += world.velocity * 0.001f;
-                        //             item.hitbox.y = item.position.y;                                
-                        //     }
-                        // }
+                    }
+                }
+            }
+            for (Item& item : existingItems) {
+                world.itemVelocity += world.itemAcceleration;
+                item.position.y += world.itemVelocity;
+                item.hitbox.x = item.position.x;
+                item.hitbox.y = item.position.y;
+
+                for (int i = firstBlockX; i < lastBlockX; i++) {
+                    for (int j = firstBlockY; j < lastBlockY; j++) {
+                        if (block[i][j].solid && CheckCollisionRecs(item.hitbox, block[i][j].hitbox)) {
+                            world.itemVelocity = 0;
+                            item.position.y = block[i][j].hitbox.y - item.hitbox.height;
+                            item.hitbox.y = item.position.y;
+                            break;
+                        }
                     }
                 }
             }
@@ -506,7 +515,7 @@ int main() {
                     //player drawing
                     player.drawPlayer();
                     
-                    for (Item item : existingItems) {
+                    for (Item& item : existingItems) {
                         if (item.place == ItemPlace::GROUND) {
                             Rectangle itemRecSource = tile.getIconRecSource(item.id);
 
