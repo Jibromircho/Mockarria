@@ -104,7 +104,7 @@ int main() {
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
     camera.offset = {currentResWidth / 2.0f, currentResHeight / 2.0f};
-    camera.zoom = 1.0f;
+    camera.zoom = 1.4f;
     Rectangle scissorArea = { player.position.x, player.position.y, currentResWidth,currentResHeight};
    
     //initialize audio stuff
@@ -164,10 +164,10 @@ int main() {
         Rectangle worldMouseHitbox = { worldMousePosition.x, worldMousePosition.y, 0.0f, 0.0f };
 
 
-        int firstBlockX = (worldSizeW / 2) + (player.position.x - currentResWidth) / 16;
-        int lastBlockX = (worldSizeW / 2) + (player.position.x + currentResWidth) / 16;
-        int firstBlockY = (worldSizeH / 5) + (player.position.y - currentResHeight) / 16;
-        int lastBlockY = (worldSizeH / 5) + (player.position.y + currentResHeight) / 16;
+        int firstBlockX = (worldSizeW / 2) + (player.position.x - currentResWidth / 2) / 16;
+        int lastBlockX = (worldSizeW / 2) + (player.position.x + currentResWidth / 2) / 16;
+        int firstBlockY = (worldSizeH / 5) + (player.position.y - currentResHeight / 2) / 16;
+        int lastBlockY = (worldSizeH / 5) + (player.position.y + currentResHeight / 2) / 16;
         
    
         UpdateMusicStream(mainMenuMusic1);
