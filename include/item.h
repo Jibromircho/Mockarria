@@ -46,7 +46,7 @@ public:
     std::string description;
     int id; 
     int stackSize;
-    int maxStackSize = 255; 
+    int maxStackSize = 25; //to be changed to 255
     int price;
     Vector2 position;
     Rectangle hitbox;

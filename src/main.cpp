@@ -268,9 +268,10 @@ int main() {
                             item.hitbox.x = item.position.x;
                             item.hitbox.y = item.position.y;
                             if(CheckCollisionRecs(player.hitbox,item.hitbox)) {
-                                inventory.addItem(item.id, item.stackSize);
-                                item.place = ItemPlace::INVENTORY;
-                                return true;
+                                if(inventory.pickUpItem(item.id, item.stackSize)) {
+                                    item.place = ItemPlace::INVENTORY;
+                                    return true;
+                                }
                             }
                         }
                         return false; 

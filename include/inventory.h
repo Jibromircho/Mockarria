@@ -50,7 +50,7 @@ public:
             }
         }
     }
-    void pickUpItem(int id, int quantity) {
+    bool pickUpItem(int id, int quantity) {
         for (int j = 0; j < inventoryRows; ++j) {
             for (int i = 0; i < hotbarSize; ++i) {
                 if (slots[i][j].empty && quantity <= slots[i][j].item.maxStackSize) {
@@ -58,14 +58,14 @@ public:
                     slots[i][j].item.place = ItemPlace::INVENTORY;
                     slots[i][j].item.stackSize = quantity;
                     slots[i][j].empty = false;
-                    return;
+                    return 1;
                 }
                 else if (slots[i][j].item.id == id && slots[i][j].item.stackSize + quantity <= slots[i][j].item.maxStackSize) {
                     slots[i][j].item.stackSize += quantity;
-                    return;
+                    return 1;
                 }
             }
-        }
+        } return 0;
     }
 
     void removeItem(int id, int quantity) {
@@ -120,7 +120,27 @@ public:
         }
     }
     void drawInventoryItems(Tile* tile, Vector2 position) {
-        
+        for(int i = 0; i < hotbarSize; i++) {
+            for (int j = 1; j < inventoryRows; j++) {
+                Rectangle sourceRec = tile->getIconRecSource(slots[i][j].item.id);
+                Vector2 origin = { sourceRec.width / 2, sourceRec.height / 2 };
+                int xOffset = 23;
+                int yOffset = 23;
+                float scaleFactor = 2.25f;
+                Rectangle destRec = { 
+                position.x + (i * 48.0f) + (xOffset / 1.75f), 
+                position.y + (j * 48.0f) + (yOffset / 1.75f),       
+                sourceRec.width * scaleFactor,            
+                sourceRec.height * scaleFactor       
+                };
+                DrawTexturePro(tile->tileSet, sourceRec, destRec, origin, 0.0f, WHITE);
+
+                Font font = GetFontDefault();
+                DrawTextEx( font, (std::to_string(slots[i][j].item.stackSize).c_str()), {position.x + (i * 48.0f) + (xOffset), position.y + (j * 48.0f) + (yOffset)}, 8 * scaleFactor, 2,WHITE);
+                DrawTextEx( font, (std::to_string(slots[i][j].item.stackSize).c_str()), {position.x + (i * 48.0f) + (xOffset) + 0.3f, position.y + (j * 48.0f) + (yOffset) + 0.3f}, 8 * scaleFactor, 2,WHITE);
+                DrawTextEx( font, (std::to_string(slots[i][j].item.stackSize).c_str()), {position.x + (i * 48.0f) + (xOffset) + 0.6f, position.y + (j * 48.0f) + (yOffset) + 0.6f}, 8 * scaleFactor, 2,WHITE);
+            }
+        }
     }
 
 };
