@@ -104,7 +104,7 @@ int main() {
     Camera2D camera = { 0 };
     camera.target = {player.position.x , player.position.y };
     camera.offset = {currentResWidth / 2.0f, currentResHeight / 2.0f};
-    camera.zoom = 1.6f;
+    camera.zoom = 1.0f;
     Rectangle scissorArea = { player.position.x, player.position.y, currentResWidth,currentResHeight};
    
     //initialize audio stuff
@@ -211,7 +211,8 @@ int main() {
             //tile hitbox checks
             for (int i = firstBlockX; i < lastBlockX; i++){
                 for (int j = firstBlockY; j < lastBlockY; j++){
-                    if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox) && mouse_playerDistance <= 100){
+                    bool isMouseOnBlock = CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox);
+                    if (isMouseOnBlock && mouse_playerDistance <= 100){
                         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
@@ -224,19 +225,17 @@ int main() {
                             }
                         }
                     }
-                    if (CheckCollisionRecs(worldMouseHitbox, block[i][j].hitbox)) {
-                        if (!CheckCollisionRecs(block[i][j].hitbox,player.hitbox)){
-                            if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-                                if (block[i][j].type == -1 && mouse_playerDistance <= 100 && !inventory.slots[inventory.hotbarIndex][0].empty) {           
-                                    block[i][j].type = static_cast<Block::Type>(inventory.slots[inventory.hotbarIndex][0].item.id);
-                                    block[i][j].solid = true;
-                                    block[i][j].directional = true;
-                                    inventory.removeItem(inventory.slots[inventory.hotbarIndex][0].item.id, 1);
-                                                            
-                                }
+                    if (isMouseOnBlock && !CheckCollisionRecs(block[i][j].hitbox,player.hitbox)) {
+                        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+                            if (block[i][j].type == -1 && mouse_playerDistance <= 100 && !inventory.slots[inventory.hotbarIndex][0].empty) {           
+                                block[i][j].type = static_cast<Block::Type>(inventory.slots[inventory.hotbarIndex][0].item.id);
+                                block[i][j].solid = true;
+                                block[i][j].directional = true;
+                                inventory.removeItem(inventory.slots[inventory.hotbarIndex][0].item.id, 1);                                             
                             }
                         }
                     }
+                    
 
                     if(block[i][j].solid){
                         Rectangle collisionArea = GetCollisionRec(player.hitbox, block[i][j].hitbox);
