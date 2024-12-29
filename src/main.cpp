@@ -254,7 +254,7 @@ int main() {
                         }
                     }
                 }
-            }    
+            }
             
             existingItems.erase(
                 std::remove_if(
@@ -497,7 +497,9 @@ int main() {
                     //player drawing
                     player.drawPlayer();
                     
+                        int itemsOnGround = 0;
                     for (Item& item : existingItems) {
+                        itemsOnGround++;
                         if (item.place == ItemPlace::GROUND) {
                             Rectangle itemRecSource = tile.getIconRecSource(item.id);
 
@@ -544,7 +546,10 @@ int main() {
                     }
                 }
 
-
+                            //////// for stress testing ho many items i can have on the ground /// tested for up to 1000 stable
+                            Font font = GetFontDefault();
+                            DrawTextEx( font, (std::to_string(itemsOnGround).c_str()), {350, 200},22, 2,BLACK);
+                            ///////
                 DrawFPS ( 200, 200 );
 
             }break;
