@@ -216,9 +216,12 @@ int main() {
                         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
-                            } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) {
+                            } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) { //////// for loop to be removed once done testing
+                                for (int g = 0;g < 22 ;g++) {
                                 Item item(block[i][j].type , block[i][j].position,1);
                                 existingItems.push_back(item);
+
+                                }
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                                 block[i][j].directional = false;
@@ -256,27 +259,25 @@ int main() {
                 }
             }
             
-            existingItems.erase(
-                std::remove_if(
-                    existingItems.begin(),
-                    existingItems.end(),
-                    [&](Item& item) {
-                        if (CheckCollisionRecs(player.pickupHitbox, item.hitbox)) {
-                            Vector2 itemMagnetism = { item.position.x - player.center.x, item.position.y - player.center.y };
-                            item.position.x -= itemMagnetism.x * 0.025;
-                            item.position.y -= itemMagnetism.y * 0.025;
-                            item.hitbox.x = item.position.x;
-                            item.hitbox.y = item.position.y;
-                            if(CheckCollisionRecs(player.hitbox,item.hitbox)) {
-                                if(inventory.pickUpItem(item.id, item.stackSize)) {
-                                    item.place = ItemPlace::INVENTORY;
-                                    return true;
-                                }
-                            }
+            std::vector<Item> updatedItems;
+
+            for (size_t i = 0; i < existingItems.size(); i++) {
+                if (CheckCollisionRecs(player.pickupHitbox, existingItems[i].hitbox)) {
+                    Vector2 itemMagnetism = { existingItems[i].position.x - player.center.x, existingItems[i].position.y - player.center.y };
+                    existingItems[i].position.x -= itemMagnetism.x * 0.025;
+                    existingItems[i].position.y -= itemMagnetism.y * 0.025;
+                    existingItems[i].hitbox.x = existingItems[i].position.x;
+                    existingItems[i].hitbox.y = existingItems[i].position.y;
+                    if (CheckCollisionRecs(player.hitbox, existingItems[i].hitbox)) {
+                        if (inventory.pickUpItem(existingItems[i].id, existingItems[i].stackSize)) {
+                            existingItems[i].place = ItemPlace::INVENTORY;
+                            continue;
                         }
-                        return false; 
-                    }),
-            existingItems.end());
+                    }
+                }
+                updatedItems.push_back(existingItems[i]);
+            }
+            existingItems = std::move(updatedItems);
 
         //other keys and inputs
         if (IsKeyDown(KEY_ESCAPE)) {
