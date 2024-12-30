@@ -217,11 +217,8 @@ int main() {
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
                             } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) { //////// for loop to be removed once done testing
-                                for (int g = 0;g < 22 ;g++) {
                                 Item item(block[i][j].type , block[i][j].position,1);
-                                existingItems.push_back(item);
-
-                                }
+                                existingItems.push_back(item);                 
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                                 block[i][j].directional = false;
@@ -260,6 +257,22 @@ int main() {
             }
             
             std::vector<Item> updatedItems;
+
+            std::vector<bool> checked (existingItems.size(), false);
+
+            for (size_t i = 0; i < existingItems.size(); ++i) {
+                for (size_t j = i + 1; j < existingItems.size(); ++j) {
+                    if (existingItems[i].id == existingItems[j].id) {
+                        if (CheckCollisionRecs(existingItems[i].hitbox, existingItems[j].hitbox)) {
+                            if (existingItems[i].stackSize + existingItems[j].stackSize <= existingItems[i].maxStackSize) {
+                                existingItems[i].stackSize += existingItems[j].stackSize;
+                                existingItems.erase(existingItems.begin() + j);
+                                --j;
+                            }
+                        }
+                    }
+                }
+            }
 
             for (size_t i = 0; i < existingItems.size(); i++) {
                 if (CheckCollisionRecs(player.pickupHitbox, existingItems[i].hitbox)) {
