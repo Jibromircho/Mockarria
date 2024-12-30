@@ -217,8 +217,10 @@ int main() {
                             if (block[i][j].health > 0) {
                                 block[i][j].health -= 100;
                             } else if (block[i][j].health == 0 && block[i][j].type != Block::SKY) { //////// for loop to be removed once done testing
+                            for(int g = 0; g < 11;g++){
                                 Item item(block[i][j].type , block[i][j].position,1);
-                                existingItems.push_back(item);                 
+                                existingItems.push_back(item);
+                            }                 
                                 block[i][j].type = Block::SKY;
                                 block[i][j].solid = false;
                                 block[i][j].directional = false;
