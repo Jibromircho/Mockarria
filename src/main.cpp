@@ -284,7 +284,7 @@ int main() {
                     existingItems[i].hitbox.x = existingItems[i].position.x;
                     existingItems[i].hitbox.y = existingItems[i].position.y;
                     if (CheckCollisionRecs(player.hitbox, existingItems[i].hitbox)) {
-                        if (inventory.pickUpItem(existingItems[i].id, existingItems[i].stackSize)) {
+                        if (inventory.pickUpItem(existingItems[i].id, &existingItems[i].stackSize)) {
                             existingItems[i].place = ItemPlace::INVENTORY;
                             continue;
                         }
