@@ -64,6 +64,10 @@ public:
     void displayItemDetails() {
 
     };
+    
+    void drawItemPickUp() {
+
+    };
 };
 
 

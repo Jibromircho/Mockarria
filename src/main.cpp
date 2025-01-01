@@ -229,7 +229,7 @@ int main() {
                     }
                     if (isMouseOnBlock && !CheckCollisionRecs(block[i][j].hitbox,player.hitbox)) {
                         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-                            if (block[i][j].type == -1 && mouse_playerDistance <= 100 && !inventory.slots[inventory.hotbarIndex][0].empty) {           
+                            if (block[i][j].type == -1 && mouse_playerDistance <= 100) {           
                                 block[i][j].type = static_cast<Block::Type>(inventory.slots[inventory.hotbarIndex][0].item.id);
                                 block[i][j].solid = true;
                                 block[i][j].directional = true;
